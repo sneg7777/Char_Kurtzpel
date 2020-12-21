@@ -1,26 +1,26 @@
 #include "stdafx.h"
 #include "Monster.h"
 #include "Export_Function.h"
+#include "SphereCollider.h"
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
+	, m_vDir(0.f, 0.f, 0.f)
 {
 
 }
 
 CMonster::~CMonster(void)
 {
-
+	for (auto& sphere : m_VecSphereCollider)
+	{
+		Engine::Safe_Release(sphere);
+	}
 }
 
 HRESULT Client::CMonster::Add_Component(void)
 {
 	Engine::CComponent* pComponent = nullptr;
-
-	// Mesh
-	pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Stone"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
 
 	// Transform
 	pComponent = m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
@@ -44,18 +44,78 @@ HRESULT Client::CMonster::Add_Component(void)
 	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Collider", pComponent);
 
 	// Optimization
-	pComponent = m_pOptimizationCom = dynamic_cast<Engine::COptimization*>(Engine::Clone(L"Proto_Optimization"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Optimization", pComponent);
+	//pComponent = m_pOptimizationCom = dynamic_cast<Engine::COptimization*>(Engine::Clone(L"Proto_Optimization"));
+	//NULL_CHECK_RETURN(pComponent, E_FAIL);
+	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Optimization", pComponent);
 
 	// Shader
 	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Mesh"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
+
 	return S_OK;
 }
 
+
+_int CMonster::Load_ColliderFile(_tchar* pFilePath)
+{
+	//TCHAR szDataPath[MAX_PATH] = L"../Bin/save.dat";
+	_tchar		szDataPath[256] = L"";
+
+	wsprintf(szDataPath, pFilePath);
+
+	HANDLE hFile = CreateFile(szDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+	DWORD dwByte = 0;
+	DWORD dwstrByte = 0;
+
+	//
+	_vec3 vecPos, vecAng, vecScal;
+	TCHAR meshName[MAX_PATH] = L"";
+	_int meshNameSize;
+	ReadFile(hFile, &meshNameSize, sizeof(_int), &dwByte, nullptr);
+	ReadFile(hFile, &meshName, meshNameSize, &dwByte, nullptr);
+	ReadFile(hFile, &vecPos, sizeof(_vec3), &dwByte, nullptr);
+	ReadFile(hFile, &vecScal, sizeof(_vec3), &dwByte, nullptr);
+	ReadFile(hFile, &vecAng, sizeof(_vec3), &dwByte, nullptr);
+	//
+	_int sphereCnt = 0;
+	ReadFile(hFile, &sphereCnt, sizeof(_int), &dwByte, nullptr);
+
+	for (size_t i = 0; i < sphereCnt; i++)
+	{
+		_vec3 spherePos, sphereScale;
+		TCHAR frameName[MAX_PATH] = L"";
+		_int frameNameSize;
+		ReadFile(hFile, &spherePos, sizeof(_vec3), &dwByte, nullptr);
+		ReadFile(hFile, &sphereScale, sizeof(_vec3), &dwByte, nullptr);
+		ReadFile(hFile, &frameNameSize, sizeof(_int), &dwByte, nullptr);
+		ReadFile(hFile, &frameName, frameNameSize, &dwByte, nullptr);
+		///////
+		//string frameNameString = TCHARToString(frameName);
+		wstring frameNameWString = frameName;
+		string frameNameString;
+		frameNameString.assign(frameNameWString.begin(), frameNameWString.end());
+		
+		
+		CSphereCollider* sphereCol = CSphereCollider::Create(m_pGraphicDev);
+		sphereCol->m_pDynamicMesh = this;
+		sphereCol->m_FrameName = frameNameString;
+		sphereCol->m_FrameNameCheck = true;
+		m_VecSphereCollider.emplace_back(sphereCol);
+		sphereCol->m_pTransformCom->m_vInfo[Engine::INFO_POS] = spherePos;
+		sphereCol->m_pTransformCom->m_vScale = sphereScale;
+	}
+	
+
+	
+	CloseHandle(hFile);
+
+	return S_OK;
+}
 
 CMonster* CMonster::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 {
@@ -85,18 +145,18 @@ HRESULT Client::CMonster::Ready_Object(void)
 Client::_int Client::CMonster::Update_Object(const _float& fTimeDelta)
 {
 	Engine::CGameObject::Update_Object(fTimeDelta);
+	for (auto& sphere : m_VecSphereCollider)
+	{
+		sphere->m_pDynamicMesh = this;
+		sphere->Update_Object(fTimeDelta);
+	}
+	//SetUp_OnTerrain();
 
-	SetUp_OnTerrain();
 
 	//m_bColl = Collision_ToObject(L"GameLogic", L"Player");
-
-	_vec3	vPos;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-
-	m_bDraw = m_pOptimizationCom->Is_InFrustumForObject(&vPos, 0.f);
-
-
-	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
+	//_vec3	vPos;
+	//m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	//m_bDraw = m_pOptimizationCom->Is_InFrustumForObject(&vPos, 0.f);
 
 	return 0;
 }

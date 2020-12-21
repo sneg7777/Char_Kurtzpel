@@ -89,6 +89,12 @@ _uint CLoading::Loading_ForStage(void)
 												Engine::BUFFER_CUBETEX),
 												E_FAIL);
 
+	FAILED_CHECK_RETURN(Engine::Ready_Buffer(m_pGraphicDev,
+												Engine::RESOURCE_STATIC,
+												L"Buffer_CollSphere",
+												Engine::BUFFER_COLLSPHERE),
+												E_FAIL);
+
 
 	lstrcpy(m_szLoading, L"Texture Loading.............................");
 	// ÅØ½ºÃÄ

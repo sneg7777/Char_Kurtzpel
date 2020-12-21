@@ -3,6 +3,7 @@
 #include "Export_Function.h"
 #include "Player.h"
 #include "Monster.h"
+#include "ApostleOfGreed.h"
 
 
 CSphereCollider::CSphereCollider(LPDIRECT3DDEVICE9 pGraphicDev)
@@ -20,9 +21,9 @@ HRESULT CSphereCollider::Add_Component(void)
 	Engine::CComponent* pComponent = nullptr;
 
 	// buffer
-	//pComponent = m_pBufferCom = dynamic_cast<Engine::CCollSphere*>(Engine::Clone(Engine::RESOURCE_STATIC, L"Buffer_CollSphere"));
-	//NULL_CHECK_RETURN(pComponent, E_FAIL);
-	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Buffer", pComponent);
+	pComponent = m_pBufferCom = dynamic_cast<Engine::CCollSphere*>(Engine::Clone(Engine::RESOURCE_STATIC, L"Buffer_CollSphere"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Buffer", pComponent);
 
 	// Transform
 	pComponent = m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
@@ -40,8 +41,9 @@ HRESULT CSphereCollider::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Calculator", pComponent);
 
-	//m_pBufferCom->Set_Color(D3DCOLOR_ARGB(255, 148, 155, 0));
-	m_pTransformCom->m_vScale = { 30.f, 30.f, 30.f };
+	m_pBufferCom->Set_Color(D3DCOLOR_ARGB(255, 0, 200, 0));
+
+	
 	return S_OK;
 }
 
@@ -64,8 +66,6 @@ HRESULT CSphereCollider::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	//Add_Vtx();
-
 	return S_OK;
 }
 
@@ -74,18 +74,19 @@ _int CSphereCollider::Update_Object(const _float& fTimeDelta)
 	if (m_Dead)
 		return 1;
 	
-
+	m_pTransformCom->m_vScale;
+	m_pTransformCom->m_vInfo[Engine::INFO_POS];
 	if (nullptr == m_pParentBoneMatrix)
 	{
 		if (m_pDynamicMesh == nullptr)
 			return 0;
 		if (!m_FrameNameCheck)
 			return 0;
-
+		
 		//다이나믹을 안쓰고 C스타일의 강제 형변환을 써서 m_pMeshCom 를 참조해도 된다함.
-		if(nullptr == dynamic_cast<CMonster*>(m_pDynamicMesh));
-			return 0;
-		const Engine::D3DXFRAME_DERIVED* pFrame = dynamic_cast<CMonster*>(m_pDynamicMesh)->m_pMeshCom->Get_FrameByName(m_FrameName.c_str());
+		//if(nullptr == dynamic_cast<CMonster*>(m_pDynamicMesh));
+		//	return 0;
+		const Engine::D3DXFRAME_DERIVED* pFrame = ((CMonster*)m_pDynamicMesh)->m_pMeshCom->Get_FrameByName(m_FrameName.c_str());
 
 		m_pParentBoneMatrix = &pFrame->CombinedTransformationMatrix;
 
@@ -111,7 +112,7 @@ void CSphereCollider::Render_Object(void)
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 
-	//m_pBufferCom->Render_Buffer();
+	m_pBufferCom->Render_Buffer();
 	//m_pTextureCom->Render_Texture(0);
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);

@@ -33,7 +33,7 @@ private:
 	//_vec3		PickUp_OnTerrain(void);
 
 public:
-	//Engine::CCollSphere* m_pBufferCom = nullptr;
+	Engine::CCollSphere* m_pBufferCom = nullptr;
 	Engine::CTransform* m_pTransformCom = nullptr;
 	Engine::CRenderer* m_pRendererCom = nullptr;
 	Engine::CCalculator* m_pCalculatorCom = nullptr;

@@ -20,6 +20,7 @@ CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
 		m_TimeCheck[i] = 0.f;
 	}
 	m_fInitSpeed = 10.f;
+	m_fJumpPower = 0.16f;
 }
 
 CPlayer::~CPlayer(void)
@@ -335,10 +336,6 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 	{
 		_vec3	vPickPos = PickUp_OnTerrain();
 		m_pTransformCom->Pick_Pos(&vPickPos, m_fSpeed, fTimeDelta);
-		CDynamicCamera* dCamera = dynamic_cast<CDynamicCamera*>(Engine::CManagement::GetInstance()->Get_GameObject(L"Environment", L"DynamicCamera"));
-		_vec3 a = *dCamera->Get_pPos();
-		_vec3 b = *dCamera->Get_pAt();
-		int i = 0;
 		
 	}
 	//if (Engine::Get_DIMouseState(Engine::DIM_RB) & 0x80)
@@ -549,6 +546,9 @@ Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 		SetUp_OnTerrain();
 		Key_Input(fTimeDelta);
 	}
+	//
+	//CameraControl(fTimeDelta);
+	//
 
 	Engine::CGameObject::Update_Object(fTimeDelta);
 	m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
@@ -583,7 +583,6 @@ void Client::CPlayer::Render_Object(void)
 	m_pTransformCom->Get_WorldMatrix(&matWorld);
 
 	m_pColliderCom->Render_Collider(Engine::COL_TRUE, &matWorld);*/
-
 }
 void CPlayer::Add_LookAtY(float lookat)
 {
@@ -627,6 +626,11 @@ void Client::CPlayer::CameraControl(_float fTimeDelta)
 	dCamera->Get_pPos()->y += 3.f;
 	dCamera->Get_pPos()->z -= 3.f;
 	*dCamera->Get_pAt() = vPos;
+	//*dCamera->Get_pPos() = vPos - (vDir * m_CameraDist);
+	//dCamera->Get_pPos()->y += 3.5f - m_LookAtY * 0.7f;
+	//*dCamera->Get_pAt() = vPos + (vDir * 200.f);
+	//dCamera->Get_pAt()->y += m_LookAtY;
+
 	
 }
 

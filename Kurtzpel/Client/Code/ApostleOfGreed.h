@@ -1,21 +1,8 @@
 #ifndef ApostleOfGreed_h__
 #define ApostleOfGreed_h__
 
-#include "GameObject.h"
 #include "Monster.h"
-#include "Define.h"
 
-BEGIN(Engine)
-
-class CDynamicMesh;
-class CTransform;
-class CRenderer;
-class CCalculator;
-class CCollider;
-class CNaviMesh;
-class CShader;
-
-END
 
 BEGIN(Client)
 
@@ -51,27 +38,9 @@ private:
 	void		Calc_Time(_float fTimeDelta);
 	_vec3		PickUp_OnTerrain(void);
 
-private:
-	Engine::CDynamicMesh*		m_pMeshCom = nullptr;
-	Engine::CNaviMesh*			m_pNaviMeshCom = nullptr; 
-	Engine::CTransform*			m_pTransformCom = nullptr;
-	Engine::CRenderer*			m_pRendererCom = nullptr;
-	Engine::CCalculator*		m_pCalculatorCom = nullptr;
-	Engine::CCollider*			m_pColliderCom = nullptr;
-	Engine::CShader*			m_pShaderCom = nullptr;
-	_vec3						m_vDir;
 
-	_float						m_fInitSpeed = 10.f;
-	_float						m_fSpeed = 7.5f;
-	_float						m_LookAtY = 2.5f;
-	_float						m_AniSpeed = 1.f;
-	_float						m_CameraDist = 300.f;
 	float						m_TimeCheck[TimeCheck::TimeCheck_End];
-	//มกวม
-	_float						m_fJumpPower = 0.2f;
-	_float						m_fJumpAccel = 0.f;
 	
-	_float						m_AniTime = 0.f;
 public:
 	bool						m_bCheck[bCheck::bCheck_End];
 	State						m_State =  State::State_Idle;
@@ -80,7 +49,7 @@ public:
 
 private:
 	virtual void Free(void) override;
-
+	
 
 	//Char
 private:

@@ -88,7 +88,7 @@ private:
 	_float						m_AniSpeed = 1.f;
 	float						m_TimeCheck[TimeCheck::TimeCheck_End];
 	//มกวม
-	_float						m_fJumpPower = 0.2f;
+	_float						m_fJumpPower = 0.12f;
 	_float						m_fJumpAccel = 0.f;
 	
 	_float						m_AniTime = 0.f;

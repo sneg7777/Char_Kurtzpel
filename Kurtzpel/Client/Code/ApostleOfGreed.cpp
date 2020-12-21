@@ -2,11 +2,10 @@
 #include "ApostleOfGreed.h"
 #include "Export_Function.h"
 #include "DynamicCamera.h"
-
+#include "SphereCollider.h"
 
 CApostleOfGreed::CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CMonster(pGraphicDev)
-	, m_vDir(0.f, 0.f, 0.f)
 {
 	for (int i = 0; i < bCheck::bCheck_End; i++)
 	{
@@ -38,6 +37,7 @@ HRESULT Client::CApostleOfGreed::Add_Component(void)
 {
 	Engine::CComponent*		pComponent = nullptr;
 
+	CMonster::Add_Component();
 	// Mesh
 	pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_M_ApostleOfGreed"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
@@ -47,41 +47,18 @@ HRESULT Client::CApostleOfGreed::Add_Component(void)
 	pComponent = m_pNaviMeshCom = dynamic_cast<Engine::CNaviMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Navi"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Navi", pComponent);
-
-	// Transform
-	pComponent = m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_DYNAMIC].emplace(L"Com_Transform", pComponent);
-
-	// Renderer
-	pComponent = m_pRendererCom = Engine::Get_Renderer();
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	Safe_AddRef(pComponent);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Renderer", pComponent);
-
-	// Calculator
-	pComponent = m_pCalculatorCom = dynamic_cast<Engine::CCalculator*>(Engine::Clone(L"Proto_Calculator"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Calculator", pComponent);
-
-	// Collider 
-	//pComponent = m_pColliderCom = Engine::CCollider::Create(m_pGraphicDev, m_pMeshCom->Get_VtxPos(), m_pMeshCom->Get_NumVtx(), m_pMeshCom->Get_Stride());
-	//NULL_CHECK_RETURN(pComponent, E_FAIL);
-	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Collider", pComponent);
-
-	// Shader
-	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Mesh"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
-
 	//
 	m_pTransformCom->Set_Pos(&Engine::_vec3{ 3.f, 0.f, 3.f });
 	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	Engine::CGameObject::Update_Object(1.f);
 
 	//m_pMeshCom->Play_Animation(1.f);
-	Engine::CRenderer::GetInstance()->Render_GameObject(m_pGraphicDev);
-	//
+
+	Load_ColliderFile(L"../Bin/Resource/Mesh/DynamicMesh/Save/ApostleOfGreed.dat");
+	for (auto& sphere : m_VecSphereCollider)
+	{
+		sphere->m_pDynamicMesh = this;
+	}
 	return S_OK;
 }
 
@@ -112,7 +89,7 @@ CApostleOfGreed* CApostleOfGreed::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 
 void CApostleOfGreed::Free(void)
 {
-	Engine::CGameObject::Free();
+	CMonster::Free();
 }
 
 
@@ -136,7 +113,7 @@ Client::_int Client::CApostleOfGreed::Update_Object(const _float& fTimeDelta)
 	SetUp_OnTerrain();
 
 
-	Engine::CGameObject::Update_Object(fTimeDelta);
+	CMonster::Update_Object(fTimeDelta);
 	m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);

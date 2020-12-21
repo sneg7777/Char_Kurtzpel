@@ -170,18 +170,18 @@ Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 {
 	Key_Input(fTimeDelta);
 
-	//
-	//CPlayer* player = dynamic_cast<CPlayer*>(Engine::CManagement::GetInstance()->Get_GameObject(L"GameLogic", L"Player"));
-	//_vec3	vPos, vDir;
-	//dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_POS, &vPos);
-	//dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_LOOK, &vDir);
-	//m_vEye = vPos - (vDir * player->m_CameraDist);
-	//m_vEye.y += 3.5f;
-	//m_vAt = m_vEye;
-	//m_vAt.y -= 3.5f;
-	//m_vAt.z -= 2.f;
-	//m_vAt.y += 2.5f;//player->m_LookAtY;
-	//
+	
+	CPlayer* player = dynamic_cast<CPlayer*>(Engine::CManagement::GetInstance()->Get_GameObject(L"GameLogic", L"Player"));
+	if (player == nullptr)
+		return 0;
+	_vec3	vPos, vDir;
+	dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_POS, &vPos);
+	dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_LOOK, &vDir);
+	m_vEye = vPos - (vDir * player->m_CameraDist);
+	m_vEye.y += 3.5f - player->m_LookAtY * 0.7f;
+	m_vAt = vPos + (vDir * 200.f);
+	m_vAt.y += player->m_LookAtY;
+	
 	if (true == m_bFix)
 	{
 		Mouse_Fix();

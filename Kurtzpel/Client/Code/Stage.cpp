@@ -19,6 +19,8 @@ HRESULT CStage::Ready_Scene(void)
 	
 	FAILED_CHECK_RETURN(Ready_Environment_Layer(L"Environment"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_GameLogic_Layer(L"GameLogic"), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_UI_Layer(L"UI"), E_FAIL);
+	
 	FAILED_CHECK_RETURN(Ready_LightInfo(), E_FAIL);
 	
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
@@ -56,10 +58,13 @@ void CStage::CameraControl(_float fTimeDelta)
 	dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_LOOK, &vDir);
 
 	CDynamicCamera* dCamera = dynamic_cast<CDynamicCamera*>(Engine::CManagement::GetInstance()->Get_GameObject(L"Environment", L"DynamicCamera"));
-	*dCamera->Get_pPos() = vPos;
-	dCamera->Get_pPos()->y += 3.f;
-	dCamera->Get_pPos()->z -= 3.f;
-	*dCamera->Get_pAt() = vPos;
+	*dCamera->Get_pPos() = vPos - (vDir * player->m_CameraDist);
+	dCamera->Get_pPos()->y += 3.5f - player->m_LookAtY * 0.7f;
+	*dCamera->Get_pAt() = vPos + (vDir * 200.f);
+	dCamera->Get_pAt()->y += player->m_LookAtY;
+
+
+
 
 }
 
@@ -78,11 +83,11 @@ HRESULT CStage::Ready_Environment_Layer(const _tchar * pLayerTag)
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Terrain", pGameObject), E_FAIL);
 
-	pGameObject = CDynamicCamera::Create(m_pGraphicDev, &_vec3(0.f, 10.f, -10.f),
-														&_vec3(0.f, 0.f, 10.f),
-														&_vec3(0.f, 1.f, 0.f));
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
+	//pGameObject = CDynamicCamera::Create(m_pGraphicDev, &_vec3(0.f, 10.f, -10.f),
+	//													&_vec3(0.f, 0.f, 10.f),
+	//													&_vec3(0.f, 1.f, 0.f));
+	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
 
 	
 	m_mapLayer.emplace(pLayerTag, pLayer);
@@ -146,6 +151,18 @@ HRESULT CStage::Ready_GameLogic_Layer(const _tchar * pLayerTag)
 
 HRESULT CStage::Ready_UI_Layer(const _tchar * pLayerTag)
 {
+	Engine::CLayer* pLayer = Engine::CLayer::Create();
+	NULL_CHECK_RETURN(pLayer, E_FAIL);
+
+	Engine::CGameObject* pGameObject = nullptr;
+
+	pGameObject = CDynamicCamera::Create(m_pGraphicDev, &_vec3(0.f, 10.f, -10.f),
+		&_vec3(0.f, 0.f, 10.f),
+		&_vec3(0.f, 1.f, 0.f));
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
+
+	m_mapLayer.emplace(pLayerTag, pLayer);
 	return S_OK;
 }
 

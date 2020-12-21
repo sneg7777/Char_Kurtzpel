@@ -43,6 +43,10 @@ private:
 
 private:
 	virtual void Free(void);
+	
+	//
+	bool	m_RenderCheck = true;
+	bool	m_KeyCheck = false;
 };
 
 END

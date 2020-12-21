@@ -55,6 +55,9 @@ HRESULT Engine::CResourcesMgr::Ready_Buffer(LPDIRECT3DDEVICE9 pGraphicDev, const
 	case BUFFER_CUBETEX:
 		pResources = CCubeTex::Create(pGraphicDev);
 		break;
+	case BUFFER_COLLSPHERE:
+		pResources = CCollSphere::Create(pGraphicDev);
+		break;
 
 	}
 	NULL_CHECK_RETURN(pResources, E_FAIL);
