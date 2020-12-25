@@ -209,6 +209,9 @@
     <ClInclude Include="..\Code\Shader_Shade.hpp">
       <Filter>09. Shader\hpp</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\Shader_SkyBox.hpp">
+      <Filter>09. Shader\hpp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Header\Export_Utility.inl">

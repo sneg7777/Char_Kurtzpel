@@ -90,9 +90,11 @@ void Engine::CGraphicDev::Free(void)
 	_ulong	dwRefCnt = 0;
 
 	if (dwRefCnt = Engine::Safe_Release(m_pGraphicDev))
-		MSG_BOX("m_pGraphicDev Release Failed");
+		//MSG_BOX("m_pGraphicDev Release Failed");
+		int i = 0;
 
 	if (dwRefCnt = Engine::Safe_Release(m_pSDK))
-		MSG_BOX("m_pSDK Release Failed");
+		//MSG_BOX("m_pSDK Release Failed");
+		int i = 0;
 }
 

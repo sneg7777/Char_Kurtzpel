@@ -176,6 +176,7 @@
     <ClInclude Include="..\Code\DynamicCamera.h" />
     <ClInclude Include="..\Code\Effect.h" />
     <ClInclude Include="..\Code\Equip_Top_01.h" />
+    <ClInclude Include="..\Code\Hammer.h" />
     <ClInclude Include="..\Code\Loading.h" />
     <ClInclude Include="..\Code\Logo.h" />
     <ClInclude Include="..\Code\MainApp.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="..\Code\TestPlayer.h" />
     <ClInclude Include="..\Code\Tree.h" />
     <ClInclude Include="..\Code\UI.h" />
+    <ClInclude Include="..\Code\Unit_D.h" />
     <ClInclude Include="..\Header\Define.h" />
     <ClInclude Include="..\Header\Function.h" />
     <ClInclude Include="..\Header\Macro.h" />
@@ -207,6 +209,7 @@
     <ClCompile Include="..\Code\DynamicCamera.cpp" />
     <ClCompile Include="..\Code\Effect.cpp" />
     <ClCompile Include="..\Code\Equip_Top_01.cpp" />
+    <ClCompile Include="..\Code\Hammer.cpp" />
     <ClCompile Include="..\Code\Loading.cpp" />
     <ClCompile Include="..\Code\Logo.cpp" />
     <ClCompile Include="..\Code\MainApp.cpp" />
@@ -223,6 +226,7 @@
     <ClCompile Include="..\Code\TestPlayer.cpp" />
     <ClCompile Include="..\Code\Tree.cpp" />
     <ClCompile Include="..\Code\UI.cpp" />
+    <ClCompile Include="..\Code\Unit_D.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

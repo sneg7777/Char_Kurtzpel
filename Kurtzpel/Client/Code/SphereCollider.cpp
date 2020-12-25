@@ -1,9 +1,8 @@
 #include "stdafx.h"
 #include "SphereCollider.h"
 #include "Export_Function.h"
-#include "Player.h"
-#include "Monster.h"
 #include "ApostleOfGreed.h"
+#include "Unit_D.h"
 
 
 CSphereCollider::CSphereCollider(LPDIRECT3DDEVICE9 pGraphicDev)
@@ -41,7 +40,12 @@ HRESULT CSphereCollider::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Calculator", pComponent);
 
-	m_pBufferCom->Set_Color(D3DCOLOR_ARGB(255, 0, 200, 0));
+	// Shader
+	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Mesh"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
+
+	//m_pBufferCom->Set_Color(D3DCOLOR_ARGB(255, 0, 200, 0));
 
 	
 	return S_OK;
@@ -86,11 +90,13 @@ _int CSphereCollider::Update_Object(const _float& fTimeDelta)
 		//다이나믹을 안쓰고 C스타일의 강제 형변환을 써서 m_pMeshCom 를 참조해도 된다함.
 		//if(nullptr == dynamic_cast<CMonster*>(m_pDynamicMesh));
 		//	return 0;
-		const Engine::D3DXFRAME_DERIVED* pFrame = ((CMonster*)m_pDynamicMesh)->m_pMeshCom->Get_FrameByName(m_FrameName.c_str());
+		
+		const Engine::D3DXFRAME_DERIVED* pFrame = ((Client::CUnit_D*)m_pDynamicMesh)->m_pMeshCom->Get_FrameByName(m_FrameName.c_str());
 
 		m_pParentBoneMatrix = &pFrame->CombinedTransformationMatrix;
 
-		Engine::CTransform* pPlayerTransCom = dynamic_cast<CMonster*>(m_pDynamicMesh)->m_pTransformCom;
+		Engine::CTransform* pPlayerTransCom = ((Client::CUnit_D*)m_pDynamicMesh)->m_pTransformCom;
+		
 		NULL_CHECK_RETURN(pPlayerTransCom, 0);
 		m_pParentWorldMatrix = pPlayerTransCom->Get_WorldMatrix();
 	}
@@ -117,4 +123,22 @@ void CSphereCollider::Render_Object(void)
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
+	//LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
+	//NULL_CHECK(pEffect);
+	//Engine::Safe_AddRef(pEffect);
+
+	//_uint	iMaxPass = 0;
+
+	//pEffect->Begin(&iMaxPass, 0);	// 현재 쉐이더 파일이 갖고 있는 최대 패스의 개수를 리턴, 사용하는 방식
+	//pEffect->BeginPass(0);
+
+	//FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
+
+	//m_pBufferCom->Render_Buffer(pEffect);
+
+	//pEffect->EndPass();
+	//pEffect->End();
+
+
+	//Engine::Safe_Release(pEffect);
 }

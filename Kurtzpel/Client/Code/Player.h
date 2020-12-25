@@ -1,7 +1,7 @@
 #ifndef Player_h__
 #define Player_h__
 
-#include "GameObject.h"
+#include "Unit_D.h"
 #include "Define.h"
 
 BEGIN(Engine)
@@ -17,7 +17,7 @@ class CShader;
 END
 
 BEGIN(Client)
-class CPlayer : public Engine::CGameObject
+class CPlayer : public CUnit_D
 {
 public:
 	static CPlayer* CPlayer::GetInstance(void) {
@@ -37,6 +37,7 @@ public:
 	enum State {
 		State_Idle, State_Move, State_Dash, State_Attack1,
 		State_JumpEnd,
+		State_Damaged,
 		State_End
 	};
 	enum JumpIdleAni {
@@ -47,7 +48,9 @@ public:
 		bCheck_KeyW, bCheck_KeyA, bCheck_KeyS, bCheck_KeyD, bCheck_MoveAni, bCheck_End
 	};
 	enum TimeCheck {
-		TimeCheck_Dash, TimeCheck_KeyW, TimeCheck_KeyA, TimeCheck_KeyS, TimeCheck_KeyD, TimeCheck_End
+		TimeCheck_Dash, TimeCheck_KeyW, TimeCheck_KeyA, TimeCheck_KeyS, TimeCheck_KeyD,
+		TimeCheck_Invin,
+		TimeCheck_End
 	};
 private:
 	explicit CPlayer(LPDIRECT3DDEVICE9 pGraphicDev);
@@ -63,35 +66,20 @@ public:
 
 private:
 	HRESULT		Add_Component(void);
-	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
-	void		SetUp_OnTerrain(void);
 	void		Key_Input(const _float& fTimeDelta);
 	void		Key_InputOfJump(const _float& fTimeDelta);
 	void		CameraControl(_float fTimeDelta);
 	void		Calc_Time(_float fTimeDelta);
 	void		Key_DoubleInput(const _float& fTimeDelta);
-	void Jump_Control(const _float& fTimeDelta);
+	void		Jump_Control(const _float& fTimeDelta);
+	void		Collision(Engine::CGameObject* _col);
 	_vec3		PickUp_OnTerrain(void);
 
 private:
-	Engine::CDynamicMesh*		m_pMeshCom = nullptr;
-	Engine::CNaviMesh*			m_pNaviMeshCom = nullptr; 
-	Engine::CTransform*			m_pTransformCom = nullptr;
-	Engine::CRenderer*			m_pRendererCom = nullptr;
-	Engine::CCalculator*		m_pCalculatorCom = nullptr;
-	Engine::CCollider*			m_pColliderCom = nullptr;
-	Engine::CShader*			m_pShaderCom = nullptr;
-	_vec3						m_vDir;
-
-	_float						m_fInitSpeed;//10.f;
-	_float						m_fSpeed = 0.f;
-	_float						m_AniSpeed = 1.f;
 	float						m_TimeCheck[TimeCheck::TimeCheck_End];
 	//มกวม
 	_float						m_fJumpPower = 0.12f;
 	_float						m_fJumpAccel = 0.f;
-	
-	_float						m_AniTime = 0.f;
 public:
 	_float						m_LookAtY = 2.5f;
 	_float						m_CameraDist = 300.f;
@@ -106,8 +94,6 @@ private:
 
 
 	//Char
-private:
-	bool m_AniEnd = true;
 };
 
 END

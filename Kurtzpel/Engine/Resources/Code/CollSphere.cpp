@@ -1,5 +1,6 @@
 #include "CollSphere.h"
 
+bool Engine::CCollSphere::pMeshRelese = false;
 USING(Engine)
 Engine::CCollSphere::CCollSphere(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CVIBuffer(pGraphicDev)
@@ -9,8 +10,10 @@ Engine::CCollSphere::CCollSphere(LPDIRECT3DDEVICE9 pGraphicDev)
 
 Engine::CCollSphere::CCollSphere(const CCollSphere& rhs)
 	: CVIBuffer(rhs)
+	, pMesh(rhs.pMesh)
 {
-	Ready_Buffer();
+	Safe_AddRef(pMesh);
+	//Ready_Buffer();
 }
 
 Engine::CCollSphere::~CCollSphere(void)
@@ -33,7 +36,7 @@ HRESULT Engine::CCollSphere::Ready_Buffer(void)
 	}
 	
 	//
-	et_Color(D3DCOLOR_ARGB(255, 8, 103, 1));
+	Set_Color(D3DCOLOR_ARGB(255, 8, 103, 1));
 
 
 	m_dwTriCnt = pMesh->GetNumFaces();
@@ -54,6 +57,12 @@ HRESULT Engine::CCollSphere::Ready_Buffer(void)
 
 	return S_OK;
 }
+
+//void CCollSphere::Render_Buffer(void)
+//{
+//	m_pGraphicDev->SetFVF(m_dwFVF);
+//	pMesh->DrawSubset(0);
+//}
 
 void Engine::CCollSphere::Set_Color(D3DCOLOR color)
 {
@@ -105,5 +114,8 @@ CComponent* CCollSphere::Clone(void)
 void Engine::CCollSphere::Free(void)
 {
 	CVIBuffer::Free();
+	
+	Safe_Release(pMesh);
+	
 }
 

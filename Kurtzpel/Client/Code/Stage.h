@@ -29,13 +29,15 @@ private:
 public:
 	virtual HRESULT Ready_Scene(void) override;
 	virtual _int Update_Scene(const _float& fTimeDelta) override;
+	virtual _int LateUpdate_Scene(const _float& fTimeDelta);
 	virtual void Render_Scene(void) override;
 
 	void CameraControl(_float fTimeDelta);
 		
 private:
 	HRESULT		Ready_Environment_Layer(const _tchar* pLayerTag);
-	HRESULT		Ready_GameLogic_Layer(const _tchar* pLayerTag);
+	HRESULT		Ready_GameLogic_Dynamic_Layer(const _tchar* pLayerTag);
+	HRESULT		Ready_GameLogic_Static_Layer(const _tchar* pLayerTag);
 	HRESULT		Ready_UI_Layer(const _tchar* pLayerTag);
 
 	HRESULT		Ready_LightInfo(void);
@@ -45,6 +47,7 @@ public:
 
 private:
 	virtual void Free(void) override;
+	void Collision_Object();
 };
 
 END

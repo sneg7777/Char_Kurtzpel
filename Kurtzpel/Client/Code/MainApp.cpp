@@ -51,6 +51,7 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 
 
 	m_pManagementClass->Update_Scene(fTimeDelta);
+	m_pManagementClass->LateUpdate_Scene(fTimeDelta);
 
 	return 0;
 }

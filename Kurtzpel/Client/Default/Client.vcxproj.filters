@@ -97,6 +97,12 @@
     <Filter Include="02. GameObject\01. Stage\20. Monster\01. ApostleOfGreed">
       <UniqueIdentifier>{eee31d22-2ed6-4b82-b1fd-c0e387273550}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Public\01. Unit">
+      <UniqueIdentifier>{c6106c3f-d15c-4692-b719-2f562c80e7cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Stage\10.Equip\Hammer">
+      <UniqueIdentifier>{65f35e9f-e795-40d6-a3f0-ffec78040645}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -186,6 +192,12 @@
     <ClInclude Include="..\Code\ApostleOfGreed.h">
       <Filter>02. GameObject\01. Stage\20. Monster\01. ApostleOfGreed</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\Unit_D.h">
+      <Filter>02. GameObject\02. Public\01. Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Hammer.h">
+      <Filter>02. GameObject\01. Stage\10.Equip\Hammer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -256,6 +268,12 @@
     </ClCompile>
     <ClCompile Include="..\Code\ApostleOfGreed.cpp">
       <Filter>02. GameObject\01. Stage\20. Monster\01. ApostleOfGreed</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Unit_D.cpp">
+      <Filter>02. GameObject\02. Public\01. Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Hammer.cpp">
+      <Filter>02. GameObject\01. Stage\10.Equip\Hammer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

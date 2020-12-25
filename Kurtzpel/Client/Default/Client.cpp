@@ -88,7 +88,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				pMainApp->Render_MainApp();
 			}		*/
 
-			pMainApp->Update_MainApp(fTimeDelta);
+            pMainApp->Update_MainApp(fTimeDelta);
 			pMainApp->Render_MainApp();
 		}
     }

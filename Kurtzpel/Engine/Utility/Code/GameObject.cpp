@@ -77,3 +77,7 @@ void Engine::CGameObject::Free(void)
 	Safe_Release(m_pGraphicDev);
 }
 
+void Engine::CGameObject::Collision(CGameObject* _col)
+{
+	
+}

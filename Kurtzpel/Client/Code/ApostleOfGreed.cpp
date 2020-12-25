@@ -3,6 +3,7 @@
 #include "Export_Function.h"
 #include "DynamicCamera.h"
 #include "SphereCollider.h"
+#include "Player.h"
 
 CApostleOfGreed::CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CMonster(pGraphicDev)
@@ -15,6 +16,8 @@ CApostleOfGreed::CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev)
 	{
 		m_TimeCheck[i] = 0.f;
 	}
+	m_fInitSpeed = 6.f;
+	m_fSpeed = m_fInitSpeed;
 }
 
 CApostleOfGreed::~CApostleOfGreed(void)
@@ -42,13 +45,13 @@ HRESULT Client::CApostleOfGreed::Add_Component(void)
 	pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_M_ApostleOfGreed"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
-	m_pMeshCom->Set_AniAngle(265.f);
+	m_pMeshCom->Set_AniAngle(95.f);
 
 	pComponent = m_pNaviMeshCom = dynamic_cast<Engine::CNaviMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Navi"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Navi", pComponent);
 	//
-	m_pTransformCom->Set_Pos(&Engine::_vec3{ 3.f, 0.f, 3.f });
+	m_pTransformCom->Set_Pos(&Engine::_vec3{ 25.f, 0.f, 25.f });
 	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	Engine::CGameObject::Update_Object(1.f);
 
@@ -59,6 +62,7 @@ HRESULT Client::CApostleOfGreed::Add_Component(void)
 	{
 		sphere->m_pDynamicMesh = this;
 	}
+	m_pTransformCom->Set_Pos(&_vec3(5.f, 0.f, 5.f));
 	return S_OK;
 }
 
@@ -98,7 +102,7 @@ HRESULT Client::CApostleOfGreed::Ready_Object(void)
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
-	m_pMeshCom->Set_AnimationSet(0);
+	m_pMeshCom->Set_AnimationSet(25);
 
 	m_pNaviMeshCom->Set_NaviIndex(0);
 
@@ -111,7 +115,7 @@ Client::_int Client::CApostleOfGreed::Update_Object(const _float& fTimeDelta)
 	Calc_Time(fTimeDelta);
 
 	SetUp_OnTerrain();
-
+	Pattern(fTimeDelta);
 
 	CMonster::Update_Object(fTimeDelta);
 	m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
@@ -120,6 +124,15 @@ Client::_int Client::CApostleOfGreed::Update_Object(const _float& fTimeDelta)
 
 	return 0;
 }
+
+Client::_int Client::CApostleOfGreed::LateUpdate_Object(const _float& fTimeDelta)
+{
+
+	
+
+	return 0;
+}
+
 void Client::CApostleOfGreed::Render_Object(void)
 {
 	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
@@ -166,4 +179,103 @@ void Client::CApostleOfGreed::Calc_Time(_float fTimeDelta)
 {
 	if (m_AniTime > 0.f)
 		m_AniTime -= fTimeDelta;
+}
+
+void Client::CApostleOfGreed::Pattern(_float fTimeDelta)
+{
+	float playerTodisTance = PlayerSearchDistance();
+	CPlayer* player = CPlayer::GetInstance();
+
+	if (m_State == State::State_Attack1) {
+		if (!m_pMeshCom->Is_AnimationSetEnd()) {
+			return;
+		}
+		else {
+			m_State = State::State_Wait;
+			m_pMeshCom->Set_AnimationSet(25);
+		}
+	}
+	else if (playerTodisTance < 10.f) {
+		m_isSearch = true;
+		
+		if (playerTodisTance < 5.5f) {
+			m_State = State::State_Attack1;
+			m_pMeshCom->Set_AnimationSet(17);
+		}
+		else {
+			m_State = State::State_Move;
+			m_pMeshCom->Set_AnimationSet(28);
+		}
+		
+	}
+	else {
+		m_isSearch = false;
+	}
+
+	if (m_isSearch) {
+		if (m_State == State::State_Move) {
+			m_vDir = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_pTransformCom->m_vInfo[Engine::INFO_POS];
+			_vec3 afterPos = m_pTransformCom->m_vInfo[Engine::INFO_POS] + (m_vDir * fTimeDelta * m_fSpeed);
+			//m_pTransformCom->Set_Pos(&afterPos);
+			m_pMeshCom->Set_AnimationSet(28);
+			//
+			_vec3 monsterPos = m_pTransformCom->m_vInfo[Engine::INFO_POS];
+			_vec3 playerPos = m_pPlayerTrans->m_vInfo[Engine::INFO_POS];
+			_vec3 monsterDir = playerPos - monsterPos;
+			D3DXVec3Normalize(&monsterDir, &monsterDir);
+
+			_vec3 monsterLook = m_pTransformCom->m_vInfo[Engine::INFO_LOOK];
+			D3DXVec3Normalize(&monsterLook, &monsterLook);
+			float radian = D3DXVec3Dot(&monsterDir, &monsterLook);
+			float angle = D3DXToDegree(radian);
+			_vec3 monsterRight = m_pTransformCom->m_vInfo[Engine::INFO_RIGHT];
+			D3DXVec3Normalize(&monsterLook, &monsterRight);
+			float radian2 = D3DXVec3Dot(&monsterDir, &monsterRight);
+			float angle2 = D3DXToDegree(radian2);
+
+			// 第率
+			if (angle < 0.f) {
+				// 坷弗率
+				if (angle2 >= 0.f) {
+					m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-40.f) * fTimeDelta);
+				}
+				// 哭率
+				else {
+					m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(40.f) * fTimeDelta);
+				}
+			}
+			// 菊率
+			else {
+				// 坷弗率
+				if (angle2 >= 0.f) {
+					m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-40.f) * fTimeDelta);
+				}
+				// 哭率
+				else {
+					m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(40.f) * fTimeDelta);
+				}
+			}
+
+
+			//_vec3 m1 = m_pPlayerTrans->m_vInfo[Engine::INFO_POS];
+			//_vec3 p1 = m_pTransformCom->m_vInfo[Engine::INFO_POS];
+			//float cosAngle = acosf(D3DXVec3Dot(&p1, &m1) / (D3DXVec3Length(&p1) * D3DXVec3Length(&m1)));
+			//cosAngle = D3DXToDegree(cosAngle);
+			//
+			//float angle = (p1.x * m1.y - p1.y * m1.x > 0.0f) ? cosAngle : -cosAngle;
+			//m_pMeshCom->Set_AniAngle(D3DXToRadian(angle));
+			//
+		}
+		else if (m_State == State::State_Attack1) {
+			m_pMeshCom->Set_AnimationSet(17);
+		}
+	}
+	else {
+		m_pMeshCom->Set_AnimationSet(25);
+	}
+}
+
+void Client::CApostleOfGreed::Collision(Engine::CGameObject* _col)
+{
+	int i = 0;
 }

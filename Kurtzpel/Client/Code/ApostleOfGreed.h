@@ -10,7 +10,7 @@ class CApostleOfGreed : public CMonster
 {
 public:
 	enum State {
-		State_Idle, State_Move, State_Dash, State_Attack1,
+		State_Wait, State_Move, State_Attack1,
 		State_JumpEnd,
 		State_End
 	};
@@ -27,6 +27,7 @@ private:
 public:
 	virtual HRESULT Ready_Object(void) override;
 	virtual _int Update_Object(const _float& fTimeDelta) override;
+	virtual _int LateUpdate_Object(const _float& fTimeDelta);
 	virtual void Render_Object(void) override;
 
 public:
@@ -36,6 +37,8 @@ private:
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
 	void		SetUp_OnTerrain(void);
 	void		Calc_Time(_float fTimeDelta);
+	void		Pattern(_float fTimeDelta);
+	virtual	void	 Collision(Engine::CGameObject* _col);
 	_vec3		PickUp_OnTerrain(void);
 
 
@@ -43,7 +46,8 @@ private:
 	
 public:
 	bool						m_bCheck[bCheck::bCheck_End];
-	State						m_State =  State::State_Idle;
+	State						m_State =  State::State_Wait;
+	bool						m_StateReady = false;
 public:
 	static CApostleOfGreed*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

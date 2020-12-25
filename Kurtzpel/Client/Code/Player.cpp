@@ -2,12 +2,12 @@
 #include "Player.h"
 #include "Export_Function.h"
 #include "DynamicCamera.h"
+#include "SphereCollider.h"
 
 CPlayer* CPlayer::m_pInstance = nullptr;
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
-	: Engine::CGameObject(pGraphicDev)
-	, m_vDir(0.f, 0.f, 0.f)
+	: CUnit_D(pGraphicDev)
 {
 	if (m_pInstance == nullptr)
 		m_pInstance = this;
@@ -43,6 +43,7 @@ HRESULT Client::CPlayer::Add_Component(void)
 {
 	Engine::CComponent*		pComponent = nullptr;
 
+	CUnit_D::Add_Component();
 	// Mesh
 	pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Player"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
@@ -53,32 +54,6 @@ HRESULT Client::CPlayer::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Navi", pComponent);
 
-	// Transform
-	pComponent = m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_DYNAMIC].emplace(L"Com_Transform", pComponent);
-
-	// Renderer
-	pComponent = m_pRendererCom = Engine::Get_Renderer();
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	Safe_AddRef(pComponent);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Renderer", pComponent);
-
-	// Calculator
-	pComponent = m_pCalculatorCom = dynamic_cast<Engine::CCalculator*>(Engine::Clone(L"Proto_Calculator"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Calculator", pComponent);
-
-	// Collider 
-	//pComponent = m_pColliderCom = Engine::CCollider::Create(m_pGraphicDev, m_pMeshCom->Get_VtxPos(), m_pMeshCom->Get_NumVtx(), m_pMeshCom->Get_Stride());
-	//NULL_CHECK_RETURN(pComponent, E_FAIL);
-	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Collider", pComponent);
-
-	// Shader
-	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Mesh"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
-
 	//
 	m_pTransformCom->Set_Pos(&Engine::_vec3{ 3.f, 0.f, 3.f });
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
@@ -87,21 +62,11 @@ HRESULT Client::CPlayer::Add_Component(void)
 	//m_pMeshCom->Play_Animation(1.f);
 	//Engine::CRenderer::GetInstance()->Render_GameObject(m_pGraphicDev);
 	//
-	return S_OK;
-}
-
-HRESULT CPlayer::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
-{
-	_matrix		matWorld, matView, matProj;
-
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
-	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
-	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
-
-	pEffect->SetMatrix("g_matWorld", &matWorld);
-	pEffect->SetMatrix("g_matView", &matView);
-	pEffect->SetMatrix("g_matProj", &matProj);
-
+	Load_ColliderFile(L"../Bin/Resource/Mesh/DynamicMesh/Save/Player.dat");
+	for (auto& sphere : m_VecSphereCollider)
+	{
+		sphere->m_pDynamicMesh = this;
+	}
 	return S_OK;
 }
 
@@ -114,10 +79,19 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 	D3DXVec3Normalize(&vDir, &vDir);
 
 	Key_DoubleInput(fTimeDelta);
+	if (m_State == State::State_Damaged) {
+		if (m_pMeshCom->Is_AnimationSetEnd()) {
+			m_State = State::State_Idle;
+			m_fSpeed = m_fInitSpeed;
+		}
+		else {
+			m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(-vDir * fTimeDelta * m_fSpeed * 1.5f)));
+			m_fSpeed -= m_fInitSpeed * fTimeDelta * 2.5f;
+			return;
+		}
+	}
 	if (m_State == State::State_Dash) {
 		m_bCheck[bCheck::bCheck_MoveAni] = true;
-		
-		m_TimeCheck[TimeCheck::TimeCheck_Dash] -= fTimeDelta;
 		
 		if (m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
 		{
@@ -373,7 +347,6 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 	}
 	// Idle ¸ð¼Ç
 	else if (m_State == State::State_Idle) {
-		//m_AniEnd = true;
 		m_fSpeed = m_fInitSpeed;
 		m_pMeshCom->Set_AnimationSet(243);
 		m_bCheck[bCheck::bCheck_MoveAni] = false;
@@ -550,7 +523,7 @@ Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 	//CameraControl(fTimeDelta);
 	//
 
-	Engine::CGameObject::Update_Object(fTimeDelta);
+	CUnit_D::Update_Object(fTimeDelta);
 	m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
@@ -596,18 +569,6 @@ void CPlayer::Add_LookAtY(float lookat)
 		m_LookAtY += lookat;
 	}
 }
-void Client::CPlayer::SetUp_OnTerrain(void)
-{
-	_vec3	vPosition;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
-
-	Engine::CTerrainTex*		pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
-	NULL_CHECK(pTerrainBufferCom);
-
-	_float fHeight = m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
-
-	m_pTransformCom->Move_Pos(vPosition.x, fHeight, vPosition.z);
-}
 
 void Client::CPlayer::CameraControl(_float fTimeDelta)
 {
@@ -636,14 +597,19 @@ void Client::CPlayer::CameraControl(_float fTimeDelta)
 
 void Client::CPlayer::Calc_Time(_float fTimeDelta)
 {
-	if (m_TimeCheck[TimeCheck::TimeCheck_KeyW] > 0.f)
+	/*if (m_TimeCheck[TimeCheck::TimeCheck_KeyW] > 0.f)
 		m_TimeCheck[TimeCheck::TimeCheck_KeyW] -= fTimeDelta;
 	if (m_TimeCheck[TimeCheck::TimeCheck_KeyA] > 0.f)
 		m_TimeCheck[TimeCheck::TimeCheck_KeyA] -= fTimeDelta;
 	if (m_TimeCheck[TimeCheck::TimeCheck_KeyS] > 0.f)
 		m_TimeCheck[TimeCheck::TimeCheck_KeyS] -= fTimeDelta;
 	if (m_TimeCheck[TimeCheck::TimeCheck_KeyD] > 0.f)
-		m_TimeCheck[TimeCheck::TimeCheck_KeyD] -= fTimeDelta;
+		m_TimeCheck[TimeCheck::TimeCheck_KeyD] -= fTimeDelta;*/
+	for (int i = 0; i < TimeCheck::TimeCheck_End; i++)
+	{
+		if (m_TimeCheck[i] > 0.f)
+			m_TimeCheck[i] -= fTimeDelta;
+	}
 	if (m_AniTime > 0.f)
 		m_AniTime -= fTimeDelta;
 }
@@ -736,5 +702,15 @@ void Client::CPlayer::Jump_Control(const _float& fTimeDelta)
 		else
 			m_JumpIdleState = JumpIdleAni::JumpIdle_JumpDown;
 		*beforePosY = afterPosY;
+	}
+}
+
+void Client::CPlayer::Collision(Engine::CGameObject* _col)
+{
+	if (m_TimeCheck[TimeCheck_Invin] <= 0.f) {
+		m_State = State::State_Damaged;
+		m_pMeshCom->Set_AnimationSet(160);
+		m_TimeCheck[TimeCheck_Invin] = 2.f;
+		m_AniSpeed = 1.5f;
 	}
 }

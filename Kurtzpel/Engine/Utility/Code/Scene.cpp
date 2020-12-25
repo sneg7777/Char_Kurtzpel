@@ -36,6 +36,24 @@ Engine::_int Engine::CScene::Update_Scene(const _float& fTimeDelta)
 	return iExit;
 }
 
+Engine::_int Engine::CScene::LateUpdate_Scene(const _float& fTimeDelta)
+{
+	_int iExit = 0;
+
+	for (auto& iter : m_mapLayer)
+	{
+		iExit = iter.second->Update_Layer(fTimeDelta);
+
+		if (iExit & 0x80000000)
+		{
+			MSG_BOX("Layer Problem");
+			return iExit;
+		}
+	}
+
+	return iExit;
+}
+
 void Engine::CScene::Render_Scene(void)
 {
 	

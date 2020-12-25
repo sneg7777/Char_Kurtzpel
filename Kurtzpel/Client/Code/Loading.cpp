@@ -177,6 +177,13 @@ _uint CLoading::Loading_ForStage(void)
 												L"Equip_Top_01.X"),
 												E_FAIL);*/
 
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+													Engine::RESOURCE_STAGE,
+													L"Mesh_Hammer",
+													Engine::TYPE_STATIC,
+													L"../Bin/Resource/Mesh/StaticMesh/Hammer/",
+													L"Hammer.X"),
+													E_FAIL);
 	/*FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 		Engine::RESOURCE_STAGE,
 		L"Mesh_Sword",
