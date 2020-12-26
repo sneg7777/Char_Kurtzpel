@@ -32,10 +32,33 @@ HRESULT Client::CSkyBox::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	Safe_AddRef(pComponent);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Renderer", pComponent);
+	
 	// Transform
 	pComponent = m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_DYNAMIC].emplace(L"Com_Transform", pComponent);
+
+	// Shader
+	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_SkyBox"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
+
+	return S_OK;
+}
+
+HRESULT CSkyBox::SetUp_ConstantTable(LPD3DXEFFECT & pEffect)
+{
+	_matrix		matWorld, matView, matProj;
+
+	m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+
+	pEffect->SetMatrix("g_matWorld", &matWorld);
+	pEffect->SetMatrix("g_matView", &matView);
+	pEffect->SetMatrix("g_matProj", &matProj);
+
+	m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture", 3);
 
 	return S_OK;
 }
@@ -82,13 +105,19 @@ Client::_int Client::CSkyBox::Update_Object(const _float& fTimeDelta)
 }
 void Client::CSkyBox::Render_Object(void)
 {
-	m_pTransformCom->Set_Transform(m_pGraphicDev);
+	LPD3DXEFFECT		pEffect = m_pShaderCom->Get_EffectHandle();
+	NULL_CHECK(pEffect);
+	Engine::Safe_AddRef(pEffect);
 
-	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
-		
-	m_pTextureCom->Render_Texture(3);
+	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
+
+	pEffect->Begin(NULL, 0);
+	pEffect->BeginPass(0);
+
 	m_pBufferCom->Render_Buffer();
 
-	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	pEffect->EndPass();
+	pEffect->End();
 
+	Engine::Safe_Release(pEffect);
 }

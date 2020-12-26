@@ -40,6 +40,30 @@ HRESULT Client::CEffect::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_DYNAMIC].emplace(L"Com_Transform", pComponent);
 
+	// Shader
+	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Effect"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
+
+	return S_OK;
+}
+
+HRESULT CEffect::SetUp_ConstantTable(LPD3DXEFFECT & pEffect)
+{
+	_matrix		matWorld, matView, matProj;
+
+	m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+
+	pEffect->SetMatrix("g_matWorld", &matWorld);
+	pEffect->SetMatrix("g_matView", &matView);
+	pEffect->SetMatrix("g_matProj", &matProj);
+
+	m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture", _uint(m_fFrame));
+
+	Engine::Throw_RenderTargetTexture(pEffect, L"Target_Depth", "g_DepthTexture");
+
 	return S_OK;
 }
 
@@ -102,8 +126,19 @@ Client::_int Client::CEffect::Update_Object(const _float& fTimeDelta)
 }
 void Client::CEffect::Render_Object(void)
 {
-	m_pTransformCom->Set_Transform(m_pGraphicDev);
-	
-	m_pTextureCom->Render_Texture((_uint)m_fFrame);
+	LPD3DXEFFECT	pEffect = m_pShaderCom->Get_EffectHandle();
+	NULL_CHECK(pEffect);
+	Engine::Safe_AddRef(pEffect);
+
+	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
+
+	pEffect->Begin(NULL, 0);
+	pEffect->BeginPass(0);
+
 	m_pBufferCom->Render_Buffer();
+
+	pEffect->EndPass();
+	pEffect->End();
+
+	Engine::Safe_Release(pEffect);
 }

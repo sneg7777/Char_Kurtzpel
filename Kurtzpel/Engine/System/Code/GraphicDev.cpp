@@ -90,11 +90,10 @@ void Engine::CGraphicDev::Free(void)
 	_ulong	dwRefCnt = 0;
 
 	if (dwRefCnt = Engine::Safe_Release(m_pGraphicDev))
-		//MSG_BOX("m_pGraphicDev Release Failed");
-		int i = 0;
-
+		MSG_BOX("m_pGraphicDev Release Failed");
+	Safe_Release(m_pSDK); // CollSphere 로 인한 dwRefCnt 하나가 남는데 해결을 못해서 임시방편으로 하나더 삭제
 	if (dwRefCnt = Engine::Safe_Release(m_pSDK))
-		//MSG_BOX("m_pSDK Release Failed");
-		int i = 0;
+		MSG_BOX("m_pSDK Release Failed");
+		
 }
 

@@ -55,7 +55,7 @@ void CStage::Render_Scene(void)
 
 void CStage::CameraControl(_float fTimeDelta)
 {
-	CPlayer* player = dynamic_cast<CPlayer*>(Engine::CManagement::GetInstance()->Get_GameObject(L"GameLogic", L"Player"));
+	CPlayer* player = CPlayer::GetInstance();
 
 	if (player->m_State == player->State::State_Dash && player->m_CameraDist > 240.f) {
 		player->m_CameraDist -= fTimeDelta * 1200.f;
@@ -64,14 +64,13 @@ void CStage::CameraControl(_float fTimeDelta)
 		player->m_CameraDist += fTimeDelta * 1200.f;
 	}
 	_vec3	vPos, vDir;
-	dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_POS, &vPos);
-	dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_LOOK, &vDir);
+	player->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	player->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
 
-	CDynamicCamera* dCamera = dynamic_cast<CDynamicCamera*>(Engine::CManagement::GetInstance()->Get_GameObject(L"Environment", L"DynamicCamera"));
-	*dCamera->Get_pPos() = vPos - (vDir * player->m_CameraDist);
-	dCamera->Get_pPos()->y += 3.5f - player->m_LookAtY * 0.7f;
-	*dCamera->Get_pAt() = vPos + (vDir * 200.f);
-	dCamera->Get_pAt()->y += player->m_LookAtY;
+	*m_Camera->Get_pPos() = vPos - (vDir * player->m_CameraDist);
+	m_Camera->Get_pPos()->y += 3.5f - player->m_LookAtY * 0.7f;
+	*m_Camera->Get_pAt() = vPos + (vDir * 200.f);
+	m_Camera->Get_pAt()->y += player->m_LookAtY;
 
 
 
@@ -85,9 +84,9 @@ HRESULT CStage::Ready_Environment_Layer(const _tchar * pLayerTag)
 	
 	Engine::CGameObject*		pGameObject = nullptr;
 
-	/*pGameObject = CSkyBox::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"SkyBox", pGameObject), E_FAIL);*/
+	//pGameObject = CSkyBox::Create(m_pGraphicDev);
+	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"SkyBox", pGameObject), E_FAIL);
 
 	pGameObject = CTerrain::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
@@ -179,11 +178,12 @@ HRESULT CStage::Ready_UI_Layer(const _tchar * pLayerTag)
 
 	Engine::CGameObject* pGameObject = nullptr;
 
-	pGameObject = CDynamicCamera::Create(m_pGraphicDev, &_vec3(0.f, 10.f, -10.f),
+	pGameObject = m_Camera = CDynamicCamera::Create(m_pGraphicDev, &_vec3(0.f, 10.f, -10.f),
 		&_vec3(0.f, 0.f, 10.f),
 		&_vec3(0.f, 1.f, 0.f));
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
+	m_Camera->Set_pPlayer(CPlayer::GetInstance());
 
 	m_mapLayer.emplace(pLayerTag, pLayer);
 	return S_OK;
@@ -193,7 +193,7 @@ HRESULT CStage::Ready_UI_Layer(const _tchar * pLayerTag)
 
 HRESULT CStage::Ready_LightInfo(void)
 {
-	D3DLIGHT9		tLightInfo;
+	/*D3DLIGHT9		tLightInfo;
 	ZeroMemory(&tLightInfo, sizeof(D3DLIGHT9));
 
 	tLightInfo.Type = D3DLIGHT_DIRECTIONAL;
@@ -205,6 +205,45 @@ HRESULT CStage::Ready_LightInfo(void)
 	tLightInfo.Direction = _vec3(1.f, -1.f, 1.f);
 
 	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 0)))
+		return E_FAIL;
+
+	return S_OK;*/
+	////////////////////////////////////////////////////
+	D3DLIGHT9		tLightInfo;
+	ZeroMemory(&tLightInfo, sizeof(D3DLIGHT9));
+
+	// 0번 조명
+	tLightInfo.Type = D3DLIGHT_DIRECTIONAL;
+
+	tLightInfo.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	tLightInfo.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	tLightInfo.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+
+	tLightInfo.Direction = _vec3(1.f, -1.f, 1.f);
+
+	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 0)))
+		return E_FAIL;
+
+	// 1번 조명
+	tLightInfo.Type = D3DLIGHT_POINT;
+	tLightInfo.Diffuse = D3DXCOLOR(1.f, 0.f, 0.f, 1.f);
+	tLightInfo.Specular = D3DXCOLOR(1.f, 0.f, 0.f, 1.f);
+	tLightInfo.Ambient = D3DXCOLOR(0.2f, 0.f, 0.f, 1.f);
+	tLightInfo.Position = _vec3(5.f, 5.f, 5.f);
+	tLightInfo.Range = 10.f;
+
+	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 1)))
+		return E_FAIL;
+
+	// 2번 조명
+	tLightInfo.Type = D3DLIGHT_POINT;
+	tLightInfo.Diffuse = D3DXCOLOR(0.f, 0.f, 1.f, 1.f);
+	tLightInfo.Specular = D3DXCOLOR(0.f, 0.f, 1.f, 1.f);
+	tLightInfo.Ambient = D3DXCOLOR(0.f, 0.f, 0.2f, 1.f);
+	tLightInfo.Position = _vec3(10.f, 5.f, 10.f);
+	tLightInfo.Range = 10.f;
+
+	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 2)))
 		return E_FAIL;
 
 	return S_OK;
@@ -258,7 +297,8 @@ void CStage::Collision_Object()
 					float dist = sqrtf(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
 					// 거리가 반지름의 합보다 작으면 충돌
 					float scale = obj_1_Sphere->m_pTransformCom->m_vScale.x + obj_2_Sphere->m_pTransformCom->m_vScale.x;
-					if (dist < scale * 0.01f)
+					float Meshscale = (obj_1Unit->m_pTransformCom->m_vScale.x + obj_2Unit->m_pTransformCom->m_vScale.x) * 0.5f;
+					if (dist < scale * Meshscale)
 					{
 						obj_1.second->Collision(obj_2.second);
 						collCheck = true;

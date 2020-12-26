@@ -113,6 +113,7 @@ PS_OUT		PS_MAIN(PS_IN In)
 	vector vFilter = tex2D(FilterSampler, In.vTexUV);
 
 	Out.vColor = vColor * vFilter + vColor1 * (1.f - vFilter);
+	Out.vColor.a = 1.f;
 	
 	vector		vAuraColor = (vector)0.f;
 

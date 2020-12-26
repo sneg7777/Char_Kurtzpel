@@ -113,6 +113,7 @@ void Client::CDynamicCamera::Mouse_Move(void)
 {
 	if (CPlayer::GetInstance()->m_State == CPlayer::State_Dash)
 		return;
+
 	_matrix			matCamWorld;
 	D3DXMatrixInverse(&matCamWorld, NULL, &m_matView);
 
@@ -120,8 +121,8 @@ void Client::CDynamicCamera::Mouse_Move(void)
 	// 마우스를 위아래로 움직일 때
 	if (dwMouseMove = Engine::Get_DIMouseMove(Engine::DIMS_Y))
 	{
-		CPlayer* player = dynamic_cast<CPlayer*>(Engine::CManagement::GetInstance()->Get_GameObject(L"GameLogic", L"Player"));
-		player->Add_LookAtY(-dwMouseMove * 0.005f);
+		//CPlayer* player = dynamic_cast<CPlayer*>(Engine::CManagement::GetInstance()->Get_GameObject(L"GameLogic", L"Player"));
+		m_Player->Add_LookAtY(-dwMouseMove * 0.005f);
 		/*_vec3		vRight;
 		memcpy(&vRight, &matCamWorld.m[0][0], sizeof(_vec3));
 
@@ -136,8 +137,8 @@ void Client::CDynamicCamera::Mouse_Move(void)
 
 	if (dwMouseMove = Engine::Get_DIMouseMove(Engine::DIMS_X))
 	{
-		Engine::CTransform* playerTrans = dynamic_cast<Engine::CTransform*>(Engine::CManagement::GetInstance()->Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
-		playerTrans->Rotation(Engine::ROT_Y, D3DXToRadian(dwMouseMove * 0.1f));
+		//Engine::CTransform* playerTrans = dynamic_cast<Engine::CTransform*>(Engine::CManagement::GetInstance()->Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
+		m_Player->m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(dwMouseMove * 0.1f));
 		/*_vec3		vUp = _vec3(0.f, 1.f, 0.f);
 		
 		_vec3	vLook = m_vAt - m_vEye;
@@ -171,12 +172,14 @@ Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 	Key_Input(fTimeDelta);
 
 	
-	CPlayer* player = dynamic_cast<CPlayer*>(Engine::CManagement::GetInstance()->Get_GameObject(L"GameLogic", L"Player"));
+	CPlayer* player = CPlayer::GetInstance();
 	if (player == nullptr)
 		return 0;
 	_vec3	vPos, vDir;
-	dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_POS, &vPos);
-	dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_LOOK, &vDir);
+	player->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	player->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+	//dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_POS, &vPos);
+	//dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_LOOK, &vDir);
 	m_vEye = vPos - (vDir * player->m_CameraDist);
 	m_vEye.y += 3.5f - player->m_LookAtY * 0.7f;
 	m_vAt = vPos + (vDir * 200.f);

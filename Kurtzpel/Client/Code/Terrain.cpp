@@ -49,9 +49,9 @@ HRESULT Client::CTerrain::Add_Component(void)
 	m_mapComponent[Engine::ID_DYNAMIC].emplace(L"Com_Transform", pComponent);
 
 	// Optimization
-	pComponent = m_pOptimizationCom = dynamic_cast<Engine::COptimization*>(Engine::Clone(L"Proto_Optimization"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Optimization", pComponent);
+	//pComponent = m_pOptimizationCom = dynamic_cast<Engine::COptimization*>(Engine::Clone(L"Proto_Optimization"));
+	//NULL_CHECK_RETURN(pComponent, E_FAIL);
+	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Optimization", pComponent);
 
 	// Shader
 	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Terrain"));
@@ -92,11 +92,11 @@ _int Client::CTerrain::Update_Object(const _float& fTimeDelta)
 {
 	Engine::CGameObject::Update_Object(fTimeDelta);
 
-	m_pOptimizationCom->Is_InFrustumForTerrain(m_pBufferCom->Get_VtxPos(),
-		m_pBufferCom->Get_VtxCntX(),
-		m_pBufferCom->Get_VtxCntZ(),
-		m_pIndex,
-		&m_dwTriCnt);
+	//m_pOptimizationCom->Is_InFrustumForTerrain(m_pBufferCom->Get_VtxPos(),
+	//	m_pBufferCom->Get_VtxCntX(),
+	//	m_pBufferCom->Get_VtxCntZ(),
+	//	m_pIndex,
+	//	&m_dwTriCnt);
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 

@@ -4,7 +4,6 @@
 #include "Layer.h"
 
 BEGIN(Engine)
-
 class ENGINE_DLL CScene : public CBase
 {
 protected:
@@ -25,7 +24,7 @@ public:
 protected:
 	LPDIRECT3DDEVICE9					m_pGraphicDev;
 	map<const _tchar*, CLayer*>			m_mapLayer;
-
+	
 public:
 	virtual void		Free(void);
 };

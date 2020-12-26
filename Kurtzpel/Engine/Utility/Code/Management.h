@@ -25,7 +25,7 @@ public:
 	_int LateUpdate_Scene(const _float& fTimeDelta);
 	void	Render_Scene(LPDIRECT3DDEVICE9 & pGraphicDev);
 
-private:
+public:
 	CScene*			m_pScene;
 
 public:

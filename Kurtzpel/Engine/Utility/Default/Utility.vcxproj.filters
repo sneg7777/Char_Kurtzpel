@@ -185,17 +185,8 @@
     <ClInclude Include="..\Code\QuadTree.h">
       <Filter>04. Component\03. Optimization\01. QuadTree</Filter>
     </ClInclude>
-    <ClInclude Include="..\Code\Shader_Sample.hpp">
-      <Filter>09. Shader\hpp</Filter>
-    </ClInclude>
     <ClInclude Include="..\Code\Shader.h">
       <Filter>09. Shader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Code\Shader_Terrain.hpp">
-      <Filter>09. Shader\hpp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Code\Shader_Mesh.hpp">
-      <Filter>09. Shader\hpp</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\RenderTarget.h">
       <Filter>10. RenderTarget</Filter>
@@ -203,13 +194,25 @@
     <ClInclude Include="..\Code\RenderTargetMgr.h">
       <Filter>10. RenderTarget\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Code\Shader_Blend.hpp">
+    <ClInclude Include="..\Code\Shader_Terrain.hpp">
+      <Filter>09. Shader\hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Shader_SkyBox.hpp">
       <Filter>09. Shader\hpp</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\Shader_Shade.hpp">
       <Filter>09. Shader\hpp</Filter>
     </ClInclude>
-    <ClInclude Include="..\Code\Shader_SkyBox.hpp">
+    <ClInclude Include="..\Code\Shader_Sample.hpp">
+      <Filter>09. Shader\hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Shader_Mesh.hpp">
+      <Filter>09. Shader\hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Shader_Effect.hpp">
+      <Filter>09. Shader\hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Shader_Blend.hpp">
       <Filter>09. Shader\hpp</Filter>
     </ClInclude>
   </ItemGroup>

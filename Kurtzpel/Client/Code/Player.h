@@ -68,7 +68,6 @@ private:
 	HRESULT		Add_Component(void);
 	void		Key_Input(const _float& fTimeDelta);
 	void		Key_InputOfJump(const _float& fTimeDelta);
-	void		CameraControl(_float fTimeDelta);
 	void		Calc_Time(_float fTimeDelta);
 	void		Key_DoubleInput(const _float& fTimeDelta);
 	void		Jump_Control(const _float& fTimeDelta);

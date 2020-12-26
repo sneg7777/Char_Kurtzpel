@@ -5,6 +5,7 @@
 #include "Define.h"
 
 BEGIN(Client)
+class CPlayer;
 class CDynamicCamera : public Engine::CCamera
 {
 private:
@@ -25,7 +26,7 @@ private:
 private:
 	_bool		m_bClick = false;
 	_bool		m_bFix = true;
-
+	CPlayer*	m_Player = nullptr;
 public:
 	static CDynamicCamera*	Create(LPDIRECT3DDEVICE9 pGraphicDev, 
 									const _vec3* pEye, 
@@ -35,6 +36,8 @@ public:
 									const _float& fAspect = _float(WINCX) / WINCY, 
 									const _float& fNear = 0.1f, 
 									const _float& fFar = 1000.f);
+
+	void		Set_pPlayer(CPlayer* _player) { m_Player = _player; }
 private:
 	virtual void Free(void) override;
 

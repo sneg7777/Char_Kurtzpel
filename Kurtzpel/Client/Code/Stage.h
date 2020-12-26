@@ -32,6 +32,7 @@ public:
 	virtual _int LateUpdate_Scene(const _float& fTimeDelta);
 	virtual void Render_Scene(void) override;
 
+	CDynamicCamera* Get_DynamicCamera() { return m_Camera; }
 	void CameraControl(_float fTimeDelta);
 		
 private:
@@ -41,10 +42,10 @@ private:
 	HRESULT		Ready_UI_Layer(const _tchar* pLayerTag);
 
 	HRESULT		Ready_LightInfo(void);
+	CDynamicCamera* m_Camera = nullptr;
 
 public:
 	static CStage*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
-
 private:
 	virtual void Free(void) override;
 	void Collision_Object();

@@ -42,7 +42,7 @@ HRESULT Engine::CLight::Ready_Light(const D3DLIGHT9* pLightInfo, const _uint& iI
 	D3DVIEWPORT9		ViewPort;
 	m_pGraphicDev->GetViewport(&ViewPort);
 
-	VTXSCREEN*		pVertex = NULL;
+	VTXSCREEN* pVertex = NULL;
 	m_pVB->Lock(0, 0, (void**)&pVertex, NULL);
 
 	// 오른쪽 위
@@ -60,7 +60,7 @@ HRESULT Engine::CLight::Ready_Light(const D3DLIGHT9* pLightInfo, const _uint& iI
 
 	m_pVB->Unlock();
 
-	INDEX16*		pIndex = nullptr;
+	INDEX16* pIndex = nullptr;
 
 	m_pIB->Lock(0, 0, (void**)&pIndex, 0);
 
@@ -80,7 +80,7 @@ HRESULT Engine::CLight::Ready_Light(const D3DLIGHT9* pLightInfo, const _uint& iI
 	return S_OK;
 }
 
-void Engine::CLight::Render_Light(LPD3DXEFFECT & pEffect)
+void Engine::CLight::Render_Light(LPD3DXEFFECT& pEffect)
 {
 	_uint	iPassIdx = 0;
 
@@ -96,7 +96,7 @@ void Engine::CLight::Render_Light(LPD3DXEFFECT & pEffect)
 		pEffect->SetFloat("g_fRange", m_tLightInfo.Range);
 	}
 
-	
+
 	pEffect->SetVector("g_vLightDiffuse", (_vec4*)&m_tLightInfo.Diffuse);
 	pEffect->SetVector("g_vLightAmbient", (_vec4*)&m_tLightInfo.Ambient);
 
@@ -129,7 +129,7 @@ void Engine::CLight::Render_Light(LPD3DXEFFECT & pEffect)
 
 Engine::CLight* Engine::CLight::Create(LPDIRECT3DDEVICE9 pGraphicDev, const D3DLIGHT9* pLightInfo, const _uint& iIndex)
 {
-	CLight*		pInstance = new CLight(pGraphicDev);
+	CLight* pInstance = new CLight(pGraphicDev);
 
 	if (FAILED(pInstance->Ready_Light(pLightInfo, iIndex)))
 		Safe_Release(pInstance);

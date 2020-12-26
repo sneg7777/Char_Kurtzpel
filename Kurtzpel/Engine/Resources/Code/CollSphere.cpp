@@ -114,8 +114,12 @@ CComponent* CCollSphere::Clone(void)
 void Engine::CCollSphere::Free(void)
 {
 	CVIBuffer::Free();
+	CVIBuffer::Free();
 	
-	Safe_Release(pMesh);
+	//Safe_Release(m_pGraphicDev);
 	
+	
+	int i = Safe_Release(pMesh);
+	int j = 0;
 }
 

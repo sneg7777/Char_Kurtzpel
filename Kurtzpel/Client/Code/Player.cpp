@@ -570,31 +570,6 @@ void CPlayer::Add_LookAtY(float lookat)
 	}
 }
 
-void Client::CPlayer::CameraControl(_float fTimeDelta)
-{
-	if (m_State == State::State_Dash && m_CameraDist > 240.f) {
-		m_CameraDist -= fTimeDelta * 1200.f;
-	}
-	else if (m_State != State::State_Dash && m_CameraDist < 300.f) {
-		m_CameraDist += fTimeDelta * 1200.f;
-	}
-	_vec3	vPos, vDir;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
-
-	CDynamicCamera* dCamera = dynamic_cast<CDynamicCamera*>(Engine::CManagement::GetInstance()->Get_GameObject(L"Environment", L"DynamicCamera"));
-	*dCamera->Get_pPos() = vPos;
-	dCamera->Get_pPos()->y += 3.f;
-	dCamera->Get_pPos()->z -= 3.f;
-	*dCamera->Get_pAt() = vPos;
-	//*dCamera->Get_pPos() = vPos - (vDir * m_CameraDist);
-	//dCamera->Get_pPos()->y += 3.5f - m_LookAtY * 0.7f;
-	//*dCamera->Get_pAt() = vPos + (vDir * 200.f);
-	//dCamera->Get_pAt()->y += m_LookAtY;
-
-	
-}
-
 void Client::CPlayer::Calc_Time(_float fTimeDelta)
 {
 	/*if (m_TimeCheck[TimeCheck::TimeCheck_KeyW] > 0.f)
