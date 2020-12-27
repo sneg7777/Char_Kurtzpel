@@ -12,7 +12,7 @@ vector		g_vLightAmbient;
 vector		g_vMtrlDiffuse = (vector)1.f;
 vector		g_vMtrlAmbient = (vector)1.f;
 
-float		g_fPower = 100.f;
+float		g_fPower = 10.f;
 vector		g_vCamPos;
 
 
