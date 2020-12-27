@@ -119,20 +119,29 @@ void Engine::CAniCtrl::Free(void)
 	Safe_Release(m_pAniCtrl);
 }
 
-_bool Engine::CAniCtrl::Is_AnimationSetEnd(void)
+_bool Engine::CAniCtrl::Is_AnimationSetEnd(float delay)
 {
 	D3DXTRACK_DESC		tTrackInfo;
 	ZeroMemory(&tTrackInfo, sizeof(D3DXTRACK_DESC));
 
 	m_pAniCtrl->GetTrackDesc(m_iCurrentTrack, &tTrackInfo);
 
-	if (tTrackInfo.Position >= m_dPeriod - 0.1) {
+	if (tTrackInfo.Position >= m_dPeriod - delay) {
 		//if(tTrackInfo.Position > m_dPeriod)
 		//	m_pAniCtrl->ResetTime();
 		return true;
 	}
 
 	return false;
+}
+
+float Engine::CAniCtrl::Get_AnimationTrackPos()
+{
+	D3DXTRACK_DESC		tTrackInfo;
+	ZeroMemory(&tTrackInfo, sizeof(D3DXTRACK_DESC));
+
+	m_pAniCtrl->GetTrackDesc(m_iCurrentTrack, &tTrackInfo);
+	return tTrackInfo.Position;
 }
 
 _bool Engine::CAniCtrl::Is_AnimationSetEnd_Percent(float per)

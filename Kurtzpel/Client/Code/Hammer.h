@@ -18,6 +18,24 @@ END
 BEGIN(Client)
 class CHammer : public Engine::CGameObject
 {
+public:
+	enum HammerState {
+		HammerState_Idle, HammerState_Attack, HammerState_End
+	};
+public:
+	static CHammer* CHammer::GetInstance(void) {
+		if (nullptr == m_pInstance) {
+			return nullptr;
+		}
+		return m_pInstance;
+	}
+	static void CHammer::DestroyInstance(void) {
+		if (nullptr != m_pInstance) {
+			delete m_pInstance;
+			m_pInstance = NULL;
+		}
+	}
+	static CHammer* m_pInstance;
 private:
 	explicit CHammer(LPDIRECT3DDEVICE9 pGraphicDev);
 	virtual ~CHammer(void);
@@ -27,8 +45,9 @@ public:
 	virtual _int Update_Object(const _float& fTimeDelta) override;
 	virtual void Render_Object(void) override;
 	//
-	HRESULT SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
+	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
 	//
+	void		Set_Pos();
 private:
 	HRESULT		Add_Component(void);
 	_bool		Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);

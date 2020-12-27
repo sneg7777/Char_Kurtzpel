@@ -15,7 +15,8 @@ private:
 
 public: 
 	LPD3DXANIMATIONCONTROLLER		Get_AnimationCtrl(void) { return m_pAniCtrl; }
-	_bool							Is_AnimationSetEnd(void);
+	_bool							Is_AnimationSetEnd(float delay = 0.1f);
+	float							Get_AnimationTrackPos();
 	_bool							Is_AnimationSetEnd_Percent(float per);
 	_bool							Is_AnimationSetEnd_Check();
 	void							Is_Loop_Change(_bool change);

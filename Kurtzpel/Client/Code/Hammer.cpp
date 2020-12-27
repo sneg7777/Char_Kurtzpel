@@ -1,11 +1,14 @@
 #include "stdafx.h"
 #include "Hammer.h"
 #include "Export_Function.h"
+#include "Player.h"
+
+CHammer* CHammer::m_pInstance = nullptr;
 
 CHammer::CHammer(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
 {
-
+	
 }
 
 CHammer::~CHammer(void)
@@ -51,6 +54,8 @@ HRESULT Client::CHammer::Add_Component(void)
 	m_pTransformCom->m_vInfo[Engine::INFO_POS] = { -25.f, 50.f, 0.f };
 	m_pTransformCom->m_vScale = { 0.7f, 0.7f, 0.7f };
 
+	CPlayer::GetInstance()->m_Hammer = this;
+	CPlayer::GetInstance()->m_WeaponEquip = CPlayer::Weapon_Hammer;
 	return S_OK;
 }
 
@@ -132,6 +137,15 @@ void Client::CHammer::Render_Object(void)
 	m_pTransformCom->Get_WorldMatrix(&matWorld);
 
 	m_pColliderCom->Render_Collider(Engine::COL_TRUE, &matWorld);*/
+}
+
+void CHammer::Set_Pos() {
+	if (CPlayer::GetInstance()->m_State == CPlayer::State::State_Attack) {
+		m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 0.f, 0.f, 0.f };
+	}
+	else {
+		m_pTransformCom->m_vInfo[Engine::INFO_POS] = { -25.f, 50.f, 0.f };
+	}
 }
 
 

@@ -3,6 +3,7 @@
 #include "Export_Function.h"
 #include "DynamicCamera.h"
 #include "SphereCollider.h"
+#include "Hammer.h"
 
 CPlayer* CPlayer::m_pInstance = nullptr;
 
@@ -20,7 +21,7 @@ CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
 		m_TimeCheck[i] = 0.f;
 	}
 	m_fInitSpeed = 10.f;
-	m_fJumpPower = 0.16f;
+	m_fJumpPower = 0.125f;
 }
 
 CPlayer::~CPlayer(void)
@@ -70,6 +71,64 @@ HRESULT Client::CPlayer::Add_Component(void)
 	return S_OK;
 }
 
+void Client::CPlayer::Set_StateToAnimation(State _state) {
+	switch (_state)
+	{
+	case Client::CPlayer::State_Idle: {
+		m_pMeshCom->Set_AnimationSet(243);
+		m_AniSpeed = 1.f;
+		break;
+	}
+	case Client::CPlayer::State_Move: {
+		m_pMeshCom->Set_AnimationSet(260);
+		m_fSpeed = m_fInitSpeed;
+		m_AniSpeed = 1.f;
+		break;
+	}
+	case Client::CPlayer::State_MoveSA: {
+		m_pMeshCom->Set_AnimationSet(258);
+		m_fSpeed = m_fInitSpeed;
+		m_AniSpeed = 1.f;
+		break;
+	}
+	case Client::CPlayer::State_MoveSD: {
+		m_pMeshCom->Set_AnimationSet(256);
+		m_fSpeed = m_fInitSpeed;
+		m_AniSpeed = 1.f;
+		break;
+	}
+	case Client::CPlayer::State_Dash: {
+		m_pMeshCom->Set_AnimationSet(266);
+		m_fSpeed = 3.5f * m_fInitSpeed;
+		m_AniSpeed = 1.8f;
+		break;
+	}
+	case Client::CPlayer::State_Attack: {
+		break;
+	}
+	case Client::CPlayer::State_JumpEnd: {
+		m_pMeshCom->Set_AnimationSet(277);
+		m_fSpeed = m_fInitSpeed;
+		m_AniSpeed = 1.f;
+		break;
+	}
+	case Client::CPlayer::State_Damaged: {
+		m_pMeshCom->Set_AnimationSet(160);
+		m_fSpeed = m_fInitSpeed;
+		m_AniSpeed = 1.5f;
+		break;
+	}
+	case Client::CPlayer::State_End: {
+		break;
+	}
+	default:
+		break;
+	}
+	m_State = _state;
+	if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
+		m_Hammer->Set_Pos();
+}
+
 void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 {
 	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &m_vDir);
@@ -77,12 +136,13 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
 	D3DXVec3Normalize(&vDir, &vDir);
-
+	
 	Key_DoubleInput(fTimeDelta);
+	// 피격 당할때
 	if (m_State == State::State_Damaged) {
 		if (m_pMeshCom->Is_AnimationSetEnd()) {
 			m_State = State::State_Idle;
-			m_fSpeed = m_fInitSpeed;
+			Set_StateToAnimation(State::State_Idle);
 		}
 		else {
 			m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(-vDir * fTimeDelta * m_fSpeed * 1.5f)));
@@ -91,11 +151,9 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 		}
 	}
 	if (m_State == State::State_Dash) {
-		m_bCheck[bCheck::bCheck_MoveAni] = true;
-		
-		if (m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
+		if (m_pMeshCom->Is_AnimationSetEnd(0.7f))//m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
 		{
-			m_State = State::State_Idle;
+			Set_StateToAnimation(State::State_Idle);
 			m_bCheck[bCheck::bCheck_KeyW] = false;
 			m_bCheck[bCheck::bCheck_KeyA] = false;
 			m_bCheck[bCheck::bCheck_KeyS] = false;
@@ -104,7 +162,6 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 			m_bCheck[bCheck::bCheck_DBKeyA] = false;
 			m_bCheck[bCheck::bCheck_DBKeyS] = false;
 			m_bCheck[bCheck::bCheck_DBKeyD] = false;
-			m_fSpeed = m_fInitSpeed;
 			return;
 		}
 		else if (m_EnumDir == EnumDir::Up) {
@@ -154,14 +211,17 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 			m_pMeshCom->Set_AniAngle(355.f);
 		}
 
-		m_fSpeed = 3.5f * m_fInitSpeed;
-		m_AniSpeed = 1.5f;
-		m_pMeshCom->Set_AnimationSet(266);
 	}
+
+	//////////////////////////////////////////////////////////////////// 좌클릭공격
+	else if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
+	{
+
+	}
+
+	//////////////////////////////////////////////////////////////////// 이동
 	else if (Engine::Get_DIKeyState(DIK_W) & 0x80)
 	{
-		m_bCheck[bCheck::bCheck_MoveAni] = true;
-		m_State = State::State_Move;
 		if (m_bCheck[bCheck::bCheck_DBKeyW]) {
 			if (m_bCheck[bCheck::bCheck_DBKeyA]) {
 				m_EnumDir = EnumDir::UpLeft;
@@ -172,7 +232,7 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 			else {
 				m_EnumDir = EnumDir::Up;
 			}
-			m_State = State::State_Dash;
+			Set_StateToAnimation(State::State_Dash);
 			m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
 		}
 		else {
@@ -182,11 +242,8 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 				D3DXVec3Normalize(&vDir2, &vDir2);
 				m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed)));
 
-				m_AniSpeed = 1.f;
-				//m_pMeshCom->Set_AniAngle(175.f);
-				//m_pMeshCom->Set_AnimationSet(256);
 				m_pMeshCom->Set_AniAngle(220.f);
-				m_pMeshCom->Set_AnimationSet(260);
+				Set_StateToAnimation(State::State_Move);
 			}
 			else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
 				vDir2 = { vDir.z, 0.f, -vDir.x };
@@ -194,26 +251,19 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 				D3DXVec3Normalize(&vDir2, &vDir2);
 				m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed)));
 
-				m_AniSpeed = 1.f;
-				//m_pMeshCom->Set_AniAngle(355.f);
-				//m_pMeshCom->Set_AnimationSet(258);
 				m_pMeshCom->Set_AniAngle(310.f);
-				m_pMeshCom->Set_AnimationSet(260);
+				Set_StateToAnimation(State::State_Move);
 			}
 			else {
 				m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed)));
 
-				m_AniSpeed = 1.f;
 				m_pMeshCom->Set_AniAngle(265.f);
-				m_pMeshCom->Set_AnimationSet(260);
-				//m_bCheck[bCheck::bCheck_RunW] = true;
+				Set_StateToAnimation(State::State_Move);
 			}
 		}
 	}
 	else if (Engine::Get_DIKeyState(DIK_S) & 0x80)
 	{
-		m_bCheck[bCheck::bCheck_MoveAni] = true;
-		m_State = State::State_Move;
 		if (m_bCheck[bCheck::bCheck_DBKeyS]) {
 			if (m_bCheck[bCheck::bCheck_DBKeyA]) {
 				m_EnumDir = EnumDir::DownLeft;
@@ -224,7 +274,7 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 			else {
 				m_EnumDir = EnumDir::Down;
 			}
-			m_State = State::State_Dash;
+			Set_StateToAnimation(State::State_Dash);
 			m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
 		}
 		else if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
@@ -233,9 +283,8 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 			D3DXVec3Normalize(&vDir2, &vDir2);
 			m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_fSpeed)));
 
-			m_AniSpeed = 1.f;
 			m_pMeshCom->Set_AniAngle(175.f);
-			m_pMeshCom->Set_AnimationSet(258);
+			Set_StateToAnimation(State::State_MoveSA);
 		}
 		else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
 			vDir2 = { -vDir.z, 0.f, vDir.x };
@@ -243,20 +292,17 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 			D3DXVec3Normalize(&vDir2, &vDir2);
 			m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_fSpeed)));
 
-			m_AniSpeed = 1.f;
 			m_pMeshCom->Set_AniAngle(355.f);
-			m_pMeshCom->Set_AnimationSet(256);
+			Set_StateToAnimation(State::State_MoveSD);
 		}
 		else {
 			m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * -m_fSpeed)));
 
-			m_AniSpeed = 1.f;
 			m_pMeshCom->Set_AniAngle(85.f);
-			m_pMeshCom->Set_AnimationSet(260);
+			Set_StateToAnimation(State::State_Move);
 		}
 	}
 	else if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
-		m_bCheck[bCheck::bCheck_MoveAni] = true;
 		m_State = State::State_Move;
 		if (m_bCheck[bCheck::bCheck_DBKeyA]) {
 			if (m_bCheck[bCheck::bCheck_DBKeyW]) {
@@ -268,20 +314,18 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 			else {
 				m_EnumDir = EnumDir::Left;
 			}
-			m_State = State::State_Dash;
+			Set_StateToAnimation(State::State_Dash);
 			m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
 		} 
 		else {
 			vDir2 = { -vDir.z, 0.f, vDir.x };
 			m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed)));
 
-			m_AniSpeed = 1.f;
 			m_pMeshCom->Set_AniAngle(175.f);
-			m_pMeshCom->Set_AnimationSet(260);
+			Set_StateToAnimation(State::State_Move);
 		}
 	}
 	else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
-		m_bCheck[bCheck::bCheck_MoveAni] = true;
 		m_State = State::State_Move;
 		if (m_bCheck[bCheck::bCheck_DBKeyD]) {
 			if (m_bCheck[bCheck::bCheck_DBKeyW]) {
@@ -293,25 +337,24 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 			else {
 				m_EnumDir = EnumDir::Right;
 			}
-			m_State = State::State_Dash;
+			Set_StateToAnimation(State::State_Dash);
 			m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
 		}
 		else {
 			vDir2 = { vDir.z, 0.f, -vDir.x };
 			m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed)));
 
-			m_AniSpeed = 1.f;
 			m_pMeshCom->Set_AniAngle(355.f);
-			m_pMeshCom->Set_AnimationSet(260);
+			Set_StateToAnimation(State::State_Move);
 		}
 	}
 
-	if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
-	{
-		_vec3	vPickPos = PickUp_OnTerrain();
-		m_pTransformCom->Pick_Pos(&vPickPos, m_fSpeed, fTimeDelta);
-		
-	}
+	//if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
+	//{
+	//	_vec3	vPickPos = PickUp_OnTerrain();
+	//	m_pTransformCom->Pick_Pos(&vPickPos, m_fSpeed, fTimeDelta);
+	//	
+	//}
 	//if (Engine::Get_DIMouseState(Engine::DIM_RB) & 0x80)
 	//{
 	//	m_pMeshCom->Set_AnimationSet(30);
@@ -331,25 +374,15 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 	}
 	// Jump 가 끝났을때 모션
 	if (m_State == State::State_JumpEnd) {
-		if (m_AniTime < 0.f) {
-			m_State = State::State_Idle;
-			m_fSpeed = m_fInitSpeed;
-			m_AniSpeed = 1.f;
-			m_pMeshCom->Set_AnimationSet(243);
+		if (m_pMeshCom->Is_AnimationSetEnd(0.3f)) {
+			Set_StateToAnimation(State::State_Idle);
 		}
-		else {
-			m_fSpeed = m_fInitSpeed;
-			m_AniSpeed = 1.f;
-			m_pMeshCom->Set_AnimationSet(277);
-		}
-		m_bCheck[bCheck::bCheck_MoveAni] = false;
 		return;
 	}
 	// Idle 모션
 	else if (m_State == State::State_Idle) {
 		m_fSpeed = m_fInitSpeed;
-		m_pMeshCom->Set_AnimationSet(243);
-		m_bCheck[bCheck::bCheck_MoveAni] = false;
+		Set_StateToAnimation(State::State_Idle);
 	}
 
 
@@ -396,8 +429,6 @@ void Client::CPlayer::Key_InputOfJump(const _float& fTimeDelta)
 
 	if (Engine::Get_DIKeyState(DIK_W) & 0x80)
 	{
-		m_bCheck[bCheck::bCheck_MoveAni] = true;
-
 		if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
 			vDir2 = { -vDir.z, 0.f, vDir.x };
 			vDir2 += vDir;
@@ -422,8 +453,6 @@ void Client::CPlayer::Key_InputOfJump(const _float& fTimeDelta)
 	}
 	else if (Engine::Get_DIKeyState(DIK_S) & 0x80)
 	{
-		m_bCheck[bCheck::bCheck_MoveAni] = true;
-
 		if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
 			vDir2 = { vDir.z, 0.f, -vDir.x };
 			vDir2 += vDir;
@@ -447,8 +476,6 @@ void Client::CPlayer::Key_InputOfJump(const _float& fTimeDelta)
 		}
 	}
 	else if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
-		m_bCheck[bCheck::bCheck_MoveAni] = true;
-
 		vDir2 = { -vDir.z, 0.f, vDir.x };
 		m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed)));
 
@@ -456,8 +483,6 @@ void Client::CPlayer::Key_InputOfJump(const _float& fTimeDelta)
 		
 	}
 	else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
-		m_bCheck[bCheck::bCheck_MoveAni] = true;
-
 		vDir2 = { vDir.z, 0.f, -vDir.x };
 		m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed)));
 
@@ -465,20 +490,6 @@ void Client::CPlayer::Key_InputOfJump(const _float& fTimeDelta)
 		
 	}
 
-
-	//if (!m_bCheck[bCheck::bCheck_MoveAni] && true == m_pMeshCom->Is_AnimationSetEnd() && m_AniEnd) {
-	//	m_AniSpeed = 1.f;
-	//	//m_pMeshCom->Set_AniAngle(265.f);
-	//	m_pMeshCom->Set_AnimationSet(243);
-	//	m_AniEnd = false;
-	//}
-
-	//if (m_State == State::State_Idle && m_bCheck[bCheck::bCheck_MoveAni] && !(Engine::Get_DIKeyState(DIK_W) & 0x80) && !(Engine::Get_DIKeyState(DIK_S) & 0x80) && !(Engine::Get_DIKeyState(DIK_A) & 0x80) && !(Engine::Get_DIKeyState(DIK_D) & 0x80)) {
-	//	m_AniEnd = true;
-	//	m_fSpeed = m_fInitSpeed;
-	//	m_pMeshCom->Set_AnimationSet(243);
-	//	m_bCheck[bCheck::bCheck_MoveAni] = false;
-	//}
 }
 
 CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pGraphicDev)
@@ -501,7 +512,7 @@ HRESULT Client::CPlayer::Ready_Object(void)
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
-	m_pMeshCom->Set_AnimationSet(243);
+	Set_StateToAnimation(State::State_Idle);
 
 	m_pNaviMeshCom->Set_NaviIndex(0);
 
@@ -654,8 +665,8 @@ void Client::CPlayer::Jump_Control(const _float& fTimeDelta)
 
 	_float fHeight = m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
 
-	if(m_fJumpAccel < 2.2f)
-		m_fJumpAccel += 3.2f * fTimeDelta;
+	if(m_fJumpAccel < 1.42f)
+		m_fJumpAccel += 2.4f * fTimeDelta;
 	float gravity = m_fJumpPower * m_fJumpAccel - (GRAVITY * m_fJumpAccel * m_fJumpAccel * 0.5f);
 
 	float* beforePosY = &m_pTransformCom->m_vInfo[Engine::INFO_POS].y;
@@ -663,9 +674,9 @@ void Client::CPlayer::Jump_Control(const _float& fTimeDelta)
 
 	if (fHeight > afterPosY) {
 		m_JumpIdleState = JumpIdleAni::JumpIdle_None;
+		Set_StateToAnimation(State::State_JumpEnd);
 		m_AniTime = 0.6f;
 		//m_pMeshCom->Is_Loop_Change(FALSE);
-		m_State = State::State_JumpEnd;
 		m_fJumpAccel = 0.f;
 		*beforePosY = fHeight;
 	}
@@ -683,9 +694,7 @@ void Client::CPlayer::Jump_Control(const _float& fTimeDelta)
 void Client::CPlayer::Collision(Engine::CGameObject* _col)
 {
 	if (m_TimeCheck[TimeCheck_Invin] <= 0.f) {
-		m_State = State::State_Damaged;
-		m_pMeshCom->Set_AnimationSet(160);
+		Set_StateToAnimation(State::State_Damaged);
 		m_TimeCheck[TimeCheck_Invin] = 2.f;
-		m_AniSpeed = 1.5f;
 	}
 }

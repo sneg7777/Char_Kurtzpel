@@ -19,7 +19,8 @@ public:
 	void			Render_Meshes(void);
 	void			Render_Meshes(LPD3DXEFFECT& pEffect);
 	const  D3DXFRAME_DERIVED* Get_FrameByName(const char* pFrameName);
-	_bool							Is_AnimationSetEnd(void);
+	_bool							Is_AnimationSetEnd(float delay = 0.1f);
+	float							Get_AnimationTrackPos();
 public:
 	void			Set_AnimationSet(const _uint& iIndex);
 	void			Play_Animation(const _float& fTimeDelta);

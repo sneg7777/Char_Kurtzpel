@@ -139,9 +139,13 @@ const Engine::D3DXFRAME_DERIVED* Engine::CDynamicMesh::Get_FrameByName(const cha
 	return (D3DXFRAME_DERIVED*)D3DXFrameFind(m_pRootFrame, pFrameName);
 }
 
-_bool Engine::CDynamicMesh::Is_AnimationSetEnd(void)
+_bool Engine::CDynamicMesh::Is_AnimationSetEnd(float delay)
 {
-	return m_pAniCtrl->Is_AnimationSetEnd();
+	return m_pAniCtrl->Is_AnimationSetEnd(delay);
+}
+
+float Engine::CDynamicMesh::Get_AnimationTrackPos() {
+	return m_pAniCtrl->Get_AnimationTrackPos();
 }
 
 void CDynamicMesh::Set_AniAngle(float angle)
