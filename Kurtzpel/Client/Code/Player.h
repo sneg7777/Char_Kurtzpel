@@ -40,15 +40,17 @@ public:
 		State_Damaged,
 		State_End
 	};
-	enum State_Attack {
-		StateA_Basic1, StateA_Basic2, StateA_Basic3, StateA_End
+	enum Attack_State {
+		StateA_None, StateA_Basic1, StateA_Basic2, StateA_Basic3, StateA_End
 	};
 	enum JumpIdleAni {
 		JumpIdle_None, JumpIdle_JumpStart, JumpIdle_JumpUp, JumpIdle_JumpDown, JumpIdle_End
 	};
 	enum bCheck {
 		bCheck_DBKeyW, bCheck_DBKeyA, bCheck_DBKeyS, bCheck_DBKeyD,
-		bCheck_KeyW, bCheck_KeyA, bCheck_KeyS, bCheck_KeyD, bCheck_End
+		bCheck_KeyW, bCheck_KeyA, bCheck_KeyS, bCheck_KeyD,
+		bCheck_MouseL, bCheck_MouseR, bCheck_MouseL_Already, bCheck_MouseR_Already,
+		bCheck_End
 	};
 	enum TimeCheck {
 		TimeCheck_Dash, TimeCheck_KeyW, TimeCheck_KeyA, TimeCheck_KeyS, TimeCheck_KeyD,
@@ -91,6 +93,7 @@ public:
 	_float						m_CameraDist = 300.f;
 	bool						m_bCheck[bCheck::bCheck_End];
 	State						m_State =  State::State_Idle;
+	Attack_State				m_Attack_State = Attack_State::StateA_None;
 	JumpIdleAni					m_JumpIdleState = JumpIdleAni::JumpIdle_None;
 
 	//¹«±â

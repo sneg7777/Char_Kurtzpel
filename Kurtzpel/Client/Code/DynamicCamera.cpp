@@ -111,8 +111,13 @@ void Client::CDynamicCamera::Key_Input(const _float& fTimeDelta)
 
 void Client::CDynamicCamera::Mouse_Move(void)
 {
-	if (CPlayer::GetInstance()->m_State == CPlayer::State_Dash)
+	//if (CPlayer::GetInstance()->m_State == CPlayer::State_Dash)
+	//	return;
+	CPlayer::State pState = CPlayer::GetInstance()->m_State;
+	if (!(pState == CPlayer::State_Idle || pState == CPlayer::State_Move || pState == CPlayer::State_MoveSA || pState == CPlayer::State_MoveSD
+		|| pState == CPlayer::State_JumpEnd || pState == CPlayer::State_Damaged))
 		return;
+
 
 	_matrix			matCamWorld;
 	D3DXMatrixInverse(&matCamWorld, NULL, &m_matView);

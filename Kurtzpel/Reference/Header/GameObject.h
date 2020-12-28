@@ -32,6 +32,14 @@ public:
 
 	EnumDir					m_EnumDir = EnumDir::Dir_End;
 
+	////////////////
+	_vec3						m_vDir;
+	_float						m_fInitSpeed = 10.f;
+	_float						m_fSpeed = 7.5f;
+
+	_float						m_fMaxHp = 0.f;
+	_float						m_fHp = 0.f;
+	_float						m_fAttack = 0.f;
 private:
 	CComponent*		Find_Component(const _tchar* pComponentTag, COMPONENTID eID);
 

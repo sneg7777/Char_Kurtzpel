@@ -48,6 +48,7 @@ public:
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
 	//
 	void		Set_Pos();
+	void		BoneAttach(string _frame);
 private:
 	HRESULT		Add_Component(void);
 	_bool		Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
@@ -63,10 +64,11 @@ private:
 	Engine::CShader*			m_pShaderCom = nullptr;
 	//
 	_bool						m_bColl = false;
-
 	const	_matrix*			m_pParentBoneMatrix = nullptr;
 	const	_matrix*			m_pParentWorldMatrix = nullptr;
 
+	float	m_RocationX = 0.f;
+	float	m_RocationZ = 0.f;
 public:
 	static CHammer*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

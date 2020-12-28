@@ -77,6 +77,8 @@ void Client::CPlayer::Set_StateToAnimation(State _state) {
 	case Client::CPlayer::State_Idle: {
 		m_pMeshCom->Set_AnimationSet(243);
 		m_AniSpeed = 1.f;
+		if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
+			m_Hammer->Set_Pos();
 		break;
 	}
 	case Client::CPlayer::State_Move: {
@@ -104,6 +106,29 @@ void Client::CPlayer::Set_StateToAnimation(State _state) {
 		break;
 	}
 	case Client::CPlayer::State_Attack: {
+		m_Attack_State = (Attack_State)((int)m_Attack_State + 1);
+		if (m_Attack_State == Attack_State::StateA_End)
+			m_Attack_State = Attack_State::StateA_Basic1;
+		m_fSpeed = m_fInitSpeed;
+		m_AniSpeed = 1.3f;
+		switch (m_Attack_State)
+		{
+		case Client::CPlayer::StateA_Basic1:
+			m_pMeshCom->Set_AnimationSet(146);
+			break;
+		case Client::CPlayer::StateA_Basic2:
+			m_pMeshCom->Set_AnimationSet(144);
+			break;
+		case Client::CPlayer::StateA_Basic3:
+			m_pMeshCom->Set_AnimationSet(142);
+			break;
+		default:
+			break;
+		}
+		if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer) {
+			m_State = _state;
+			m_Hammer->Set_Pos();
+		}
 		break;
 	}
 	case Client::CPlayer::State_JumpEnd: {
@@ -125,8 +150,6 @@ void Client::CPlayer::Set_StateToAnimation(State _state) {
 		break;
 	}
 	m_State = _state;
-	if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
-		m_Hammer->Set_Pos();
 }
 
 void Client::CPlayer::Key_Input(const _float& fTimeDelta)
@@ -141,7 +164,6 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 	// 피격 당할때
 	if (m_State == State::State_Damaged) {
 		if (m_pMeshCom->Is_AnimationSetEnd()) {
-			m_State = State::State_Idle;
 			Set_StateToAnimation(State::State_Idle);
 		}
 		else {
@@ -150,7 +172,26 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 			return;
 		}
 	}
-	if (m_State == State::State_Dash) {
+	else if (m_State == State::State_Attack) {
+		if (m_bCheck[bCheck::bCheck_MouseL_Already]) {
+			if (m_pMeshCom->Is_AnimationSetEnd(0.65f)) {
+				Set_StateToAnimation(State::State_Attack);
+				m_bCheck[bCheck::bCheck_MouseL_Already] = false;
+			}
+		}
+		else if (m_pMeshCom->Is_AnimationSetEnd(0.3f)) {
+			Set_StateToAnimation(State::State_Idle);
+			m_Attack_State = Attack_State::StateA_None;
+		}
+		else if((Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80) && (m_Attack_State == Attack_State::StateA_Basic1 || m_Attack_State == Attack_State::StateA_Basic2)){
+			float aniPos = m_pMeshCom->Get_AnimationTrackPos();
+
+			if (aniPos > 0.35f) {
+				m_bCheck[bCheck::bCheck_MouseL_Already] = true;
+			}
+		}
+	}
+	else if (m_State == State::State_Dash) {
 		if (m_pMeshCom->Is_AnimationSetEnd(0.7f))//m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
 		{
 			Set_StateToAnimation(State::State_Idle);
@@ -214,8 +255,11 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 	}
 
 	//////////////////////////////////////////////////////////////////// 좌클릭공격
-	else if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
+	else if ((Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80) && !m_bCheck[bCheck::bCheck_MouseL])
 	{
+		m_bCheck[bCheck::bCheck_MouseL] = true;
+		Set_StateToAnimation(State::State_Attack);
+		m_bCheck[bCheck::bCheck_MouseL_Already] = false;
 
 	}
 
@@ -365,11 +409,13 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 	//	m_pMeshCom->Set_AnimationSet(243);
 	//	m_AniEnd = false;
 	//}
-	if (m_State == State::State_Move && !(Engine::Get_DIKeyState(DIK_W) & 0x80) && !(Engine::Get_DIKeyState(DIK_S) & 0x80) && !(Engine::Get_DIKeyState(DIK_A) & 0x80) && !(Engine::Get_DIKeyState(DIK_D) & 0x80)) {
+	if ((m_State == State::State_Move || m_State == State::State_MoveSA || m_State == State::State_MoveSD)
+		&& !(Engine::Get_DIKeyState(DIK_W) & 0x80) && !(Engine::Get_DIKeyState(DIK_S) & 0x80) && !(Engine::Get_DIKeyState(DIK_A) & 0x80) && !(Engine::Get_DIKeyState(DIK_D) & 0x80)) {
 		m_State = State::State_Idle;
 	}
 
-	if (m_State != State::State_Dash && Engine::Get_DIKeyState(DIK_SPACE) & 0x80) {
+	if ((m_State == State::State_Move || m_State == State::State_MoveSA || m_State == State::State_MoveSD)
+		&& Engine::Get_DIKeyState(DIK_SPACE) & 0x80) {
 		m_JumpIdleState = JumpIdleAni::JumpIdle_JumpStart;
 	}
 	// Jump 가 끝났을때 모션
@@ -400,11 +446,9 @@ void Client::CPlayer::Key_InputOfJump(const _float& fTimeDelta)
 	{
 	case JumpIdleAni::JumpIdle_JumpStart: {
 		//애니메이션 그전꺼를 저장하는거 땜에 좀 씹혀서 스킵함
-		/*m_AniSpeed = 1.f;
-		m_pMeshCom->Set_AnimationSet(273);
-		if (m_AniTime < 0.f)*/
-			m_JumpIdleState = JumpIdleAni::JumpIdle_JumpUp;
-		//
+		//m_pMeshCom->Set_AnimationSet(273);
+		//이유를 알앗는데 귀찮네 Is_AnimationSetEnd() 사용법을 잘 몰라서 생긴 문제
+		m_JumpIdleState = JumpIdleAni::JumpIdle_JumpUp;
 		m_AniSpeed = 1.f;
 		m_pMeshCom->Set_AnimationSet(275);
 		break;
@@ -596,8 +640,6 @@ void Client::CPlayer::Calc_Time(_float fTimeDelta)
 		if (m_TimeCheck[i] > 0.f)
 			m_TimeCheck[i] -= fTimeDelta;
 	}
-	if (m_AniTime > 0.f)
-		m_AniTime -= fTimeDelta;
 }
 
 void Client::CPlayer::Key_DoubleInput(const _float& fTimeDelta)
@@ -653,6 +695,14 @@ void Client::CPlayer::Key_DoubleInput(const _float& fTimeDelta)
 	else if (!(Engine::Get_DIKeyState(DIK_D) & 0x80)) {
 		m_bCheck[bCheck::bCheck_KeyD] = false;
 	}
+
+	// 마우스
+	if (!(Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)) {
+		m_bCheck[bCheck::bCheck_MouseL] = false;
+	}
+	if (!(Engine::Get_DIMouseState(Engine::DIM_RB) & 0x80)) {
+		m_bCheck[bCheck::bCheck_MouseR] = false;
+	}
 }
 
 void Client::CPlayer::Jump_Control(const _float& fTimeDelta)
@@ -675,7 +725,6 @@ void Client::CPlayer::Jump_Control(const _float& fTimeDelta)
 	if (fHeight > afterPosY) {
 		m_JumpIdleState = JumpIdleAni::JumpIdle_None;
 		Set_StateToAnimation(State::State_JumpEnd);
-		m_AniTime = 0.6f;
 		//m_pMeshCom->Is_Loop_Change(FALSE);
 		m_fJumpAccel = 0.f;
 		*beforePosY = fHeight;

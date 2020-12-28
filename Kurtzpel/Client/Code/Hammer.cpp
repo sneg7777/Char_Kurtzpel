@@ -82,24 +82,15 @@ HRESULT Client::CHammer::Ready_Object(void)
 
 	m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(172.5f));
 	m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(22.5f));
-
+	m_RocationX = 172.5f;
+	m_RocationZ = 22.5f;
 	return S_OK;
 }
 Client::_int Client::CHammer::Update_Object(const _float& fTimeDelta)
 {
 	if (nullptr == m_pParentBoneMatrix)
 	{
-		Engine::CDynamicMesh*	pPlayerMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Mesh", Engine::ID_STATIC));
-		NULL_CHECK_RETURN(pPlayerMeshCom, 0);
-
-		//const Engine::D3DXFRAME_DERIVED* pFrame = pPlayerMeshCom->Get_FrameByName("Weapon_Spine_R");
-		const Engine::D3DXFRAME_DERIVED* pFrame = pPlayerMeshCom->Get_FrameByName("Weapon_R");
-
-		m_pParentBoneMatrix = &pFrame->CombinedTransformationMatrix;
-
-		Engine::CTransform*		pPlayerTransCom = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
-		NULL_CHECK_RETURN(pPlayerTransCom, 0);
-		m_pParentWorldMatrix = pPlayerTransCom->Get_WorldMatrix();
+		BoneAttach("Weapon_R");
 	}
 
 	Engine::CGameObject::Update_Object(fTimeDelta);
@@ -142,12 +133,42 @@ void Client::CHammer::Render_Object(void)
 void CHammer::Set_Pos() {
 	if (CPlayer::GetInstance()->m_State == CPlayer::State::State_Attack) {
 		m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 0.f, 0.f, 0.f };
+		BoneAttach("Weapon_Hand_R");
+		if (m_RocationX != 0.f) {
+			m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(-m_RocationX + 0.f));
+			m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-m_RocationZ));
+			m_RocationX = 0.f;
+			m_RocationZ = 0.f;
+		}
 	}
 	else {
 		m_pTransformCom->m_vInfo[Engine::INFO_POS] = { -25.f, 50.f, 0.f };
+		BoneAttach("Weapon_R");
+		if (m_RocationX != 172.5f) {
+			m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(-m_RocationX + 172.5f));
+			m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-m_RocationZ + 22.5f));
+			m_RocationX = 172.5f;
+			m_RocationZ = 22.5f;
+		}
 	}
 }
 
+void CHammer::BoneAttach(string _frame)
+{
+	Engine::CDynamicMesh* pPlayerMeshCom = CPlayer::GetInstance()->m_pMeshCom;
+	//dynamic_cast<Engine::CDynamicMesh*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Mesh", Engine::ID_STATIC));
+	NULL_CHECK_RETURN(pPlayerMeshCom, );
+
+	//const Engine::D3DXFRAME_DERIVED* pFrame = pPlayerMeshCom->Get_FrameByName("Weapon_Spine_R");
+	const Engine::D3DXFRAME_DERIVED* pFrame = pPlayerMeshCom->Get_FrameByName(_frame.c_str());
+
+	m_pParentBoneMatrix = &pFrame->CombinedTransformationMatrix;
+
+	Engine::CTransform* pPlayerTransCom = CPlayer::GetInstance()->m_pTransformCom;
+	//dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
+	NULL_CHECK_RETURN(pPlayerTransCom, );
+	m_pParentWorldMatrix = pPlayerTransCom->Get_WorldMatrix();
+}
 
 _bool CHammer::Collision_ToObject(const _tchar * pLayerTag, const _tchar * pObjTag)
 {

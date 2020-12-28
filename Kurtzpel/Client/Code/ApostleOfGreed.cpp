@@ -177,8 +177,7 @@ void Client::CApostleOfGreed::SetUp_OnTerrain(void)
 
 void Client::CApostleOfGreed::Calc_Time(_float fTimeDelta)
 {
-	if (m_AniTime > 0.f)
-		m_AniTime -= fTimeDelta;
+
 }
 
 void Client::CApostleOfGreed::Pattern(_float fTimeDelta)

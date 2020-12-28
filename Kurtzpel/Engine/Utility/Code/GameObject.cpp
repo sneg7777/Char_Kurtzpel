@@ -4,6 +4,7 @@ USING(Engine)
 
 Engine::CGameObject::CGameObject(LPDIRECT3DDEVICE9 pGraphicDev)
 	: m_pGraphicDev(pGraphicDev)
+	, m_vDir(0.f, 0.f, 0.f)
 {
 	Safe_AddRef(m_pGraphicDev);
 }

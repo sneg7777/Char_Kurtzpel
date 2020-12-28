@@ -6,7 +6,6 @@
 
 CUnit_D::CUnit_D(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
-	, m_vDir(0.f, 0.f, 0.f)
 {
 
 }

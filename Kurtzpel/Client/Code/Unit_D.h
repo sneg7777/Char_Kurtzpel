@@ -47,16 +47,13 @@ public:
 
 	//_bool						m_bColl = false;
 	//_bool						m_bDraw = false;
-
-	_vec3						m_vDir;
-	_float						m_fInitSpeed = 10.f;
-	_float						m_fSpeed = 7.5f;
 	_float						m_AniSpeed = 1.f;
-	_float						m_AniTime = 0.f;
+
+
 public:
 	_int Load_ColliderFile(_tchar* pFilePath);
 	
-	static CUnit_D* Create(LPDIRECT3DDEVICE9 pGraphicDev);
+	//static CUnit_D* Create(LPDIRECT3DDEVICE9 pGraphicDev);
 
 public:
 	vector<CSphereCollider*>		m_VecSphereCollider;
