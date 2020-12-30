@@ -69,7 +69,7 @@ void CNaviMesh::Render_NaviMeshes(void)
 		iter->Render_Cell();
 }
 
-_vec3 CNaviMesh::Move_OnNaviMesh(const _vec3 * pTargetPos, const _vec3 * pTargetDir)
+_vec3 CNaviMesh::Move_OnNaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir, _ulong* _index)
 {
 	_vec3		vEndPos = *pTargetPos + *pTargetDir;
 
@@ -82,11 +82,11 @@ _vec3 CNaviMesh::Move_OnNaviMesh(const _vec3 * pTargetPos, const _vec3 * pTarget
 	//else if (CCell::STOP == movecheck)
 	//	return *pTargetPos + vTargetDir;
 
-	CCell::MOVING movecheck = m_vecCell[m_dwIndex]->CompareCell(&vEndPos, &m_dwIndex);
-	if (CCell::MOVE == m_vecCell[m_dwIndex]->CompareCell(&vEndPos, &m_dwIndex))
+	CCell::MOVING movecheck = m_vecCell[*_index]->CompareCell(&vEndPos, _index);
+	if (CCell::MOVE == m_vecCell[*_index]->CompareCell(&vEndPos, _index))
 		return vEndPos;
 
-	else if (CCell::STOP == m_vecCell[m_dwIndex]->CompareCell(&vEndPos, &m_dwIndex))
+	else if (CCell::STOP == m_vecCell[*_index]->CompareCell(&vEndPos, _index))
 		return *pTargetPos;
 }
 

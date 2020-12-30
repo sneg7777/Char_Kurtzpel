@@ -80,7 +80,7 @@ private:
 	void		Calc_Time(_float fTimeDelta);
 	void		Key_DoubleInput(const _float& fTimeDelta);
 	void		Jump_Control(const _float& fTimeDelta);
-	void		Collision(Engine::CGameObject* _col);
+	virtual void		Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere);
 	_vec3		PickUp_OnTerrain(void);
 
 private:

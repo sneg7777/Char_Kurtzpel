@@ -17,6 +17,15 @@ class CTerrainTri;
 class CMFCDynamicMesh;
 class CSphereCollider : public Engine::CGameObject
 {
+public:
+	enum BonePart {
+		BonePart_Weapon, BonePart_Body,
+		BonePart_PlayerHammer,
+		BonePart_End
+	};
+	enum BoneTeam {
+		BoneTeam_Player, BoneTeam_Enemy, BoneTeam_Etc, BoneTeam_End
+	};
 private:
 	explicit CSphereCollider(LPDIRECT3DDEVICE9 pGraphicDev);
 	virtual ~CSphereCollider(void);
@@ -25,6 +34,8 @@ public:
 	virtual HRESULT Ready_Object(void) override;
 	virtual Engine::_int Update_Object(const Engine::_float& fTimeDelta) override;
 	virtual void Render_Object(void) override;
+
+	bool Check_DamagedObject(Engine::CGameObject* _obj);
 
 private:
 	HRESULT		Add_Component(void);
@@ -52,6 +63,11 @@ public:
 	const	_matrix* m_pParentWorldMatrix = nullptr;
 	string m_FrameName;
 	bool m_FrameNameCheck = false;
+	bool m_WeaponAttack = false;
+
+	BonePart m_BonePart = BonePart::BonePart_End;
+	BoneTeam m_BoneTeam = BoneTeam::BoneTeam_End;
+	vector<Engine::CGameObject*>	m_VecDamagedObject;
 private:
 	virtual void Free(void) override;
 

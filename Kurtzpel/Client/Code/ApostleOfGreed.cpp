@@ -4,7 +4,11 @@
 #include "DynamicCamera.h"
 #include "SphereCollider.h"
 #include "Player.h"
+#include "Stage.h"
+#include "NaviTerrain.h"
 
+#define PLAYER_SEARCH_DISTANCE 15.f
+#define PLAYER_ATTACK_DISTANCE 10.f
 CApostleOfGreed::CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CMonster(pGraphicDev)
 {
@@ -18,6 +22,11 @@ CApostleOfGreed::CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev)
 	}
 	m_fInitSpeed = 6.f;
 	m_fSpeed = m_fInitSpeed;
+	m_fMaxHp = 5000.f;
+	m_fHp = m_fMaxHp;
+	m_fMaxKnockBackHp = 1000.f;
+	m_fKnockBackHp = m_fMaxKnockBackHp;
+	m_fAttack = 100.f;
 }
 
 CApostleOfGreed::~CApostleOfGreed(void)
@@ -47,20 +56,24 @@ HRESULT Client::CApostleOfGreed::Add_Component(void)
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
 	m_pMeshCom->Set_AniAngle(95.f);
 
-	pComponent = m_pNaviMeshCom = dynamic_cast<Engine::CNaviMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Navi"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Navi", pComponent);
 	//
 	m_pTransformCom->Set_Pos(&Engine::_vec3{ 25.f, 0.f, 25.f });
 	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	Engine::CGameObject::Update_Object(1.f);
-
+	
 	//m_pMeshCom->Play_Animation(1.f);
 
 	Load_ColliderFile(L"../Bin/Resource/Mesh/DynamicMesh/Save/ApostleOfGreed.dat");
 	for (auto& sphere : m_VecSphereCollider)
 	{
 		sphere->m_pDynamicMesh = this;
+		if (!sphere->m_FrameName.compare("Bip001")) {
+			sphere->m_BonePart = CSphereCollider::BonePart_Body;
+		}
+		else if (!sphere->m_FrameName.compare("weapon")) {
+			sphere->m_BonePart = CSphereCollider::BonePart_Weapon;
+		}
+		sphere->m_BoneTeam = CSphereCollider::BoneTeam_Enemy;
 	}
 	m_pTransformCom->Set_Pos(&_vec3(5.f, 0.f, 5.f));
 	return S_OK;
@@ -101,16 +114,16 @@ HRESULT Client::CApostleOfGreed::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
+	m_pTransformCom->Set_Scale(0.02f, 0.02f, 0.02f);
 	m_pMeshCom->Set_AnimationSet(25);
-
-	m_pNaviMeshCom->Set_NaviIndex(0);
 
 	return S_OK;
 }
 
 Client::_int Client::CApostleOfGreed::Update_Object(const _float& fTimeDelta)
 {
+	if (m_IsDead || m_fHp < 0.f)
+		return 1;
 
 	Calc_Time(fTimeDelta);
 
@@ -151,7 +164,7 @@ void Client::CApostleOfGreed::Render_Object(void)
 	pEffect->EndPass();
 	pEffect->End();
 
-	m_pNaviMeshCom->Render_NaviMeshes();
+	//m_pNaviMeshCom->Render_NaviMeshes();
 
 
 	Engine::Safe_Release(pEffect);
@@ -177,104 +190,162 @@ void Client::CApostleOfGreed::SetUp_OnTerrain(void)
 
 void Client::CApostleOfGreed::Calc_Time(_float fTimeDelta)
 {
+	if (m_TimeGroggy > 0.f) {
+		m_TimeGroggy -= fTimeDelta;
+	}
+}
 
+void Client::CApostleOfGreed::Set_StateToAnimation(State _state) {
+	switch (_state)
+	{
+	case Client::CApostleOfGreed::State_Wait:
+		m_pMeshCom->Set_AnimationSet(25);
+		m_AniSpeed = 1.f;
+		break;
+	case Client::CApostleOfGreed::State_Move:
+		m_pMeshCom->Set_AnimationSet(28);
+		m_fSpeed = m_fInitSpeed;
+		m_AniSpeed = 1.f;
+		break;
+	case Client::CApostleOfGreed::State_Rocate:
+		m_pMeshCom->Set_AnimationSet(24);
+		m_AniSpeed = 1.f;
+		break;
+	case Client::CApostleOfGreed::State_Attack1:
+		m_pMeshCom->Set_AnimationSet(17);
+		m_fSpeed = m_fInitSpeed;
+		m_AniSpeed = 1.f;
+		Get_BonePartCollider(CSphereCollider::BonePart_Weapon)->m_WeaponAttack = false;
+		break;
+	case Client::CApostleOfGreed::State_JumpEnd:
+		break;
+	case Client::CApostleOfGreed::State_KnockBack:
+		m_pMeshCom->Set_AnimationSet(18);
+		m_AniSpeed = 1.f;
+		break;
+	case Client::CApostleOfGreed::State_Groggy:
+		m_pMeshCom->Set_AnimationSet(19);
+		m_AniSpeed = 1.f;
+		m_TimeGroggy = GROGGY;
+		break;
+	case Client::CApostleOfGreed::State_GroggyUp:
+		m_pMeshCom->Set_AnimationSet(20);
+		m_AniSpeed = 1.f;
+		break;
+	case Client::CApostleOfGreed::State_End:
+		break;
+	default:
+		break;
+	}
+	m_State = _state;
 }
 
 void Client::CApostleOfGreed::Pattern(_float fTimeDelta)
 {
+	//////////////////////////////////////////////////////////////////////////////////////
+	Engine::CNaviMesh* pNaviMeshCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_NaviTerrain->m_pNaviMeshCom;
 	float playerTodisTance = PlayerSearchDistance();
 	CPlayer* player = CPlayer::GetInstance();
+	Set_PlayerTowardAngle();
+	//////////////////////////////////////////////////////////////////////////////////////
 
-	if (m_State == State::State_Attack1) {
-		if (!m_pMeshCom->Is_AnimationSetEnd()) {
-			return;
+	//////////////////////////////////////////////////////////////////////////////////////
+	if (m_fKnockBackHp < 0.f) {
+		m_fKnockBackHp = m_fMaxKnockBackHp;
+		Set_StateToAnimation(State::State_KnockBack);
+	}
+	if (!m_isSearch) {
+		if (playerTodisTance < PLAYER_SEARCH_DISTANCE) {
+			m_isSearch = true;
+			Set_StateToAnimation(State::State_Wait);
 		}
-		else {
+		return;
+	}
+	//////////////////////////////////////////////////////////////////////////////////////
+
+	if (m_State == State::State_KnockBack) {
+		if (m_pMeshCom->Is_AnimationSetEnd(0.2f)) {
+			Set_StateToAnimation(State::State_Groggy);
+		}
+	}
+	else if (m_State == State::State_Groggy) {
+		if (m_TimeGroggy < 0.f) {
+			Set_StateToAnimation(State::State_GroggyUp);
+		}
+	}
+	else if (m_State == State::State_GroggyUp) {
+		if (m_pMeshCom->Is_AnimationSetEnd(0.2f)) {
 			m_State = State::State_Wait;
 			m_pMeshCom->Set_AnimationSet(25);
 		}
 	}
-	else if (playerTodisTance < 10.f) {
-		m_isSearch = true;
-		
-		if (playerTodisTance < 5.5f) {
-			m_State = State::State_Attack1;
-			m_pMeshCom->Set_AnimationSet(17);
+	else if (m_State == State::State_Attack1) {
+		if (m_pMeshCom->Is_AnimationSetEnd(0.15f)) {
+			Set_StateToAnimation(State::State_Wait);
 		}
 		else {
-			m_State = State::State_Move;
-			m_pMeshCom->Set_AnimationSet(28);
-		}
-		
-	}
-	else {
-		m_isSearch = false;
-	}
+			float trackPos = m_pMeshCom->Get_AnimationTrackPos();
+			//m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
 
-	if (m_isSearch) {
-		if (m_State == State::State_Move) {
-			m_vDir = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_pTransformCom->m_vInfo[Engine::INFO_POS];
-			_vec3 afterPos = m_pTransformCom->m_vInfo[Engine::INFO_POS] + (m_vDir * fTimeDelta * m_fSpeed);
-			//m_pTransformCom->Set_Pos(&afterPos);
-			m_pMeshCom->Set_AnimationSet(28);
-			//
-			_vec3 monsterPos = m_pTransformCom->m_vInfo[Engine::INFO_POS];
-			_vec3 playerPos = m_pPlayerTrans->m_vInfo[Engine::INFO_POS];
-			_vec3 monsterDir = playerPos - monsterPos;
-			D3DXVec3Normalize(&monsterDir, &monsterDir);
-
-			_vec3 monsterLook = m_pTransformCom->m_vInfo[Engine::INFO_LOOK];
-			D3DXVec3Normalize(&monsterLook, &monsterLook);
-			float radian = D3DXVec3Dot(&monsterDir, &monsterLook);
-			float angle = D3DXToDegree(radian);
-			_vec3 monsterRight = m_pTransformCom->m_vInfo[Engine::INFO_RIGHT];
-			D3DXVec3Normalize(&monsterLook, &monsterRight);
-			float radian2 = D3DXVec3Dot(&monsterDir, &monsterRight);
-			float angle2 = D3DXToDegree(radian2);
-
-			// 뒤쪽
-			if (angle < 0.f) {
-				// 오른쪽
-				if (angle2 >= 0.f) {
-					m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-40.f) * fTimeDelta);
-				}
-				// 왼쪽
-				else {
-					m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(40.f) * fTimeDelta);
-				}
+			//이따 애니구조 바꾸고 완전히 수정
+			if (trackPos > 1.6f) {
+				Get_BonePartCollider(CSphereCollider::BonePart_Weapon)->m_WeaponAttack = true;
 			}
-			// 앞쪽
 			else {
-				// 오른쪽
-				if (angle2 >= 0.f) {
-					m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-40.f) * fTimeDelta);
-				}
-				// 왼쪽
-				else {
-					m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(40.f) * fTimeDelta);
-				}
+				Get_BonePartCollider(CSphereCollider::BonePart_Weapon)->m_WeaponAttack = false;
 			}
-
-
-			//_vec3 m1 = m_pPlayerTrans->m_vInfo[Engine::INFO_POS];
-			//_vec3 p1 = m_pTransformCom->m_vInfo[Engine::INFO_POS];
-			//float cosAngle = acosf(D3DXVec3Dot(&p1, &m1) / (D3DXVec3Length(&p1) * D3DXVec3Length(&m1)));
-			//cosAngle = D3DXToDegree(cosAngle);
-			//
-			//float angle = (p1.x * m1.y - p1.y * m1.x > 0.0f) ? cosAngle : -cosAngle;
-			//m_pMeshCom->Set_AniAngle(D3DXToRadian(angle));
-			//
-		}
-		else if (m_State == State::State_Attack1) {
-			m_pMeshCom->Set_AnimationSet(17);
+			return;
 		}
 	}
-	else {
-		m_pMeshCom->Set_AnimationSet(25);
+	else if (m_State == State::State_Move) {
+
+		m_vDir = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_pTransformCom->m_vInfo[Engine::INFO_POS];
+		_vec3 afterPos = m_pTransformCom->m_vInfo[Engine::INFO_POS] + (m_vDir * fTimeDelta * m_fSpeed);
+		//m_pTransformCom->Set_Pos(&afterPos);
+		Set_StateToAnimation(State::State_Move);
+		//
+		Rocate_PlayerToWardAngle(fTimeDelta);
+	}
+	else if (m_State == State::State_Rocate) {
+		Set_StateToAnimation(State::State_Rocate);
+		Rocate_PlayerToWardAngle(fTimeDelta);
+	}
+
+	if (m_State == State::State_Wait || m_State == State::State_Move || m_State == State::State_Rocate){
+		if (playerTodisTance < PLAYER_SEARCH_DISTANCE) {
+			if (playerTodisTance < PLAYER_ATTACK_DISTANCE) {
+				if(m_AngleOfSame)
+					Set_StateToAnimation(State::State_Attack1);
+				else
+					Set_StateToAnimation(State::State_Rocate);
+			}
+			else {
+				Set_StateToAnimation(State::State_Move);
+			}
+		}
+		else {
+			//Set_StateToAnimation(State::State_Wait);
+			Set_StateToAnimation(State::State_Move);
+		}
+
 	}
 }
 
-void Client::CApostleOfGreed::Collision(Engine::CGameObject* _col)
+void CApostleOfGreed::Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere)
 {
-	int i = 0;
+	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
+		return;
+
+	if (_mySphere->m_BonePart == CSphereCollider::BonePart_Body) {
+		if (_colSphere->m_BonePart == CSphereCollider::BonePart_PlayerHammer
+			&& _colSphere->m_WeaponAttack) {
+			if (!_colSphere->Check_DamagedObject(this)) {
+				_colSphere->m_VecDamagedObject.emplace_back(this);
+				m_fHp -= _col->m_fAttack;
+				m_fKnockBackHp -= _col->m_fAttack;
+
+			}
+		}
+	}
+	
 }

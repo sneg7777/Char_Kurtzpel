@@ -25,6 +25,7 @@ public:
 
 	bool colorGreenCheck = true;
 	bool colorGreen = true;
+
 	static bool pMeshRelese;
 };
 END

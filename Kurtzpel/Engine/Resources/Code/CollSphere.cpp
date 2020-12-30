@@ -5,7 +5,10 @@ USING(Engine)
 Engine::CCollSphere::CCollSphere(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CVIBuffer(pGraphicDev)
 {
-
+	Safe_Release(m_pGraphicDev);
+	Safe_Release(m_pGraphicDev);
+	Safe_Release(m_pGraphicDev);
+	Safe_Release(m_pGraphicDev);
 }
 
 Engine::CCollSphere::CCollSphere(const CCollSphere& rhs)
@@ -114,12 +117,11 @@ CComponent* CCollSphere::Clone(void)
 void Engine::CCollSphere::Free(void)
 {
 	CVIBuffer::Free();
-	CVIBuffer::Free();
-	
-	//Safe_Release(m_pGraphicDev);
-	
+
+	Safe_Release(m_pVB);
+	Safe_Release(m_pIB);
 	
 	int i = Safe_Release(pMesh);
-	int j = 0;
+	
 }
 

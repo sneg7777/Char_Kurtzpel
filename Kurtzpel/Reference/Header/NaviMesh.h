@@ -21,7 +21,7 @@ public:
 	HRESULT		Ready_NaviMeshes(void);
 	void		Render_NaviMeshes(void);
 
-	_vec3			Move_OnNaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir);
+	_vec3			Move_OnNaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir, _ulong* _index);
 
 private:
 	HRESULT		Link_Cell(void);

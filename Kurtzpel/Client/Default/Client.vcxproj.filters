@@ -198,6 +198,9 @@
     <ClInclude Include="..\Code\Hammer.h">
       <Filter>02. GameObject\01. Stage\10.Equip\Hammer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\NaviTerrain.h">
+      <Filter>02. GameObject\01. Stage\00. Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -274,6 +277,9 @@
     </ClCompile>
     <ClCompile Include="..\Code\Hammer.cpp">
       <Filter>02. GameObject\01. Stage\10.Equip\Hammer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\NaviTerrain.cpp">
+      <Filter>02. GameObject\01. Stage\00. Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

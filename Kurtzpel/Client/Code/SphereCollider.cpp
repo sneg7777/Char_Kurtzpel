@@ -142,3 +142,13 @@ void CSphereCollider::Render_Object(void)
 
 	//Engine::Safe_Release(pEffect);
 }
+
+bool CSphereCollider::Check_DamagedObject(Engine::CGameObject* _obj)
+{
+	for (auto& gObj : m_VecDamagedObject)
+	{
+		if (gObj == _obj)
+			return true;
+	}
+	return false;
+}

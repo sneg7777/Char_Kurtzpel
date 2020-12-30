@@ -5,6 +5,8 @@
 #include "Unit_D.h"
 #include "SphereCollider.h"
 #include "Hammer.h"
+#include "NaviTerrain.h"
+#include "Player.h"
 
 CStage::CStage(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CScene(pGraphicDev)
@@ -91,6 +93,10 @@ HRESULT CStage::Ready_Environment_Layer(const _tchar * pLayerTag)
 	pGameObject = CTerrain::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Terrain", pGameObject), E_FAIL);
+
+	pGameObject = m_NaviTerrain = CNaviTerrain::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Navi", pGameObject), E_FAIL);
 
 	//pGameObject = CDynamicCamera::Create(m_pGraphicDev, &_vec3(0.f, 10.f, -10.f),
 	//													&_vec3(0.f, 0.f, 10.f),
@@ -216,35 +222,35 @@ HRESULT CStage::Ready_LightInfo(void)
 	tLightInfo.Type = D3DLIGHT_DIRECTIONAL;
 
 	tLightInfo.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	tLightInfo.Specular = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
+	tLightInfo.Ambient = D3DXCOLOR(0.25f, 0.25f, 0.25f, 1.f);
 
 	tLightInfo.Direction = _vec3(1.f, -1.f, 1.f);
 
 	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 0)))
 		return E_FAIL;
 
-	// 1번 조명
-	tLightInfo.Type = D3DLIGHT_POINT;
-	tLightInfo.Diffuse = D3DXCOLOR(1.f, 0.f, 0.f, 1.f);
-	tLightInfo.Specular = D3DXCOLOR(1.f, 0.f, 0.f, 1.f);
-	tLightInfo.Ambient = D3DXCOLOR(0.2f, 0.f, 0.f, 1.f);
-	tLightInfo.Position = _vec3(5.f, 5.f, 5.f);
-	tLightInfo.Range = 10.f;
+	//// 1번 조명
+	//tLightInfo.Type = D3DLIGHT_POINT;
+	//tLightInfo.Diffuse = D3DXCOLOR(1.f, 0.f, 0.f, 1.f);
+	//tLightInfo.Specular = D3DXCOLOR(1.f, 0.f, 0.f, 1.f);
+	//tLightInfo.Ambient = D3DXCOLOR(0.2f, 0.f, 0.f, 1.f);
+	//tLightInfo.Position = _vec3(5.f, 5.f, 5.f);
+	//tLightInfo.Range = 10.f;
 
-	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 1)))
-		return E_FAIL;
+	//if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 1)))
+	//	return E_FAIL;
 
-	// 2번 조명
-	tLightInfo.Type = D3DLIGHT_POINT;
-	tLightInfo.Diffuse = D3DXCOLOR(0.f, 0.f, 1.f, 1.f);
-	tLightInfo.Specular = D3DXCOLOR(0.f, 0.f, 1.f, 1.f);
-	tLightInfo.Ambient = D3DXCOLOR(0.f, 0.f, 0.2f, 1.f);
-	tLightInfo.Position = _vec3(10.f, 5.f, 10.f);
-	tLightInfo.Range = 10.f;
+	//// 2번 조명
+	//tLightInfo.Type = D3DLIGHT_POINT;
+	//tLightInfo.Diffuse = D3DXCOLOR(0.f, 0.f, 1.f, 1.f);
+	//tLightInfo.Specular = D3DXCOLOR(0.f, 0.f, 1.f, 1.f);
+	//tLightInfo.Ambient = D3DXCOLOR(0.f, 0.f, 0.2f, 1.f);
+	//tLightInfo.Position = _vec3(10.f, 5.f, 10.f);
+	//tLightInfo.Range = 10.f;
 
-	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 2)))
-		return E_FAIL;
+	//if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 2)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -300,13 +306,13 @@ void CStage::Collision_Object()
 					float Meshscale = (obj_1Unit->m_pTransformCom->m_vScale.x + obj_2Unit->m_pTransformCom->m_vScale.x) * 0.5f;
 					if (dist < scale * Meshscale)
 					{
-						obj_1.second->Collision(obj_2.second);
-						collCheck = true;
-						break;
+						obj_1Unit->Collision(obj_1_Sphere, obj_2.second, obj_2_Sphere);
+						/*collCheck = true;
+						break;*/
 					}
 				}
-				if (collCheck)
-					break;
+				/*if (collCheck)
+					break;*/
 			}
 
 

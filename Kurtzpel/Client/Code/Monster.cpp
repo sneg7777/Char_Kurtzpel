@@ -100,3 +100,74 @@ float CMonster::PlayerSearchDistance()
 	return disPlayer; 
 
 }
+
+void CMonster::Set_PlayerTowardAngle()
+{
+	_vec3 monsterPos = m_pTransformCom->m_vInfo[Engine::INFO_POS];
+	_vec3 playerPos = m_pPlayerTrans->m_vInfo[Engine::INFO_POS];
+	_vec3 monsterDir = playerPos - monsterPos;
+	D3DXVec3Normalize(&monsterDir, &monsterDir);
+
+	_vec3 monsterLook = m_pTransformCom->m_vInfo[Engine::INFO_LOOK];
+	D3DXVec3Normalize(&monsterLook, &monsterLook);
+	float radian = D3DXVec3Dot(&monsterDir, &monsterLook);
+	m_TowardAngle1 = D3DXToDegree(radian);
+	_vec3 monsterRight = m_pTransformCom->m_vInfo[Engine::INFO_RIGHT];
+	D3DXVec3Normalize(&monsterLook, &monsterRight);
+	float radian2 = D3DXVec3Dot(&monsterDir, &monsterRight);
+	m_TowardAngle2 = D3DXToDegree(radian2);
+	// 第率
+	if (m_TowardAngle1 < 0.f) {
+		// 坷弗率
+		if (m_TowardAngle2 >= 0.1f) {
+			m_AngleOfSame = false;
+		}
+		// 哭率
+		else if (m_TowardAngle2 < -0.1f) {
+			m_AngleOfSame = false;
+		}
+		else {
+			m_AngleOfSame = true;
+		}
+	}
+	// 菊率
+	else {
+		// 坷弗率
+		if (m_TowardAngle2 >= 0.1f) {
+			m_AngleOfSame = false;
+		}
+		// 哭率
+		else if (m_TowardAngle2 < -0.1f) {
+			m_AngleOfSame = false;
+		}
+		else {
+			m_AngleOfSame = true;
+		}
+	}
+}
+
+void CMonster::Rocate_PlayerToWardAngle(float fTimeDelta, float _speed)
+{
+	// 第率
+	if (m_TowardAngle1 < 0.f) {
+		// 坷弗率
+		if (m_TowardAngle2 >= 0.1f) {
+			m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-_speed) * fTimeDelta);
+		}
+		// 哭率
+		else if (m_TowardAngle2 < -0.1f) {
+			m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(_speed) * fTimeDelta);
+		}
+	}
+	// 菊率
+	else {
+		// 坷弗率
+		if (m_TowardAngle2 >= 0.1f) {
+			m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-_speed) * fTimeDelta);
+		}
+		// 哭率
+		else if (m_TowardAngle2 < -0.1f) {
+			m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(_speed) * fTimeDelta);
+		}
+	}
+}

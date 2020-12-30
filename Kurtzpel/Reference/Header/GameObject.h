@@ -40,6 +40,8 @@ public:
 	_float						m_fMaxHp = 0.f;
 	_float						m_fHp = 0.f;
 	_float						m_fAttack = 0.f;
+	_bool						m_IsDead = false;
+	_ulong						m_dwNaviIndex = 0.f;
 private:
 	CComponent*		Find_Component(const _tchar* pComponentTag, COMPONENTID eID);
 

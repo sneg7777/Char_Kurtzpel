@@ -73,7 +73,7 @@ PS_OUT		PS_MAIN(PS_IN In)
 	// (0 ~ 1) 텍스쳐 uv좌표로 변환
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w * 0.001f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w * 0.00000001f, 0.f, 0.f);
 	
 	return Out;
 }

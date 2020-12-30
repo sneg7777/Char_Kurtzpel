@@ -10,8 +10,9 @@ class CApostleOfGreed : public CMonster
 {
 public:
 	enum State {
-		State_Wait, State_Move, State_Attack1,
+		State_Wait, State_Move, State_Rocate, State_Attack1,
 		State_JumpEnd,
+		State_KnockBack, State_Groggy, State_GroggyUp,
 		State_End
 	};
 	enum bCheck {
@@ -37,8 +38,9 @@ private:
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
 	void		SetUp_OnTerrain(void);
 	void		Calc_Time(_float fTimeDelta);
+	void		Set_StateToAnimation(State _state);
 	void		Pattern(_float fTimeDelta);
-	virtual	void	 Collision(Engine::CGameObject* _col);
+	virtual void	 Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere);
 	_vec3		PickUp_OnTerrain(void);
 
 
@@ -53,6 +55,7 @@ public:
 
 private:
 	virtual void Free(void) override;
+
 	
 
 	//Char

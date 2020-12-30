@@ -182,6 +182,7 @@
     <ClInclude Include="..\Code\MainApp.h" />
     <ClInclude Include="..\Code\Monster.h" />
     <ClInclude Include="..\Code\MonsterTemp.h" />
+    <ClInclude Include="..\Code\NaviTerrain.h" />
     <ClInclude Include="..\Code\Player.h" />
     <ClInclude Include="..\Code\SkyBox.h" />
     <ClInclude Include="..\Code\SphereCollider.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="..\Code\MainApp.cpp" />
     <ClCompile Include="..\Code\Monster.cpp" />
     <ClCompile Include="..\Code\MonsterTemp.cpp" />
+    <ClCompile Include="..\Code\NaviTerrain.cpp" />
     <ClCompile Include="..\Code\Player.cpp" />
     <ClCompile Include="..\Code\SkyBox.cpp" />
     <ClCompile Include="..\Code\SphereCollider.cpp" />

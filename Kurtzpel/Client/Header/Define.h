@@ -11,4 +11,5 @@ extern HINSTANCE g_hInst;
 using namespace Client;
 
 #define GRAVITY 0.22f
+#define GROGGY 5.f;
 #endif // Define_h__

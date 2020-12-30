@@ -116,6 +116,16 @@ _int CUnit_D::Load_ColliderFile(_tchar* pFilePath)
 	return S_OK;
 }
 
+CSphereCollider* CUnit_D::Get_BonePartCollider(CSphereCollider::BonePart _bonePart)
+{
+	for (auto& col : m_VecSphereCollider)
+	{
+		if (col->m_BonePart == _bonePart)
+			return col;
+	}
+	return nullptr;
+}
+
 void CUnit_D::Free(void)
 {
 	Engine::CGameObject::Free();
@@ -139,7 +149,7 @@ Client::_int Client::CUnit_D::Update_Object(const _float& fTimeDelta)
 		sphere->m_pDynamicMesh = this;
 		sphere->Update_Object(fTimeDelta);
 	}
-
+	this;
 	return 0;
 }
 void Client::CUnit_D::Render_Object(void)
@@ -207,4 +217,9 @@ _bool CUnit_D::Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag
 		m_pColliderCom->Get_Min(),
 		m_pColliderCom->Get_Max(),
 		m_pColliderCom->Get_CollMatrix());
+}
+
+void CUnit_D::Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere)
+{
+
 }

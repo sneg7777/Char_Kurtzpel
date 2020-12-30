@@ -34,6 +34,8 @@ protected:
 	HRESULT		Add_Component(void);
 	_bool		Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 	float		PlayerSearchDistance();
+	void		Set_PlayerTowardAngle();
+	void		Rocate_PlayerToWardAngle(float fTimeDelta, float _speed = 120.f);
 public:
 
 	//_bool						m_bColl = false;
@@ -41,9 +43,13 @@ public:
 
 	Engine::CTransform* m_pPlayerTrans = nullptr;
 	bool						m_isSearch = false;
+	float						m_TimeGroggy = 0.f;
 
-public:
-	vector<CSphereCollider*>		m_VecSphereCollider;
+	//
+	bool						m_AngleOfSame = false;
+	float						m_TowardAngle1 = 0.f;
+	float						m_TowardAngle2 = 0.f;
+
 protected:
 	virtual void Free(void) override;
 

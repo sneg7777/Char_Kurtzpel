@@ -6,7 +6,6 @@
 
 #include "SkyBox.h"
 #include "Terrain.h"
-#include "Player.h"
 #include "DynamicCamera.h"
 #include "Monster.h"
 
@@ -19,6 +18,7 @@
 #include "UI.h"
 
 BEGIN(Client)
+class CNaviTerrain;
 
 class CStage : public Engine::CScene
 {
@@ -43,8 +43,8 @@ private:
 
 	HRESULT		Ready_LightInfo(void);
 	CDynamicCamera* m_Camera = nullptr;
-
 public:
+	CNaviTerrain* m_NaviTerrain = nullptr;
 	static CStage*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 private:
 	virtual void Free(void) override;
