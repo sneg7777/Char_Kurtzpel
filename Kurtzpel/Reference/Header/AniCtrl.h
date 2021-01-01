@@ -20,7 +20,7 @@ public:
 	_bool							Is_AnimationSetEnd_Percent(float per);
 	_bool							Is_AnimationSetEnd_Check();
 	void							Is_Loop_Change(_bool change);
-
+	_double							Get_Period() { return m_dPeriod; }
 public:
 	HRESULT			Ready_AnimationCtrl(void);
 

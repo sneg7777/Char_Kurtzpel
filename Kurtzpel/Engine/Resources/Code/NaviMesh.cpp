@@ -69,11 +69,11 @@ void CNaviMesh::Render_NaviMeshes(void)
 		iter->Render_Cell();
 }
 
-_vec3 CNaviMesh::Move_OnNaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir, _ulong* _index)
+_vec3 CNaviMesh::Move_OnNaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir, _ulong* _index, bool* _check)
 {
 	_vec3		vEndPos = *pTargetPos + *pTargetDir;
 
-	
+
 	_vec3		vTargetDir = { pTargetDir->x, 0.f, pTargetDir->z };
 
 	//CCell::MOVING movecheck = m_vecCell[m_dwIndex]->CompareCell2(&vEndPos, &m_dwIndex, &vTargetDir);
@@ -83,11 +83,16 @@ _vec3 CNaviMesh::Move_OnNaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDi
 	//	return *pTargetPos + vTargetDir;
 
 	CCell::MOVING movecheck = m_vecCell[*_index]->CompareCell(&vEndPos, _index);
-	if (CCell::MOVE == m_vecCell[*_index]->CompareCell(&vEndPos, _index))
+	if (CCell::MOVE == m_vecCell[*_index]->CompareCell(&vEndPos, _index)) {
+		if (_check != nullptr)
+			*_check = false;
 		return vEndPos;
-
-	else if (CCell::STOP == m_vecCell[*_index]->CompareCell(&vEndPos, _index))
+	}
+	else if (CCell::STOP == m_vecCell[*_index]->CompareCell(&vEndPos, _index)) {
+		if (_check != nullptr)
+			*_check = true;
 		return *pTargetPos;
+	}
 }
 
 HRESULT Engine::CNaviMesh::Link_Cell(void)

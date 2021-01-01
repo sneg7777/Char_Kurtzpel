@@ -131,7 +131,8 @@ void Client::CHammer::Render_Object(void)
 }
 
 void CHammer::Set_Pos() {
-	if (CPlayer::GetInstance()->m_State == CPlayer::State::State_Attack) {
+	CPlayer* pPlayer = CPlayer::GetInstance();
+	if (pPlayer->m_State == CPlayer::State::State_Attack || pPlayer->m_State == CPlayer::State::State_Skill) {
 		m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 0.f, 0.f, 0.f };
 		BoneAttach("Weapon_Hand_R");
 		if (m_RocationX != 0.f) {

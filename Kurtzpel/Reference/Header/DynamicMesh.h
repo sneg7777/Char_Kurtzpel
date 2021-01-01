@@ -30,6 +30,7 @@ public:
 	_bool							Is_AnimationSetEnd_Check();
 	void							Is_Loop_Change(_bool change);
 	_float			m_Angle;
+	_double							Get_Period();
 	//
 
 private:

@@ -169,6 +169,11 @@ void Engine::CDynamicMesh::Is_Loop_Change(_bool change)
 	return;
 }
 
+_double CDynamicMesh::Get_Period()
+{
+	return m_pAniCtrl->Get_Period();
+}
+
 void CDynamicMesh::Set_AnimationSet(const _uint& iIndex)
 {
 	m_pAniCtrl->Set_AnimationSet(iIndex);

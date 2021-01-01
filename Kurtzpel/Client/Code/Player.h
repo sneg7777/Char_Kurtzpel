@@ -35,13 +35,15 @@ public:
 	static CPlayer* m_pInstance;
 public:
 	enum State {
-		State_Idle, State_Move, State_MoveSA, State_MoveSD, State_Dash, State_Attack,
-		State_JumpEnd,
+		State_Idle, State_Move, State_MoveSA, State_MoveSD, State_Dash, State_Attack, State_Skill,
+		State_JumpEnd, State_JumpComboEnd,
 		State_Damaged,
 		State_End
 	};
 	enum Attack_State {
-		StateA_None, StateA_Basic1, StateA_Basic2, StateA_Basic3, StateA_End
+		StateA_None, StateA_Basic1, StateA_Basic2, StateA_Basic3, StateA_Basic4,
+		StateA_SkillQ, StateA_SkillE, StateA_SkillF, StateA_SkillZ,
+		StateA_End
 	};
 	enum JumpIdleAni {
 		JumpIdle_None, JumpIdle_JumpStart, JumpIdle_JumpUp, JumpIdle_JumpDown, JumpIdle_End
@@ -50,15 +52,20 @@ public:
 		bCheck_DBKeyW, bCheck_DBKeyA, bCheck_DBKeyS, bCheck_DBKeyD,
 		bCheck_KeyW, bCheck_KeyA, bCheck_KeyS, bCheck_KeyD,
 		bCheck_MouseL, bCheck_MouseR, bCheck_MouseL_Already, bCheck_MouseR_Already,
+		bCheck_Skill_F1, bCheck_Skill_F2,
 		bCheck_End
 	};
 	enum TimeCheck {
 		TimeCheck_Dash, TimeCheck_KeyW, TimeCheck_KeyA, TimeCheck_KeyS, TimeCheck_KeyD,
+		TimeCheck_Cool_Q, TimeCheck_Cool_E, TimeCheck_Cool_F,
 		TimeCheck_Invin,
 		TimeCheck_End
 	};
 	enum Weapon_Equip {
 		Weapon_Hammer, Weapon_Bow, Weapon_End
+	};
+	enum AnimationClip {
+		Ani_1, Ani_2, Ani_3, Ani_4, Ani_5, Ani_End
 	};
 private:
 	explicit CPlayer(LPDIRECT3DDEVICE9 pGraphicDev);
@@ -75,11 +82,13 @@ public:
 private:
 	HRESULT		Add_Component(void);
 	void		Set_StateToAnimation(State _state);
+	void		Set_StateToAnimation_Jump(State _state);
 	void		Key_Input(const _float& fTimeDelta);
 	void		Key_InputOfJump(const _float& fTimeDelta);
 	void		Calc_Time(_float fTimeDelta);
 	void		Key_DoubleInput(const _float& fTimeDelta);
 	void		Jump_Control(const _float& fTimeDelta);
+	void		Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _vec3 vPos, _vec3 vDir);
 	virtual void		Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere);
 	_vec3		PickUp_OnTerrain(void);
 
@@ -95,7 +104,8 @@ public:
 	State						m_State =  State::State_Idle;
 	Attack_State				m_Attack_State = Attack_State::StateA_None;
 	JumpIdleAni					m_JumpIdleState = JumpIdleAni::JumpIdle_None;
-
+	//애니메이션 Start Loop End 로 나누어져있는거 순서로 이용할려고
+	AnimationClip				m_AniClip = AnimationClip::Ani_End;
 	//무기
 	Weapon_Equip				m_WeaponEquip;
 	CHammer*					m_Hammer;
