@@ -10,6 +10,7 @@
 #define COOLTIME_Q 5.f
 #define COOLTIME_E 5.f
 #define COOLTIME_F 5.f
+#define COLLDOWNPOWER 2.5f
 CPlayer* CPlayer::m_pInstance = nullptr;
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
@@ -25,11 +26,13 @@ CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
 	{
 		m_TimeCheck[i] = 0.f;
 	}
-	m_fInitSpeed = 10.f;
+	m_fInitSpeed = 11.5f;
+	m_fSpeed = m_fInitSpeed;
 	m_fJumpPower = 0.125f;
 	m_fMaxHp = 1000.f;
 	m_fHp = m_fMaxHp;
 	m_fAttack = 600.f;
+	m_CameraDist = 400.f;
 }
 
 CPlayer::~CPlayer(void)
@@ -60,7 +63,7 @@ HRESULT Client::CPlayer::Add_Component(void)
 	m_pMeshCom->Set_AniAngle(265.f);
 
 	//
-	m_pTransformCom->Set_Pos(&Engine::_vec3{ 3.f, 0.f, 3.f });
+	m_pTransformCom->Set_Pos(&Engine::_vec3{ 54.f, 0.f, 54.f });
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	Engine::CGameObject::Update_Object(1.f);
 
@@ -72,7 +75,7 @@ HRESULT Client::CPlayer::Add_Component(void)
 	{
 		sphere->m_pDynamicMesh = this;
 		if (!sphere->m_FrameName.compare("Core")) {
-			sphere->m_BonePart = CSphereCollider::BonePart_Body;
+			sphere->m_BonePart = CSphereCollider::BonePart_CollBody;
 		}
 		else if (!sphere->m_FrameName.compare("Weapon_Hand_R")) {
 			sphere->m_BonePart = CSphereCollider::BonePart_PlayerHammer;
@@ -113,8 +116,8 @@ void Client::CPlayer::Set_StateToAnimation(State _state) {
 	}
 	case Client::CPlayer::State_Dash: {
 		m_pMeshCom->Set_AnimationSet(266);
-		m_fSpeed = 3.5f * m_fInitSpeed;
-		m_AniSpeed = 1.8f;
+		m_fSpeed = 3.4f * m_fInitSpeed;
+		m_AniSpeed = 2.f;
 		break;
 	}
 	case Client::CPlayer::State_Attack: {
@@ -195,7 +198,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state) {
 	case Client::CPlayer::State_JumpComboEnd: {
 		m_pMeshCom->Set_AnimationSet(155);
 		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.5f;
+		m_AniSpeed = 1.6f;
 		Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 		if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer) {
 			m_State = _state;
@@ -204,9 +207,16 @@ void Client::CPlayer::Set_StateToAnimation(State _state) {
 		break;
 	}
 	case Client::CPlayer::State_Damaged: {
-		m_pMeshCom->Set_AnimationSet(160);
+		if (m_fKnockBackPower < COLLDOWNPOWER) {
+			m_pMeshCom->Set_AnimationSet(160);
+			m_AniSpeed = 1.5f;
+		}
+		else {  //강한어택 맞음
+			m_pMeshCom->Set_AnimationSet(183);
+			m_bCheck[bCheck::bCheck_DamagedUp] = false;
+			m_AniSpeed = 1.4f;
+		}
 		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.5f;
 		break;
 	}
 	case Client::CPlayer::State_End: {
@@ -232,13 +242,36 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 	
 	// 피격 당할때
 	if (m_State == State::State_Damaged) { ////////////////////////////////////////////////////////////////////////////// 피격
-		if (m_pMeshCom->Is_AnimationSetEnd()) {
-			Set_StateToAnimation(State::State_Idle);
+		if (m_fKnockBackPower > COLLDOWNPOWER) {		//강한 공격을 맞고 다운
+			if (!m_bCheck[bCheck::bCheck_DamagedUp]) {
+				if (m_pMeshCom->Is_AnimationSetEnd(0.4f)) {
+					m_bCheck[bCheck::bCheck_DamagedUp] = true;
+					m_pMeshCom->Set_AnimationSet(245);
+				}
+				else {
+					if (m_pMeshCom->Get_AnimationTrackPos() < 0.68f) {
+						m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_fKnockBackDir * fTimeDelta * m_fSpeed * 1.5f * m_fKnockBackPower), &m_dwNaviIndex));
+					}
+					m_fSpeed -= m_fInitSpeed * fTimeDelta * 2.5f;
+					return;
+				}
+			}
+			else {
+				if (m_pMeshCom->Is_AnimationSetEnd(0.9f)) {
+					Set_StateToAnimation(State::State_Idle);
+				}
+				return;
+			}
 		}
-		else {
-			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(-vDir * fTimeDelta * m_fSpeed * 1.5f), &m_dwNaviIndex));
-			m_fSpeed -= m_fInitSpeed * fTimeDelta * 2.5f;
-			return;
+		else {											//약한 공격을 맞고 약간 넉백
+			if (m_pMeshCom->Is_AnimationSetEnd()) {
+				Set_StateToAnimation(State::State_Idle);
+			}
+			else {
+				m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_fKnockBackDir * fTimeDelta * m_fSpeed * 1.5f * m_fKnockBackPower), &m_dwNaviIndex));
+				m_fSpeed -= m_fInitSpeed * fTimeDelta * 2.5f;
+				return;
+			}
 		}
 	}
 	else if (m_State == State::State_Skill) { /////////////////////////////////////////////////////////////////////////// Skill
@@ -624,9 +657,12 @@ void Client::CPlayer::Set_StateToAnimation_Jump(State _state) {
 		break;
 	}
 	case Client::CPlayer::State_Damaged: {
-		m_pMeshCom->Set_AnimationSet(160);
+		m_pMeshCom->Set_AnimationSet(183);
 		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.5f;
+		m_AniSpeed = 1.4f;
+		if (m_fJumpAccel < 1.42f) {
+			m_fJumpAccel = 1.42f;
+		}
 		break;
 	}
 	case Client::CPlayer::State_End: {
@@ -964,11 +1000,15 @@ void Client::CPlayer::Jump_Control(const _float& fTimeDelta)
 	_float fHeight = m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
 
 	if (m_State == State::State_Idle || m_Attack_State == Attack_State::StateA_Basic4) {
-		if (m_fJumpAccel < 1.42f) {
-			if(m_State == State::State_Idle)
+		if (m_State == State::State_Idle) {
+			if (m_fJumpAccel < 1.42f) {
 				m_fJumpAccel += 2.4f * fTimeDelta;
-			else if(m_Attack_State == Attack_State::StateA_Basic4)
+			}
+		}
+		else if(m_Attack_State == Attack_State::StateA_Basic4){
+			if (m_fJumpAccel < 1.64f) {
 				m_fJumpAccel += 3.2f * fTimeDelta;
+			}
 		}
 		float gravity = m_fJumpPower * m_fJumpAccel - (GRAVITY * m_fJumpAccel * m_fJumpAccel * 0.5f);
 
@@ -1057,27 +1097,51 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 	}
 }
 
-void CPlayer::Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere)
+void CPlayer::Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)
 {
 	//충돌체가 같은 팀이었을경우
 	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
 		return;
 
-	if (_mySphere->m_BonePart == CSphereCollider::BonePart_Body) {
+	if (_colSphere->m_BonePart == CSphereCollider::BonePart_CollBody && !_colSphere->m_WeaponAttack) {
+		CUnit_D* _colUnit = dynamic_cast<CUnit_D*>(_col);
+		if (nullptr == _colUnit)
+			return;
+
+		//
+		_vec3 _colUnitPos = _colUnit->m_pTransformCom->m_vInfo[Engine::INFO_POS];
+		_vec3 _myUnitPos = m_pTransformCom->m_vInfo[Engine::INFO_POS];
+		float _Radius = (_colUnit->m_pTransformCom->m_vScale.x * _colSphere->m_pTransformCom->m_vScale.x);
+		_vec3 CollDir = _myUnitPos - _colUnitPos;
+		CollDir.y = 0.f;
+		D3DXVec3Normalize(&CollDir, &CollDir);
+		Engine::CNaviMesh* pNaviMeshCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_NaviTerrain->m_pNaviMeshCom;
+		_vec3	vPos;
+		m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+		m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(CollDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+		Engine::CGameObject::Update_Object(fTimeDelta);
+		//
+	}
+
+	//내 몸에 충돌했을때
+	if (_mySphere->m_BonePart == CSphereCollider::BonePart_CollBody) {
+		//스킬A 돌진시
 		if (m_Attack_State == Attack_State::StateA_SkillQ) {
 			if (m_AniClip == AnimationClip::Ani_2) {
-				if (_colSphere->m_BonePart == CSphereCollider::BonePart_Body) {
+				if (_colSphere->m_BonePart == CSphereCollider::BonePart_CollBody) {
 					m_AniClip = AnimationClip::Ani_3;
 					Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
 					m_pMeshCom->Set_AnimationSet(125);
 				}
 			}
 		}
-		else if (_colSphere->m_BonePart == CSphereCollider::BonePart_Weapon
-			&& _colSphere->m_WeaponAttack) {
+		else if (_colSphere->m_WeaponAttack) {
 			if (m_TimeCheck[TimeCheck_Invin] <= 0.f) {
+				m_fKnockBackPower = _colSphere->m_WeaponPower;
 				Set_StateToAnimation(State::State_Damaged);
-				m_TimeCheck[TimeCheck_Invin] = 2.f;
+				m_TimeCheck[TimeCheck_Invin] = 4.f;
+				m_fKnockBackDir = m_pTransformCom->m_vInfo[Engine::INFO_POS] - dynamic_cast<CUnit_D*>(_col)->m_pTransformCom->m_vInfo[Engine::INFO_POS];
+				D3DXVec3Normalize(&m_fKnockBackDir, &m_fKnockBackDir);
 			}
 		}
 	}

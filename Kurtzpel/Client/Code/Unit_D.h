@@ -30,8 +30,10 @@ public:
 	virtual HRESULT Ready_Object(void) override;
 	virtual _int Update_Object(const _float& fTimeDelta) override;
 	virtual void Render_Object(void) override;
-	virtual void Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere);
+	virtual void Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
 	CSphereCollider*	Get_BonePartCollider(CSphereCollider::BonePart _bonePart);
+	void Set_BonePartColliderAttack(CSphereCollider::BonePart _bonePart, bool _attack, float _power = 1.f);
+
 
 protected:
 	HRESULT		Add_Component(void);
@@ -52,7 +54,8 @@ public:
 	_float						m_AniSpeed = 1.f;
 	_float						m_fMaxKnockBackHp = 0.f;
 	_float						m_fKnockBackHp = 0.f;
-
+	_float						m_fKnockBackPower = 1.f;
+	_vec3						m_fKnockBackDir;
 public:
 	_int Load_ColliderFile(_tchar* pFilePath);
 

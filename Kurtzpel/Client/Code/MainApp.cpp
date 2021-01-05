@@ -27,6 +27,7 @@ HRESULT CMainApp::Ready_MainApp(void)
 
 	//m_pGraphicDev->SetRenderState(D3DRS_ZENABLE, TRUE);	// Z버퍼에 기록은 한다. 단, 정렬을 수행할지 말지 결정
 	//m_pGraphicDev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE); // Z버퍼에 기록을 할지 말지 결정하는 옵션
+	CRandom_Manager::Get_Instance()->Ready_Random();
 
 	return S_OK;
 }
@@ -130,5 +131,6 @@ void CMainApp::Free(void)
 	Engine::Release_Utility();
 	Engine::Release_Resoures();
 	Engine::Release_System();
+	CRandom_Manager::Destroy_Instance();
 }
 

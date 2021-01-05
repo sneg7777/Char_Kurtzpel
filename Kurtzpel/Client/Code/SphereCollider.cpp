@@ -114,10 +114,10 @@ _int CSphereCollider::Update_Object(const _float& fTimeDelta)
 }
 void CSphereCollider::Render_Object(void)
 {
-	if (m_BonePart == BonePart::BonePart_Weapon && !m_WeaponAttack)
+	if (m_BonePart != BonePart::BonePart_CollBody && !m_WeaponAttack)
 		return;
-	if (m_BonePart == BonePart::BonePart_PlayerHammer && !m_WeaponAttack)
-		return;
+	/*if (m_BonePart == BonePart::BonePart_PlayerHammer && !m_WeaponAttack)
+		return;*/
 
 	m_pTransformCom->Set_Transform(m_pGraphicDev);
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);

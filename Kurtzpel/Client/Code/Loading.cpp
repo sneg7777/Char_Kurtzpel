@@ -136,7 +136,7 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/hpbar.png") , E_FAIL);
 	
 	lstrcpy(m_szLoading, L"Mesh Loading.............................");
-	// Stone
+	///////////////////////////////////////////////// Static Mesh
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 												Engine::RESOURCE_STAGE,
 												L"Mesh_Stone", 
@@ -144,6 +144,14 @@ _uint CLoading::Loading_ForStage(void)
 												L"../Bin/Resource/Mesh/StaticMesh/TombStone/",
 												L"TombStone.X"),
 												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_ZonePlace", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/ZonePlace/",
+												L"Zone_Place.X"),
+												E_FAIL);
+	/////////////////////////////////////////////////
 
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 												Engine::RESOURCE_STAGE,

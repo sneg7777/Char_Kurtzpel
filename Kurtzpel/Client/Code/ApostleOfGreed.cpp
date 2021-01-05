@@ -6,9 +6,16 @@
 #include "Player.h"
 #include "Stage.h"
 #include "NaviTerrain.h"
+#include "Random_Manager.h"
 
-#define PLAYER_SEARCH_DISTANCE 15.f
+#define PLAYER_SEARCH_DISTANCE 20.f
 #define PLAYER_ATTACK_DISTANCE 10.f
+#define ApSkill_CoolTotal 3.f
+#define ApSkill_Cool1 5.f
+#define ApSkill_Cool3 5.f
+#define ApSkill_Cool3_DisTance 15.f
+#define ApSkill_Cool7 5.f
+#define ApSkill_Cool7_DisTance 30.f
 CApostleOfGreed::CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CMonster(pGraphicDev)
 {
@@ -20,13 +27,18 @@ CApostleOfGreed::CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev)
 	{
 		m_TimeCheck[i] = 0.f;
 	}
-	m_fInitSpeed = 6.f;
+	for (int i = 0; i < SKill_Cool_Ap::SCool_Ap_End; i++)
+	{
+		m_SkillCool[i] = 0.f;
+	}
+	m_fInitSpeed = 9.f;
 	m_fSpeed = m_fInitSpeed;
-	m_fMaxHp = 5000.f;
+	m_fMaxHp = 12000.f;
 	m_fHp = m_fMaxHp;
 	m_fMaxKnockBackHp = 1000.f;
 	m_fKnockBackHp = m_fMaxKnockBackHp;
 	m_fAttack = 100.f;
+	m_dwNaviIndex = 0;
 }
 
 CApostleOfGreed::~CApostleOfGreed(void)
@@ -55,9 +67,9 @@ HRESULT Client::CApostleOfGreed::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
 	m_pMeshCom->Set_AniAngle(95.f);
-
+	//m_pMeshCom->Set_AniAngle(275.f);
 	//
-	m_pTransformCom->Set_Pos(&Engine::_vec3{ 25.f, 0.f, 25.f });
+	m_pTransformCom->Set_Pos(&_vec3(72.f, 0.f, 72.f));
 	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	Engine::CGameObject::Update_Object(1.f);
 	
@@ -68,14 +80,20 @@ HRESULT Client::CApostleOfGreed::Add_Component(void)
 	{
 		sphere->m_pDynamicMesh = this;
 		if (!sphere->m_FrameName.compare("Bip001")) {
-			sphere->m_BonePart = CSphereCollider::BonePart_Body;
+			sphere->m_BonePart = CSphereCollider::BonePart_CollBody;
 		}
 		else if (!sphere->m_FrameName.compare("weapon")) {
 			sphere->m_BonePart = CSphereCollider::BonePart_Weapon;
 		}
+		else if (!sphere->m_FrameName.compare("Bip001-L-Hand")) {
+			sphere->m_BonePart = CSphereCollider::BonePart_RHand;
+		}
+		else if (!sphere->m_FrameName.compare("Bip001-Spine")) {
+			sphere->m_BonePart = CSphereCollider::BonePart_BodyWeapon;
+		}
 		sphere->m_BoneTeam = CSphereCollider::BoneTeam_Enemy;
 	}
-	m_pTransformCom->Set_Pos(&_vec3(5.f, 0.f, 5.f));
+	//m_pTransformCom->Set_Pos(&_vec3(52.f, 0.f, 52.f));
 	return S_OK;
 }
 
@@ -114,7 +132,7 @@ HRESULT Client::CApostleOfGreed::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pTransformCom->Set_Scale(0.02f, 0.02f, 0.02f);
+	m_pTransformCom->Set_Scale(0.018f, 0.018f, 0.018f);
 	m_pMeshCom->Set_AnimationSet(25);
 
 	return S_OK;
@@ -193,14 +211,27 @@ void Client::CApostleOfGreed::Calc_Time(_float fTimeDelta)
 	if (m_TimeGroggy > 0.f) {
 		m_TimeGroggy -= fTimeDelta;
 	}
+	for (int i = 0; i < SKill_Cool_Ap::SCool_Ap_End; i++)
+	{
+		if (m_SkillCool[i] > 0.f)
+			m_SkillCool[i] -= fTimeDelta;
+	}
 }
 
-void Client::CApostleOfGreed::Set_StateToAnimation(State _state) {
+void Client::CApostleOfGreed::Init_BoneAttack() {
+	for (auto& bone : m_VecSphereCollider)
+	{
+		bone->m_WeaponAttack = false;
+	}
+}
+
+void Client::CApostleOfGreed::Set_StateToAnimation(State _state, Skill_Ap _skill) {
 	switch (_state)
 	{
 	case Client::CApostleOfGreed::State_Wait:
 		m_pMeshCom->Set_AnimationSet(25);
 		m_AniSpeed = 1.f;
+		Init_BoneAttack();
 		break;
 	case Client::CApostleOfGreed::State_Move:
 		m_pMeshCom->Set_AnimationSet(28);
@@ -211,11 +242,30 @@ void Client::CApostleOfGreed::Set_StateToAnimation(State _state) {
 		m_pMeshCom->Set_AnimationSet(24);
 		m_AniSpeed = 1.f;
 		break;
-	case Client::CApostleOfGreed::State_Attack1:
-		m_pMeshCom->Set_AnimationSet(17);
-		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.f;
-		Get_BonePartCollider(CSphereCollider::BonePart_Weapon)->m_WeaponAttack = false;
+	case Client::CApostleOfGreed::State_Skill: {
+		m_SkillState = _skill;
+		if (m_SkillState == Skill_Ap_1) {
+			m_SkillCool[SKill_Cool_Ap::SCool_Ap_1] = ApSkill_Cool1;
+			m_pMeshCom->Set_AnimationSet(17);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.3f;
+			Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, false);
+		}
+		else if (m_SkillState == Skill_Ap_3) {
+			m_SkillCool[SKill_Cool_Ap::SCool_Ap_3] = ApSkill_Cool3;
+			m_pMeshCom->Set_AnimationSet(14);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.3f;
+			Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, false, 4.f);
+			Set_BonePartColliderAttack(CSphereCollider::BonePart_RHand, false, 4.f);
+		}
+		else if (m_SkillState == Skill_Ap_7) {
+			m_SkillCool[SKill_Cool_Ap::SCool_Ap_7] = ApSkill_Cool7;
+			m_pMeshCom->Set_AnimationSet(7);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 0.8f;
+		}
+	}
 		break;
 	case Client::CApostleOfGreed::State_JumpEnd:
 		break;
@@ -247,8 +297,20 @@ void Client::CApostleOfGreed::Pattern(_float fTimeDelta)
 	float playerTodisTance = PlayerSearchDistance();
 	CPlayer* player = CPlayer::GetInstance();
 	Set_PlayerTowardAngle();
+	_vec3	vPos, vDir;
+	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+	D3DXVec3Normalize(&vDir, &vDir);
+	//뭐지?
+	vDir *= -1.f;
 	//////////////////////////////////////////////////////////////////////////////////////
-
+	if (m_isSearch && m_State == State::State_Wait || m_State == State::State_Move || m_State == State::State_Rocate) {
+		bool state_check = Random_Skill(playerTodisTance);
+		if (state_check) {
+			m_State = State::State_Skill;
+			m_SkillCool[SKill_Cool_Ap::SCool_Ap_Total] = ApSkill_CoolTotal;
+		}
+	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	if (m_fKnockBackHp < 0.f) {
 		m_fKnockBackHp = m_fMaxKnockBackHp;
@@ -279,64 +341,48 @@ void Client::CApostleOfGreed::Pattern(_float fTimeDelta)
 			m_pMeshCom->Set_AnimationSet(25);
 		}
 	}
-	else if (m_State == State::State_Attack1) {
-		if (m_pMeshCom->Is_AnimationSetEnd(0.15f)) {
-			Set_StateToAnimation(State::State_Wait);
-		}
-		else {
-			float trackPos = m_pMeshCom->Get_AnimationTrackPos();
-			//m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
-
-			//이따 애니구조 바꾸고 완전히 수정
-			if (trackPos > 1.6f) {
-				Get_BonePartCollider(CSphereCollider::BonePart_Weapon)->m_WeaponAttack = true;
-			}
-			else {
-				Get_BonePartCollider(CSphereCollider::BonePart_Weapon)->m_WeaponAttack = false;
-			}
-			return;
-		}
+	else if (m_State == State::State_Skill) {
+		Event_Skill(fTimeDelta, pNaviMeshCom, vPos, vDir, playerTodisTance);
 	}
 	else if (m_State == State::State_Move) {
 
 		m_vDir = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_pTransformCom->m_vInfo[Engine::INFO_POS];
-		_vec3 afterPos = m_pTransformCom->m_vInfo[Engine::INFO_POS] + (m_vDir * fTimeDelta * m_fSpeed);
+		Rocate_PlayerToWardAngle(fTimeDelta, 180.f);
+		//_vec3 afterPos = m_pTransformCom->m_vInfo[Engine::INFO_POS] + (m_vDir * fTimeDelta * m_fSpeed);
 		//m_pTransformCom->Set_Pos(&afterPos);
+		m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
 		Set_StateToAnimation(State::State_Move);
 		//
-		Rocate_PlayerToWardAngle(fTimeDelta);
 	}
 	else if (m_State == State::State_Rocate) {
 		Set_StateToAnimation(State::State_Rocate);
-		Rocate_PlayerToWardAngle(fTimeDelta);
+		Rocate_PlayerToWardAngle(fTimeDelta, 180.f);
 	}
 
 	if (m_State == State::State_Wait || m_State == State::State_Move || m_State == State::State_Rocate){
 		if (playerTodisTance < PLAYER_SEARCH_DISTANCE) {
 			if (playerTodisTance < PLAYER_ATTACK_DISTANCE) {
-				if(m_AngleOfSame)
-					Set_StateToAnimation(State::State_Attack1);
-				else
+				if (!m_AngleOfSame) {
 					Set_StateToAnimation(State::State_Rocate);
+				}
 			}
 			else {
 				Set_StateToAnimation(State::State_Move);
 			}
 		}
 		else {
-			//Set_StateToAnimation(State::State_Wait);
 			Set_StateToAnimation(State::State_Move);
 		}
-
 	}
 }
 
-void CApostleOfGreed::Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere)
+void CApostleOfGreed::Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)
 {
 	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
 		return;
 
-	if (_mySphere->m_BonePart == CSphereCollider::BonePart_Body) {
+	if (_mySphere->m_BonePart == CSphereCollider::BonePart_CollBody) {
 		if (_colSphere->m_BonePart == CSphereCollider::BonePart_PlayerHammer
 			&& _colSphere->m_WeaponAttack) {
 			if (!_colSphere->Check_DamagedObject(this)) {
@@ -348,4 +394,105 @@ void CApostleOfGreed::Collision(CSphereCollider* _mySphere, Engine::CGameObject*
 		}
 	}
 	
+}
+
+void CApostleOfGreed::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _vec3 vPos, _vec3 vDir, float playerTodisTance) {
+	if (m_SkillState == Skill_Ap::Skill_Ap_1) {
+		if (m_pMeshCom->Is_AnimationSetEnd(0.15f)) {
+			Set_StateToAnimation(State::State_Wait);
+		}
+		else {
+			float trackPos = m_pMeshCom->Get_AnimationTrackPos();
+			//m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
+			if (trackPos > 1.6f) {
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, true);
+			}
+			else {
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, false);
+			}
+			return;
+		}
+	}
+	else if (m_SkillState == Skill_Ap::Skill_Ap_3) {
+		if (m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
+			Set_StateToAnimation(State::State_Wait);
+		}
+		else {
+			float trackPos = m_pMeshCom->Get_AnimationTrackPos();
+			//m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
+			if (2.66f < trackPos && trackPos < 3.33f) {
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, true, 4.f);
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_RHand, true, 4.f);
+			}
+			else {
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, false, 4.f);
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_RHand, false, 4.f);
+			}
+
+			if (2.9f < trackPos && trackPos < 3.1f) {
+				m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * 30.f), &m_dwNaviIndex));
+			}
+			return;
+		}
+	}
+	else if (m_SkillState == Skill_Ap::Skill_Ap_7) {
+		if (m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
+			Set_StateToAnimation(State::State_Wait);
+		}
+		else {
+			float trackPos = m_pMeshCom->Get_AnimationTrackPos();
+			if (0.16f < trackPos && trackPos < 0.76f) {
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_BodyWeapon, true, 3.f);
+				m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_PlayerDistanceSave * fTimeDelta * 1.4f), &m_dwNaviIndex));
+			}
+			else {
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_BodyWeapon, false);
+			}
+		}
+	}
+}
+
+bool CApostleOfGreed::Random_Skill(float playerTodisTance) {
+	if (m_SkillCool[SKill_Cool_Ap::SCool_Ap_Total] > 0.f)
+		return false;
+	int iPattern = CRandom_Manager::Random() % 3;
+	switch (iPattern)
+	{
+	case 0: {
+		if (m_SkillCool[SKill_Cool_Ap::SCool_Ap_1] <= 0.f && playerTodisTance < PLAYER_ATTACK_DISTANCE && m_AngleOfSame) {
+			Set_StateToAnimation(State::State_Skill, Skill_Ap::Skill_Ap_1);
+			return true;
+		}
+		else {
+			return false;
+		}
+		break;
+	}
+	case 1: {
+		if (m_SkillCool[SKill_Cool_Ap::SCool_Ap_3] <= 0.f && playerTodisTance < ApSkill_Cool3_DisTance && m_AngleOfSame) {
+			Set_StateToAnimation(State::State_Skill, Skill_Ap::Skill_Ap_3);
+			return true;
+		}
+		else {
+			return false;
+		}
+		break;
+	}
+	case 2: {
+		if (m_SkillCool[SKill_Cool_Ap::SCool_Ap_7] <= 0.f && PLAYER_SEARCH_DISTANCE < playerTodisTance && playerTodisTance < ApSkill_Cool7_DisTance && m_AngleOfSame) {
+			Set_StateToAnimation(State::State_Skill, Skill_Ap::Skill_Ap_7);
+			m_PlayerDistanceSave = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_pTransformCom->m_vInfo[Engine::INFO_POS];
+			return true;
+		}
+		else {
+			return false;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+	return false;
 }

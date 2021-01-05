@@ -47,3 +47,4 @@
 
 using namespace std;
 
+#include "Random_Manager.h"

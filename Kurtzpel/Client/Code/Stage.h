@@ -48,7 +48,8 @@ public:
 	static CStage*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 private:
 	virtual void Free(void) override;
-	void Collision_Object();
+	void Collision_Object(const _float& fTimeDelta);
+	HRESULT Load_StaticObject(Engine::CLayer* _layer, const _tchar* pLayerTag);
 };
 
 END

@@ -70,9 +70,6 @@
     <Filter Include="02. GameObject\01. Stage\02. Monster">
       <UniqueIdentifier>{fa6b4915-cecb-40a6-9eed-252997339b14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\01. Stage\03. Stone">
-      <UniqueIdentifier>{9ca9802c-94fd-45f3-8163-49d2396cdb9f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Stage\04. Sword">
       <UniqueIdentifier>{f1cd01c4-b0c1-4441-8e88-75857e621480}</UniqueIdentifier>
     </Filter>
@@ -102,6 +99,12 @@
     </Filter>
     <Filter Include="02. GameObject\01. Stage\10.Equip\Hammer">
       <UniqueIdentifier>{65f35e9f-e795-40d6-a3f0-ffec78040645}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Manager">
+      <UniqueIdentifier>{5f7b6b50-31cb-40e7-8301-f487a46f950e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Stage\03. StaticObject">
+      <UniqueIdentifier>{9ca9802c-94fd-45f3-8163-49d2396cdb9f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -163,7 +166,7 @@
       <Filter>02. GameObject\01. Stage\01. SkyBox</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\Stone.h">
-      <Filter>02. GameObject\01. Stage\03. Stone</Filter>
+      <Filter>02. GameObject\01. Stage\03. StaticObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\Sword.h">
       <Filter>02. GameObject\01. Stage\04. Sword</Filter>
@@ -200,6 +203,12 @@
     </ClInclude>
     <ClInclude Include="..\Code\NaviTerrain.h">
       <Filter>02. GameObject\01. Stage\00. Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Random_Manager.h">
+      <Filter>97. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\StaticObject.h">
+      <Filter>02. GameObject\01. Stage\03. StaticObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -243,7 +252,7 @@
       <Filter>02. GameObject\01. Stage\01. SkyBox</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\Stone.cpp">
-      <Filter>02. GameObject\01. Stage\03. Stone</Filter>
+      <Filter>02. GameObject\01. Stage\03. StaticObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\Sword.cpp">
       <Filter>02. GameObject\01. Stage\04. Sword</Filter>
@@ -280,6 +289,12 @@
     </ClCompile>
     <ClCompile Include="..\Code\NaviTerrain.cpp">
       <Filter>02. GameObject\01. Stage\00. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Random_Manager.cpp">
+      <Filter>97. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\StaticObject.cpp">
+      <Filter>02. GameObject\01. Stage\03. StaticObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

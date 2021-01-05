@@ -126,6 +126,19 @@ CSphereCollider* CUnit_D::Get_BonePartCollider(CSphereCollider::BonePart _bonePa
 	return nullptr;
 }
 
+void CUnit_D::Set_BonePartColliderAttack(CSphereCollider::BonePart _bonePart, bool _attack, float _power)
+{
+	for (auto& col : m_VecSphereCollider)
+	{
+		if (col->m_BonePart == _bonePart) {
+			col->m_WeaponAttack = _attack;
+			col->m_WeaponPower = _power;
+			return;
+		}
+	}
+	return;
+}
+
 void CUnit_D::Free(void)
 {
 	Engine::CGameObject::Free();
@@ -219,7 +232,7 @@ _bool CUnit_D::Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag
 		m_pColliderCom->Get_CollMatrix());
 }
 
-void CUnit_D::Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere)
+void CUnit_D::Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)
 {
 
 }

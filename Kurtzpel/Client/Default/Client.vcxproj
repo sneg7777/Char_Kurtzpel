@@ -184,9 +184,11 @@
     <ClInclude Include="..\Code\MonsterTemp.h" />
     <ClInclude Include="..\Code\NaviTerrain.h" />
     <ClInclude Include="..\Code\Player.h" />
+    <ClInclude Include="..\Code\Random_Manager.h" />
     <ClInclude Include="..\Code\SkyBox.h" />
     <ClInclude Include="..\Code\SphereCollider.h" />
     <ClInclude Include="..\Code\Stage.h" />
+    <ClInclude Include="..\Code\StaticObject.h" />
     <ClInclude Include="..\Code\Stone.h" />
     <ClInclude Include="..\Code\Sword.h" />
     <ClInclude Include="..\Code\Terrain.h" />
@@ -218,9 +220,11 @@
     <ClCompile Include="..\Code\MonsterTemp.cpp" />
     <ClCompile Include="..\Code\NaviTerrain.cpp" />
     <ClCompile Include="..\Code\Player.cpp" />
+    <ClCompile Include="..\Code\Random_Manager.cpp" />
     <ClCompile Include="..\Code\SkyBox.cpp" />
     <ClCompile Include="..\Code\SphereCollider.cpp" />
     <ClCompile Include="..\Code\Stage.cpp" />
+    <ClCompile Include="..\Code\StaticObject.cpp" />
     <ClCompile Include="..\Code\Stone.cpp" />
     <ClCompile Include="..\Code\Sword.cpp" />
     <ClCompile Include="..\Code\Terrain.cpp" />

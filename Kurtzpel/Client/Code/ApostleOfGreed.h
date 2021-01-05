@@ -10,7 +10,7 @@ class CApostleOfGreed : public CMonster
 {
 public:
 	enum State {
-		State_Wait, State_Move, State_Rocate, State_Attack1,
+		State_Wait, State_Move, State_Rocate, State_Skill,
 		State_JumpEnd,
 		State_KnockBack, State_Groggy, State_GroggyUp,
 		State_End
@@ -20,6 +20,12 @@ public:
 	};
 	enum TimeCheck {
 		TimeCheck_Dash, TimeCheck_End
+	};
+	enum Skill_Ap {
+		Skill_Ap_None, Skill_Ap_1, Skill_Ap_3, Skill_Ap_7, Skill_Ap_End
+	};
+	enum SKill_Cool_Ap {
+		SCool_Ap_1, SCool_Ap_3, SCool_Ap_7, SCool_Ap_Total, SCool_Ap_End
 	};
 private:
 	explicit CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev);
@@ -38,9 +44,12 @@ private:
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
 	void		SetUp_OnTerrain(void);
 	void		Calc_Time(_float fTimeDelta);
-	void		Set_StateToAnimation(State _state);
+	void		Init_BoneAttack();
+	void		Set_StateToAnimation(State _state, Skill_Ap _skill = Skill_Ap_None);
 	void		Pattern(_float fTimeDelta);
-	virtual void	 Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere);
+	virtual void	 Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
+	void		Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _vec3 vPos, _vec3 vDir, float playerTodisTance);
+	bool		Random_Skill(float playerTodisTance);
 	_vec3		PickUp_OnTerrain(void);
 
 
@@ -49,7 +58,11 @@ private:
 public:
 	bool						m_bCheck[bCheck::bCheck_End];
 	State						m_State =  State::State_Wait;
+	Skill_Ap					m_SkillState = Skill_Ap::Skill_Ap_None;
 	bool						m_StateReady = false;
+	float						m_SkillCool[SCool_Ap_End];
+	_vec3						m_PlayerPosSave;
+	_vec3						m_PlayerDistanceSave;
 public:
 	static CApostleOfGreed*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

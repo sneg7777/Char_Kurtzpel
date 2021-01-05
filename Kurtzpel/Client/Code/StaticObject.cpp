@@ -1,26 +1,33 @@
 #include "stdafx.h"
-#include "Stone.h"
+#include "StaticObject.h"
 #include "Export_Function.h"
 
-CStone::CStone(LPDIRECT3DDEVICE9 pGraphicDev)
+CStaticObject::CStaticObject(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
 {
 
 }
 
-CStone::~CStone(void)
+CStaticObject::~CStaticObject(void)
 {
 
 }
 
-HRESULT Client::CStone::Add_Component(void)
+HRESULT Client::CStaticObject::Add_Component(bool check, wstring _wstring)
 {
 	Engine::CComponent* pComponent = nullptr;
 
 	// Mesh
-	pComponent = m_pMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Stone"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
+	if (check) {
+		pComponent = m_pMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, _wstring.c_str()));
+		NULL_CHECK_RETURN(pComponent, E_FAIL);
+		m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
+	}
+	else {
+		pComponent = m_pMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Stone"));
+		NULL_CHECK_RETURN(pComponent, E_FAIL);
+		m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
+	}
 
 	// Transform
 	pComponent = m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
@@ -34,14 +41,14 @@ HRESULT Client::CStone::Add_Component(void)
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Renderer", pComponent);
 
 	// Calculator
-	pComponent = m_pCalculatorCom = dynamic_cast<Engine::CCalculator*>(Engine::Clone(L"Proto_Calculator"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Calculator", pComponent);
+	//pComponent = m_pCalculatorCom = dynamic_cast<Engine::CCalculator*>(Engine::Clone(L"Proto_Calculator"));
+	//NULL_CHECK_RETURN(pComponent, E_FAIL);
+	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Calculator", pComponent);
 
 	// Collider 
-	pComponent = m_pColliderCom = Engine::CCollider::Create(m_pGraphicDev, m_pMeshCom->Get_VtxPos(), m_pMeshCom->Get_NumVtx(), m_pMeshCom->Get_Stride());
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Collider", pComponent);
+	//pComponent = m_pColliderCom = Engine::CCollider::Create(m_pGraphicDev, m_pMeshCom->Get_VtxPos(), m_pMeshCom->Get_NumVtx(), m_pMeshCom->Get_Stride());
+	//NULL_CHECK_RETURN(pComponent, E_FAIL);
+	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Collider", pComponent);
 
 	// Optimization
 	pComponent = m_pOptimizationCom = dynamic_cast<Engine::COptimization*>(Engine::Clone(L"Proto_Optimization"));
@@ -57,9 +64,9 @@ HRESULT Client::CStone::Add_Component(void)
 }
 
 
-CStone* CStone::Create(LPDIRECT3DDEVICE9 pGraphicDev)
+CStaticObject* CStaticObject::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 {
-	CStone* pInstance = new CStone(pGraphicDev);
+	CStaticObject* pInstance = new CStaticObject(pGraphicDev);
 
 	if (FAILED(pInstance->Ready_Object()))
 		Client::Safe_Release(pInstance);
@@ -67,27 +74,38 @@ CStone* CStone::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 	return pInstance;
 }
 
-void CStone::Free(void)
+CStaticObject* CStaticObject::Create(LPDIRECT3DDEVICE9 pGraphicDev, wstring _wstring)
+{
+	CStaticObject* pInstance = new CStaticObject(pGraphicDev);
+
+	if (FAILED(pInstance->Ready_Object(true, _wstring)))
+		Client::Safe_Release(pInstance);
+
+	return pInstance;
+}
+
+
+void CStaticObject::Free(void)
 {
 	Engine::CGameObject::Free();
 }
 
 
-HRESULT Client::CStone::Ready_Object(void)
+HRESULT Client::CStaticObject::Ready_Object(bool check, wstring _wstring)
 {
-	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
+	FAILED_CHECK_RETURN(Add_Component(check, _wstring), E_FAIL);
 
-	m_pTransformCom->Set_Pos(&_vec3(5.f, 0.f, 5.f));
-	m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(45.f));
-	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
+	//m_pTransformCom->Set_Pos(&_vec3(5.f, 0.f, 5.f));
+	//m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(45.f));
+	//m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
 
 	return S_OK;
 }
-Client::_int Client::CStone::Update_Object(const _float& fTimeDelta)
+Client::_int Client::CStaticObject::Update_Object(const _float& fTimeDelta)
 {
 	Engine::CGameObject::Update_Object(fTimeDelta);
 
-	SetUp_OnTerrain();
+	//SetUp_OnTerrain();
 
 	//m_bColl = Collision_ToObject(L"GameLogic", L"Player");
 
@@ -101,7 +119,7 @@ Client::_int Client::CStone::Update_Object(const _float& fTimeDelta)
 
 	return 0;
 }
-void Client::CStone::Render_Object(void)
+void Client::CStaticObject::Render_Object(void)
 {
 	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
@@ -120,7 +138,7 @@ void Client::CStone::Render_Object(void)
 	Engine::Safe_Release(pEffect);
 }
 
-void Client::CStone::SetUp_OnTerrain(void)
+void Client::CStaticObject::SetUp_OnTerrain(void)
 {
 	_vec3	vPosition;
 	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
@@ -133,7 +151,7 @@ void Client::CStone::SetUp_OnTerrain(void)
 	m_pTransformCom->Move_Pos(vPosition.x, fHeight, vPosition.z);
 }
 
-HRESULT Client::CStone::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
+HRESULT Client::CStaticObject::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
 	_matrix		matWorld, matView, matProj;
 
@@ -148,7 +166,7 @@ HRESULT Client::CStone::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	return S_OK;
 }
 
-_bool CStone::Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag)
+_bool CStaticObject::Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag)
 {
 	Engine::CCollider* pPlayerColliderCom = dynamic_cast<Engine::CCollider*>(Engine::Get_Component(pLayerTag, pObjTag, L"Com_Collider", Engine::ID_STATIC));
 	NULL_CHECK_RETURN(pPlayerColliderCom, false);

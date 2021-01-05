@@ -19,7 +19,8 @@ class CSphereCollider : public Engine::CGameObject
 {
 public:
 	enum BonePart {
-		BonePart_Weapon, BonePart_Body,
+		BonePart_CollBody,
+		BonePart_Weapon, BonePart_BodyWeapon, BonePart_RHand,
 		BonePart_PlayerHammer,
 		BonePart_End
 	};
@@ -64,6 +65,7 @@ public:
 	string m_FrameName;
 	bool m_FrameNameCheck = false;
 	bool m_WeaponAttack = false;
+	float m_WeaponPower = 1.f;
 
 	BonePart m_BonePart = BonePart::BonePart_End;
 	BoneTeam m_BoneTeam = BoneTeam::BoneTeam_End;

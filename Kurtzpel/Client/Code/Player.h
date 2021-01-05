@@ -37,7 +37,7 @@ public:
 	enum State {
 		State_Idle, State_Move, State_MoveSA, State_MoveSD, State_Dash, State_Attack, State_Skill,
 		State_JumpEnd, State_JumpComboEnd,
-		State_Damaged,
+		State_Damaged, State_DamagedDown,
 		State_End
 	};
 	enum Attack_State {
@@ -53,6 +53,7 @@ public:
 		bCheck_KeyW, bCheck_KeyA, bCheck_KeyS, bCheck_KeyD,
 		bCheck_MouseL, bCheck_MouseR, bCheck_MouseL_Already, bCheck_MouseR_Already,
 		bCheck_Skill_F1, bCheck_Skill_F2,
+		bCheck_DamagedUp,
 		bCheck_End
 	};
 	enum TimeCheck {
@@ -89,7 +90,7 @@ private:
 	void		Key_DoubleInput(const _float& fTimeDelta);
 	void		Jump_Control(const _float& fTimeDelta);
 	void		Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _vec3 vPos, _vec3 vDir);
-	virtual void		Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere);
+	virtual void		Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
 	_vec3		PickUp_OnTerrain(void);
 
 private:
@@ -99,7 +100,7 @@ private:
 	_float						m_fJumpAccel = 0.f;
 public:
 	_float						m_LookAtY = 2.5f;
-	_float						m_CameraDist = 300.f;
+	_float						m_CameraDist = 320.f;
 	bool						m_bCheck[bCheck::bCheck_End];
 	State						m_State =  State::State_Idle;
 	Attack_State				m_Attack_State = Attack_State::StateA_None;
@@ -109,6 +110,7 @@ public:
 	//¹«±â
 	Weapon_Equip				m_WeaponEquip;
 	CHammer*					m_Hammer;
+
 public:
 	static CPlayer*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 
