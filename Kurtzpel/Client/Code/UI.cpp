@@ -24,9 +24,9 @@ HRESULT Client::CUI::Add_Component(void)
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Buffer", pComponent);
 
 	// texture
-	pComponent = m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Texture", pComponent);
+	//pComponent = m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UISkill"));
+	//NULL_CHECK_RETURN(pComponent, E_FAIL);
+	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Texture", pComponent);
 
 	// Renderer
 	pComponent = m_pRendererCom = Engine::Get_Renderer();
@@ -39,6 +39,10 @@ HRESULT Client::CUI::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_DYNAMIC].emplace(L"Com_Transform", pComponent);
 
+	// Shader
+	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Mesh"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 	return S_OK;
 }
 
@@ -62,16 +66,18 @@ HRESULT Client::CUI::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_fX = 400.f;
-	m_fY = 550.f;
-
-	m_fSizeX = 800.f;
-	m_fSizeY = 160.f;
+	/*m_fX = 90.f;
+	m_fY = 510.f;
+	m_fSizeX = 81.6f;
+	m_fSizeY = 97.2f;*/
 
 	return S_OK;
 }
 Client::_int Client::CUI::Update_Object(const _float& fTimeDelta)
 {
+	if (m_Weapon != CPlayer::Weapon_None && m_Weapon != CPlayer::GetInstance()->m_WeaponEquip) {
+		return 0;
+	}
 	Engine::CGameObject::Update_Object(fTimeDelta);
 		
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);

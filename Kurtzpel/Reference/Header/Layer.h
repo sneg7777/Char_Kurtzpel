@@ -7,6 +7,10 @@ BEGIN(Engine)
 
 class ENGINE_DLL CLayer : public CBase
 {
+public:
+	enum LayerName {
+		Layer_Environment, Layer_Dynamic, Layer_Static, Layer_Decoration, Layer_UI, Layer_End
+	};
 private:
 	explicit CLayer(void);
 	virtual ~CLayer();
@@ -19,6 +23,7 @@ public:
 	HRESULT		Ready_Layer(void);
 	_int		Update_Layer(const _float& fTimeDelta);
 
+	LayerName		m_LayerName = LayerName::Layer_End;
 private:
 	multimap<const _tchar*, CGameObject*>			m_mapObject;
 

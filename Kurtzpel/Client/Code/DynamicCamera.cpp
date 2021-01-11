@@ -113,10 +113,6 @@ void Client::CDynamicCamera::Mouse_Move(void)
 {
 	//if (CPlayer::GetInstance()->m_State == CPlayer::State_Dash)
 	//	return;
-	CPlayer::State pState = CPlayer::GetInstance()->m_State;
-	if (!(pState == CPlayer::State_Idle || pState == CPlayer::State_Move || pState == CPlayer::State_MoveSA || pState == CPlayer::State_MoveSD
-		|| pState == CPlayer::State_JumpEnd || pState == CPlayer::State_Damaged))
-		return;
 
 
 	_matrix			matCamWorld;
@@ -140,10 +136,20 @@ void Client::CDynamicCamera::Mouse_Move(void)
 		m_vAt = m_vEye + vLook;*/
 	}
 
+	CPlayer::State pState = CPlayer::GetInstance()->m_State;
+	if (!(pState == CPlayer::State_Idle || pState == CPlayer::State_Move || pState == CPlayer::State_MoveSA || pState == CPlayer::State_MoveSD
+		|| pState == CPlayer::State_JumpEnd || pState == CPlayer::State_Damaged))
+		return;
+
 	if (dwMouseMove = Engine::Get_DIMouseMove(Engine::DIMS_X))
 	{
 		//Engine::CTransform* playerTrans = dynamic_cast<Engine::CTransform*>(Engine::CManagement::GetInstance()->Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
 		m_Player->m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(dwMouseMove * 0.1f));
+		m_Player->m_RocateY += dwMouseMove * 0.1f;
+		if (m_Player->m_RocateY > 360.f)
+			m_Player->m_RocateY -= 360.f;
+		else if (m_Player->m_RocateY < 0.f)
+			m_Player->m_RocateY += 360.f;
 		/*_vec3		vUp = _vec3(0.f, 1.f, 0.f);
 		
 		_vec3	vLook = m_vAt - m_vEye;

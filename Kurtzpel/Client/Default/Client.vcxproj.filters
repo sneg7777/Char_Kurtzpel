@@ -106,6 +106,9 @@
     <Filter Include="02. GameObject\01. Stage\03. StaticObject">
       <UniqueIdentifier>{9ca9802c-94fd-45f3-8163-49d2396cdb9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Stage\10.Equip\LongBow">
+      <UniqueIdentifier>{a2c5b966-ddc2-4173-b5e3-cc8569d32a43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -210,6 +213,18 @@
     <ClInclude Include="..\Code\StaticObject.h">
       <Filter>02. GameObject\01. Stage\03. StaticObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\UI_Manager.h">
+      <Filter>97. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\LongBow.h">
+      <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Unit.h">
+      <Filter>02. GameObject\02. Public\01. Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Arrow.h">
+      <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -295,6 +310,18 @@
     </ClCompile>
     <ClCompile Include="..\Code\StaticObject.cpp">
       <Filter>02. GameObject\01. Stage\03. StaticObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\UI_Manager.cpp">
+      <Filter>97. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\LongBow.cpp">
+      <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Unit.cpp">
+      <Filter>02. GameObject\02. Public\01. Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Arrow.cpp">
+      <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

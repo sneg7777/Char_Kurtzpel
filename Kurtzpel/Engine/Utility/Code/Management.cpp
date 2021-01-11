@@ -27,7 +27,7 @@ HRESULT CManagement::Ready_Shader(LPDIRECT3DDEVICE9& pGraphicDev)
 		D3DXCOLOR(0.f, 0.f, 0.f, 0.f)),
 		E_FAIL);
 
-	FAILED_CHECK_RETURN(Ready_DebugBuffer(L"Target_Albedo", 0.f, 0.f, 200.f, 200.f), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_DebugBuffer(L"Target_Albedo", 0.f, 0.f, 100.f, 100.f), E_FAIL);
 
 	FAILED_CHECK_RETURN(Ready_RenderTarget(pGraphicDev,
 		L"Target_Normal",
@@ -36,7 +36,7 @@ HRESULT CManagement::Ready_Shader(LPDIRECT3DDEVICE9& pGraphicDev)
 		D3DFMT_A16B16G16R16F,
 		D3DXCOLOR(0.f, 0.f, 0.f, 1.f)),
 		E_FAIL);
-	FAILED_CHECK_RETURN(Ready_DebugBuffer(L"Target_Normal", 0.f, 200.f, 200.f, 200.f), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_DebugBuffer(L"Target_Normal", 0.f, 100.f, 100.f, 100.f), E_FAIL);
 
 	FAILED_CHECK_RETURN(Ready_RenderTarget(pGraphicDev,
 		L"Target_Shade",
@@ -45,7 +45,7 @@ HRESULT CManagement::Ready_Shader(LPDIRECT3DDEVICE9& pGraphicDev)
 		D3DFMT_A16B16G16R16F,
 		D3DXCOLOR(0.f, 0.f, 0.f, 1.f)),
 		E_FAIL);
-	FAILED_CHECK_RETURN(Ready_DebugBuffer(L"Target_Shade", 200.f, 0.f, 200.f, 200.f), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_DebugBuffer(L"Target_Shade", 0.f, 200.f, 100.f, 100.f), E_FAIL);
 
 	FAILED_CHECK_RETURN(Ready_RenderTarget(pGraphicDev,
 		L"Target_Specular",
@@ -54,7 +54,7 @@ HRESULT CManagement::Ready_Shader(LPDIRECT3DDEVICE9& pGraphicDev)
 		D3DFMT_A16B16G16R16F,
 		D3DXCOLOR(0.f, 0.f, 0.f, 0.f)),
 		E_FAIL);
-	FAILED_CHECK_RETURN(Ready_DebugBuffer(L"Target_Specular", 200.f, 200.f, 200.f, 200.f), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_DebugBuffer(L"Target_Specular", 0.f, 300.f, 100.f, 100.f), E_FAIL);
 
 	FAILED_CHECK_RETURN(Ready_RenderTarget(pGraphicDev,
 		L"Target_Depth",
@@ -63,7 +63,7 @@ HRESULT CManagement::Ready_Shader(LPDIRECT3DDEVICE9& pGraphicDev)
 		D3DFMT_A32B32G32R32F,
 		D3DXCOLOR(1.f, 1.f, 1.f, 1.f)),
 		E_FAIL);
-	FAILED_CHECK_RETURN(Ready_DebugBuffer(L"Target_Depth", 0.f, 400.f, 200.f, 200.f), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_DebugBuffer(L"Target_Depth", 0.f, 400.f, 100.f, 100.f), E_FAIL);
 
 
 	FAILED_CHECK_RETURN(Ready_MRT(L"MRT_Deferred", L"Target_Albedo"), E_FAIL);
@@ -110,6 +110,11 @@ HRESULT CManagement::Ready_Shader(LPDIRECT3DDEVICE9& pGraphicDev)
 	pShader = CShader::Create(pGraphicDev, L"../../Reference/Header/Shader_Effect.hpp");
 	NULL_CHECK_RETURN(pShader, E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Proto(L"Proto_Shader_Effect", pShader), E_FAIL);
+
+	// Test
+	//pShader = CShader::Create(pGraphicDev, L"../../Reference/Header/Shader_Test.hpp");
+	//NULL_CHECK_RETURN(pShader, E_FAIL);
+	//FAILED_CHECK_RETURN(Ready_Proto(L"Proto_Shader_Test", pShader), E_FAIL);
 
 	return S_OK;
 }

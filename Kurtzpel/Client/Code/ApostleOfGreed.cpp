@@ -78,7 +78,7 @@ HRESULT Client::CApostleOfGreed::Add_Component(void)
 	Load_ColliderFile(L"../Bin/Resource/Mesh/DynamicMesh/Save/ApostleOfGreed.dat");
 	for (auto& sphere : m_VecSphereCollider)
 	{
-		sphere->m_pDynamicMesh = this;
+		sphere->m_pDynamicThis = this;
 		if (!sphere->m_FrameName.compare("Bip001")) {
 			sphere->m_BonePart = CSphereCollider::BonePart_CollBody;
 		}
@@ -377,19 +377,19 @@ void Client::CApostleOfGreed::Pattern(_float fTimeDelta)
 	}
 }
 
-void CApostleOfGreed::Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)
+void CApostleOfGreed::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)
 {
 	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
 		return;
 
 	if (_mySphere->m_BonePart == CSphereCollider::BonePart_CollBody) {
-		if (_colSphere->m_BonePart == CSphereCollider::BonePart_PlayerHammer
-			&& _colSphere->m_WeaponAttack) {
+		if (/*_colSphere->m_BonePart == CSphereCollider::BonePart_PlayerHammer
+			&& */_colSphere->m_WeaponAttack) {
 			if (!_colSphere->Check_DamagedObject(this)) {
 				_colSphere->m_VecDamagedObject.emplace_back(this);
 				m_fHp -= _col->m_fAttack;
 				m_fKnockBackHp -= _col->m_fAttack;
-
+				m_isSearch = true;
 			}
 		}
 	}

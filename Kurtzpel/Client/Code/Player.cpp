@@ -4,8 +4,10 @@
 #include "DynamicCamera.h"
 #include "SphereCollider.h"
 #include "Hammer.h"
+#include "LongBow.h"
 #include "Stage.h"
 #include "NaviTerrain.h"
+#include "Arrow.h"
 
 #define COOLTIME_Q 5.f
 #define COOLTIME_E 5.f
@@ -73,7 +75,7 @@ HRESULT Client::CPlayer::Add_Component(void)
 	Load_ColliderFile(L"../Bin/Resource/Mesh/DynamicMesh/Save/Player.dat");
 	for (auto& sphere : m_VecSphereCollider)
 	{
-		sphere->m_pDynamicMesh = this;
+		sphere->m_pDynamicThis = this;
 		if (!sphere->m_FrameName.compare("Core")) {
 			sphere->m_BonePart = CSphereCollider::BonePart_CollBody;
 		}
@@ -85,150 +87,295 @@ HRESULT Client::CPlayer::Add_Component(void)
 	return S_OK;
 }
 
-void Client::CPlayer::Set_StateToAnimation(State _state) {
-	switch (_state)
+void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDir, float fTimeDelta) {
+	if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
 	{
-	case Client::CPlayer::State_Idle: {
-		m_pMeshCom->Set_AnimationSet(243);
-		m_AniSpeed = 1.f;
-		if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
-			m_Hammer->Set_Pos();
-		Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
-		break;
-	}
-	case Client::CPlayer::State_Move: {
-		m_pMeshCom->Set_AnimationSet(260);
-		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.f;
-		break;
-	}
-	case Client::CPlayer::State_MoveSA: {
-		m_pMeshCom->Set_AnimationSet(258);
-		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.f;
-		break;
-	}
-	case Client::CPlayer::State_MoveSD: {
-		m_pMeshCom->Set_AnimationSet(256);
-		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.f;
-		break;
-	}
-	case Client::CPlayer::State_Dash: {
-		m_pMeshCom->Set_AnimationSet(266);
-		m_fSpeed = 3.4f * m_fInitSpeed;
-		m_AniSpeed = 2.f;
-		break;
-	}
-	case Client::CPlayer::State_Attack: {
-		m_Attack_State = (Attack_State)((int)m_Attack_State + 1);
-		Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
-		m_pMeshCom->Set_AniAngle(265.f);
-		//if (m_Attack_State == Attack_State::StateA_End)
-		//	m_Attack_State = Attack_State::StateA_Basic1;
-		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.4f;
-		switch (m_Attack_State)
+		switch (_state)
 		{
-		case Client::CPlayer::StateA_Basic1:
-			m_pMeshCom->Set_AnimationSet(146);
-			break;
-		case Client::CPlayer::StateA_Basic2:
-			m_pMeshCom->Set_AnimationSet(144);
-			break;
-		case Client::CPlayer::StateA_Basic3:
-			m_pMeshCom->Set_AnimationSet(142);
-			break;
-		default:
+		case Client::CPlayer::State_Idle: {
+			m_pMeshCom->Set_AnimationSet(243);
+			m_AniSpeed = 1.f;
+			
+			m_Hammer->Set_Pos();
+			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
 			break;
 		}
-		if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer) {
+		case Client::CPlayer::State_Move: {
+			m_pMeshCom->Set_AnimationSet(260);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.f;
+			break;
+		}
+		case Client::CPlayer::State_MoveSA: {
+			m_pMeshCom->Set_AnimationSet(258);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.f;
+			break;
+		}
+		case Client::CPlayer::State_MoveSD: {
+			m_pMeshCom->Set_AnimationSet(256);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.f;
+			break;
+		}
+		case Client::CPlayer::State_Dash: {
+			m_pMeshCom->Set_AnimationSet(266);
+			m_fSpeed = 2.4f * m_fInitSpeed;
+			m_AniSpeed = 2.1f;
+			break;
+		}
+		case Client::CPlayer::State_Attack: {
+			m_Attack_State = (Attack_State)((int)m_Attack_State + 1);
+			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+			m_pMeshCom->Set_AniAngle(265.f);
+			//if (m_Attack_State == Attack_State::StateA_End)
+			//	m_Attack_State = Attack_State::StateA_Basic1;
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.4f;
+			switch (m_Attack_State)
+			{
+			case Client::CPlayer::StateA_Basic1:
+				m_pMeshCom->Set_AnimationSet(146);
+				break;
+			case Client::CPlayer::StateA_Basic2:
+				m_pMeshCom->Set_AnimationSet(144);
+				break;
+			case Client::CPlayer::StateA_Basic3:
+				m_pMeshCom->Set_AnimationSet(142);
+				break;
+			default:
+				break;
+			}
+			
 			m_State = _state;
 			m_Hammer->Set_Pos();
+			
+			break;
 		}
-		break;
-	}
-	case Client::CPlayer::State_Skill: {
-		Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
-		m_pMeshCom->Set_AniAngle(265.f);
-		m_fSpeed = m_fInitSpeed;
-		switch (m_Attack_State)
-		{
-		case Client::CPlayer::StateA_SkillQ:
-			m_pMeshCom->Set_AnimationSet(123);
-			m_AniSpeed = 1.2f;
-			m_AniClip = AnimationClip::Ani_1;
+		case Client::CPlayer::State_Skill: {
 			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
-			break;
-		case Client::CPlayer::StateA_SkillE: {
-			m_pMeshCom->Set_AnimationSet(134);
-			m_AniSpeed = 1.2f;
-			break;
-		}
-		case Client::CPlayer::StateA_SkillF: {
-			m_pMeshCom->Set_AnimationSet(130);
-			m_AniSpeed = 1.3f;
-			m_bCheck[bCheck::bCheck_Skill_F1] = false;
-			m_bCheck[bCheck::bCheck_Skill_F2] = false;
-			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
-			break;
-		}
-		case Client::CPlayer::StateA_SkillZ: {
-			m_pMeshCom->Set_AnimationSet(13);
-			m_AniSpeed = 1.1f;
-			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
-			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
-			break;
-		}
-		default:
-			break;
-		}
-		if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer) {
+			m_pMeshCom->Set_AniAngle(265.f);
+			m_fSpeed = m_fInitSpeed;
+			switch (m_Attack_State)
+			{
+			case Client::CPlayer::StateA_SkillQ:
+				m_pMeshCom->Set_AnimationSet(123);
+				m_AniSpeed = 1.2f;
+				m_AniClip = AnimationClip::Ani_1;
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+				break;
+			case Client::CPlayer::StateA_SkillE: {
+				m_pMeshCom->Set_AnimationSet(134);
+				m_AniSpeed = 1.2f;
+				break;
+			}
+			case Client::CPlayer::StateA_SkillF: {
+				m_pMeshCom->Set_AnimationSet(130);
+				m_AniSpeed = 1.3f;
+				m_bCheck[bCheck::bCheck_Skill_F1] = false;
+				m_bCheck[bCheck::bCheck_Skill_F2] = false;
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+				break;
+			}
+			case Client::CPlayer::StateA_SkillZ: {
+				m_pMeshCom->Set_AnimationSet(13);
+				m_AniSpeed = 1.1f;
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+				break;
+			}
+			default:
+				break;
+			}
+			
 			m_State = _state;
 			m_Hammer->Set_Pos();
+			
+			break;
 		}
-		break;
-	}
-	case Client::CPlayer::State_JumpEnd: {
-		m_pMeshCom->Set_AnimationSet(277);
-		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.f;
-		break;
-	}
-	case Client::CPlayer::State_JumpComboEnd: {
-		m_pMeshCom->Set_AnimationSet(155);
-		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.6f;
-		Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
-		if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer) {
+		case Client::CPlayer::State_JumpEnd: {
+			m_pMeshCom->Set_AnimationSet(277);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.f;
+			break;
+		}
+		case Client::CPlayer::State_JumpComboEnd: {
+			m_pMeshCom->Set_AnimationSet(155);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.6f;
+			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+			
 			m_State = _state;
 			//m_Hammer->Set_Pos();
+			
+			break;
 		}
-		break;
-	}
-	case Client::CPlayer::State_Damaged: {
-		if (m_fKnockBackPower < COLLDOWNPOWER) {
-			m_pMeshCom->Set_AnimationSet(160);
-			m_AniSpeed = 1.5f;
+		case Client::CPlayer::State_Damaged: {
+			if (m_fKnockBackPower < COLLDOWNPOWER) {
+				m_pMeshCom->Set_AnimationSet(160);
+				m_AniSpeed = 1.5f;
+			}
+			else {  //강한어택 맞음
+				m_pMeshCom->Set_AnimationSet(183);
+				m_bCheck[bCheck::bCheck_DamagedUp] = false;
+				m_AniSpeed = 1.4f;
+			}
+			m_fSpeed = m_fInitSpeed;
+			break;
 		}
-		else {  //강한어택 맞음
-			m_pMeshCom->Set_AnimationSet(183);
-			m_bCheck[bCheck::bCheck_DamagedUp] = false;
-			m_AniSpeed = 1.4f;
+		case Client::CPlayer::State_End: {
+			break;
 		}
-		m_fSpeed = m_fInitSpeed;
-		break;
+		default:
+			break;
+		}
 	}
-	case Client::CPlayer::State_End: {
-		break;
-	}
-	default:
-		break;
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////// LongBow Status
+	else if (m_WeaponEquip == Weapon_Equip::Weapon_LongBow)
+	{
+		switch (_state)
+		{
+		case Client::CPlayer::State_Idle: {
+			m_pMeshCom->Set_AnimationSet(243);
+			m_AniSpeed = 1.f;
+			m_LongBow->Set_Pos();
+			
+			//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
+			break;
+		}
+		case Client::CPlayer::State_Move: {
+			m_pMeshCom->Set_AnimationSet(260);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.f;
+			break;
+		}
+		case Client::CPlayer::State_MoveSA: {
+			m_pMeshCom->Set_AnimationSet(258);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.f;
+			break;
+		}
+		case Client::CPlayer::State_MoveSD: {
+			m_pMeshCom->Set_AnimationSet(256);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.f;
+			break;
+		}
+		case Client::CPlayer::State_Dash: {
+			m_pMeshCom->Set_AnimationSet(266);
+			m_fSpeed = 2.4f * m_fInitSpeed;
+			m_AniSpeed = 2.1f;
+			break;
+		}
+		case Client::CPlayer::State_Attack: {
+			Create_ArrowShot(_vPos, _vDir, fTimeDelta);
+			m_Attack_State = (Attack_State)((int)m_Attack_State + 1);
+			//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+			m_pMeshCom->Set_AniAngle(265.f);
+			//if (m_Attack_State == Attack_State::StateA_End)
+			//	m_Attack_State = Attack_State::StateA_Basic1;
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 3.f;
+			switch (m_Attack_State)
+			{
+			case Client::CPlayer::StateA_Basic1:
+				m_pMeshCom->Set_AnimationSet(77);
+				break;
+			case Client::CPlayer::StateA_Basic2:
+				m_pMeshCom->Set_AnimationSet(74);
+				break;
+			case Client::CPlayer::StateA_Basic3:
+				m_pMeshCom->Set_AnimationSet(71);
+				break;
+			default:
+				break;
+			}
+			
+			m_State = _state;
+			m_LongBow->Set_Pos();
+			
+			break;
+		}
+		case Client::CPlayer::State_Skill: {
+			//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+			m_pMeshCom->Set_AniAngle(265.f);
+			m_fSpeed = m_fInitSpeed;
+			switch (m_Attack_State)
+			{
+			case Client::CPlayer::StateA_SkillQ:
+				m_pMeshCom->Set_AnimationSet(123);
+				m_AniSpeed = 1.2f;
+				m_AniClip = AnimationClip::Ani_1;
+				//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+				break;
+			case Client::CPlayer::StateA_SkillE: {
+				m_pMeshCom->Set_AnimationSet(134);
+				m_AniSpeed = 1.2f;
+				break;
+			}
+			case Client::CPlayer::StateA_SkillF: {
+				m_pMeshCom->Set_AnimationSet(130);
+				m_AniSpeed = 1.3f;
+				m_bCheck[bCheck::bCheck_Skill_F1] = false;
+				m_bCheck[bCheck::bCheck_Skill_F2] = false;
+				//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+				break;
+			}
+			case Client::CPlayer::StateA_SkillZ: {
+				m_pMeshCom->Set_AnimationSet(13);
+				m_AniSpeed = 1.1f;
+				//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+				//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+				break;
+			}
+			default:
+				break;
+			}
+			m_State = _state;
+			m_LongBow->Set_Pos();
+			
+			break;
+		}
+		case Client::CPlayer::State_JumpEnd: {
+			m_pMeshCom->Set_AnimationSet(277);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.f;
+			break;
+		}
+		case Client::CPlayer::State_JumpComboEnd: {
+			m_pMeshCom->Set_AnimationSet(155);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.6f;
+			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+			m_State = _state;
+			//m_LongBow->Set_Pos();
+			
+			break;
+		}
+		case Client::CPlayer::State_Damaged: {
+			if (m_fKnockBackPower < COLLDOWNPOWER) {
+				m_pMeshCom->Set_AnimationSet(160);
+				m_AniSpeed = 1.5f;
+			}
+			else {  //강한어택 맞음
+				m_pMeshCom->Set_AnimationSet(183);
+				m_bCheck[bCheck::bCheck_DamagedUp] = false;
+				m_AniSpeed = 1.4f;
+			}
+			m_fSpeed = m_fInitSpeed;
+			break;
+		}
+		case Client::CPlayer::State_End: {
+			break;
+		}
+		default:
+			break;
+		}
 	}
 	m_State = _state;
 }
 
-void Client::CPlayer::Key_Input(const _float& fTimeDelta)
+void Client::CPlayer::Hammer_Key_Input(const _float& fTimeDelta)
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Engine::CNaviMesh* pNaviMeshCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_NaviTerrain->m_pNaviMeshCom;
@@ -404,11 +551,14 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 	else if ((Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80) && !m_bCheck[bCheck::bCheck_MouseL])
 	{
 		m_bCheck[bCheck::bCheck_MouseL] = true;
-		Set_StateToAnimation(State::State_Attack);
+		Set_StateToAnimation(State::State_Attack, vPos, vDir, fTimeDelta);
 		m_bCheck[bCheck::bCheck_MouseL_Already] = false;
 
 	}
-
+	//////////////////////////////////////////////////////////////////// 무기 체인지
+	else if ((Engine::Get_DIKeyState(DIK_TAB) & 0x80) && m_TimeCheck[TimeCheck_Cool_Tab] <= 0.f) {
+		Change_Weapon();
+	}
 	//////////////////////////////////////////////////////////////////// 이동
 	else if (Engine::Get_DIKeyState(DIK_W) & 0x80)
 	{
@@ -579,17 +729,387 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 
 }
 
-void Client::CPlayer::Set_StateToAnimation_Jump(State _state) {
-	switch (_state)
-	{
-	case Client::CPlayer::State_Idle: {
-		m_AniSpeed = 1.f;
-		if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
-			m_Hammer->Set_Pos();
-		Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
-		m_Attack_State = Attack_State::StateA_None;
-		switch (m_JumpIdleState)
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////// LongBow Pattern
+void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
+{
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Engine::CNaviMesh* pNaviMeshCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_NaviTerrain->m_pNaviMeshCom;
+	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &m_vDir);
+	_vec3	vPos, vDir, vDir2;
+	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+	D3DXVec3Normalize(&vDir, &vDir);
+	Key_DoubleInput(fTimeDelta);
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// 피격 당할때
+	if (m_State == State::State_Damaged) { ////////////////////////////////////////////////////////////////////////////// 피격
+		if (m_fKnockBackPower > COLLDOWNPOWER) {		//강한 공격을 맞고 다운
+			if (!m_bCheck[bCheck::bCheck_DamagedUp]) {
+				if (m_pMeshCom->Is_AnimationSetEnd(0.4f)) {
+					m_bCheck[bCheck::bCheck_DamagedUp] = true;
+					m_pMeshCom->Set_AnimationSet(245);
+				}
+				else {
+					if (m_pMeshCom->Get_AnimationTrackPos() < 0.68f) {
+						m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_fKnockBackDir * fTimeDelta * m_fSpeed * 1.5f * m_fKnockBackPower), &m_dwNaviIndex));
+					}
+					m_fSpeed -= m_fInitSpeed * fTimeDelta * 2.5f;
+					return;
+				}
+			}
+			else {
+				if (m_pMeshCom->Is_AnimationSetEnd(0.9f)) {
+					Set_StateToAnimation(State::State_Idle);
+				}
+				return;
+			}
+		}
+		else {											//약한 공격을 맞고 약간 넉백
+			if (m_pMeshCom->Is_AnimationSetEnd()) {
+				Set_StateToAnimation(State::State_Idle);
+			}
+			else {
+				m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_fKnockBackDir * fTimeDelta * m_fSpeed * 1.5f * m_fKnockBackPower), &m_dwNaviIndex));
+				m_fSpeed -= m_fInitSpeed * fTimeDelta * 2.5f;
+				return;
+			}
+		}
+	}
+	else if (m_State == State::State_Skill) { /////////////////////////////////////////////////////////////////////////// Skill
+
+		Event_Skill(fTimeDelta, pNaviMeshCom, vPos, vDir);
+
+	}
+	else if (m_State == State::State_Attack) { ////////////////////////////////////////////////////////////////////////// Attack
+		if (m_bCheck[bCheck::bCheck_MouseL_Already]) {
+			if (m_Attack_State == Attack_State::StateA_Basic1) {
+				if (m_pMeshCom->Is_AnimationSetEnd(1.06f)) {
+					Set_StateToAnimation(State::State_Attack, vPos, vDir, fTimeDelta);
+						m_bCheck[bCheck::bCheck_MouseL_Already] = false;
+				}
+			}
+			else if (m_Attack_State == Attack_State::StateA_Basic2) {
+				if (m_pMeshCom->Is_AnimationSetEnd(1.6f)) {
+					Set_StateToAnimation(State::State_Attack, vPos, vDir, fTimeDelta);
+					m_bCheck[bCheck::bCheck_MouseL_Already] = false;
+				}
+			}
+		}
+		else if (m_Attack_State == Attack_State::StateA_Basic1 && m_pMeshCom->Is_AnimationSetEnd(0.8f)) {
+			Set_StateToAnimation(State::State_Idle);
+			m_Attack_State = Attack_State::StateA_None;
+		}
+		else if (m_Attack_State == Attack_State::StateA_Basic2 && m_pMeshCom->Is_AnimationSetEnd(1.3f)) {
+			Set_StateToAnimation(State::State_Idle);
+			m_Attack_State = Attack_State::StateA_None;
+		}
+		else if (m_Attack_State == Attack_State::StateA_Basic3 && m_pMeshCom->Is_AnimationSetEnd(1.8f)) {
+			Set_StateToAnimation(State::State_Idle);
+			m_Attack_State = Attack_State::StateA_None;
+		}
+		else if ((Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80) && (m_Attack_State == Attack_State::StateA_Basic1 || m_Attack_State == Attack_State::StateA_Basic2)) {
+			float aniPos = m_pMeshCom->Get_AnimationTrackPos();
+
+			if (aniPos > 0.35f) {
+				m_bCheck[bCheck::bCheck_MouseL_Already] = true;
+			}
+		}
+		//공격모션 동안 움직임
+		float trackPos = m_pMeshCom->Get_AnimationTrackPos();
+		if (trackPos < 0.3f && trackPos > 0.1f) {
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+		}
+		if (trackPos > 0.1f && trackPos < 0.7f) {
+			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+		}
+		else {
+			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
+		}
+	}
+	else if (m_State == State::State_JumpComboEnd) { ////////////////////////////////////////////////////////////////////// JumpComboEnd
+		if (m_pMeshCom->Is_AnimationSetEnd(0.05f)) {
+			Set_StateToAnimation(State::State_Idle);
+		}
+		Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+		return;
+	}
+	else if (m_State == State::State_Dash) { ///////////////////////////////////////////////////////////////////////////// Dash
+		if (m_pMeshCom->Is_AnimationSetEnd(0.7f))//m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
 		{
+			Set_StateToAnimation(State::State_Idle);
+			m_bCheck[bCheck::bCheck_KeyW] = false;
+			m_bCheck[bCheck::bCheck_KeyA] = false;
+			m_bCheck[bCheck::bCheck_KeyS] = false;
+			m_bCheck[bCheck::bCheck_KeyD] = false;
+			m_bCheck[bCheck::bCheck_DBKeyW] = false;
+			m_bCheck[bCheck::bCheck_DBKeyA] = false;
+			m_bCheck[bCheck::bCheck_DBKeyS] = false;
+			m_bCheck[bCheck::bCheck_DBKeyD] = false;
+			return;
+		}
+		else if (m_EnumDir == EnumDir::Up) {
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+			m_pMeshCom->Set_AniAngle(265.f);
+		}
+		else if (m_EnumDir == EnumDir::UpLeft) {
+			vDir2 = { -vDir.z, 0.f, vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+			m_pMeshCom->Set_AniAngle(220.f);
+		}
+		else if (m_EnumDir == EnumDir::UpRight) {
+			vDir2 = { vDir.z, 0.f, -vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+			m_pMeshCom->Set_AniAngle(310.f);
+		}
+		else if (m_EnumDir == EnumDir::Down) {
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * -m_fSpeed), &m_dwNaviIndex));
+			m_pMeshCom->Set_AniAngle(85.f);
+		}
+		else if (m_EnumDir == EnumDir::DownLeft) {
+			vDir2 = { vDir.z, 0.f, -vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_fSpeed), &m_dwNaviIndex));
+			m_pMeshCom->Set_AniAngle(130.f);
+		}
+		else if (m_EnumDir == EnumDir::DownRight) {
+			vDir2 = { -vDir.z, 0.f, vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_fSpeed), &m_dwNaviIndex));
+			m_pMeshCom->Set_AniAngle(40.f);
+		}
+		else if (m_EnumDir == EnumDir::Left) {
+			vDir2 = { -vDir.z, 0.f, vDir.x };
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+			m_pMeshCom->Set_AniAngle(175.f);
+		}
+		else if (m_EnumDir == EnumDir::Right) {
+			vDir2 = { vDir.z, 0.f, -vDir.x };
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+			m_pMeshCom->Set_AniAngle(355.f);
+		}
+
+	}
+	//////////////////////////////////////////////////////////////////// 실제 키 입력부분
+	else if ((Engine::Get_DIKeyState(DIK_F) & 0x80) && m_TimeCheck[TimeCheck_Cool_F] <= 0.f) {
+		m_TimeCheck[TimeCheck_Cool_F] = COOLTIME_F;
+		m_Attack_State = Attack_State::StateA_SkillF;
+		Set_StateToAnimation(State::State_Skill);
+	}
+	else if ((Engine::Get_DIKeyState(DIK_E) & 0x80) && m_TimeCheck[TimeCheck_Cool_E] <= 0.f) {
+		m_TimeCheck[TimeCheck_Cool_E] = COOLTIME_E;
+		m_Attack_State = Attack_State::StateA_SkillE;
+		Set_StateToAnimation(State::State_Skill);
+	}
+	else if ((Engine::Get_DIKeyState(DIK_Q) & 0x80) && m_TimeCheck[TimeCheck_Cool_Q] <= 0.f) {
+		m_TimeCheck[TimeCheck_Cool_Q] = COOLTIME_Q;
+		m_Attack_State = Attack_State::StateA_SkillQ;
+		Set_StateToAnimation(State::State_Skill);
+	}
+	else if ((Engine::Get_DIKeyState(DIK_Z) & 0x80)) {
+		m_Attack_State = Attack_State::StateA_SkillZ;
+		Set_StateToAnimation(State::State_Skill);
+	}
+	//////////////////////////////////////////////////////////////////// 좌클릭공격
+	else if ((Engine::Get_DIMouseState(Engine::DIM_RB) & 0x80) && !m_bCheck[bCheck::bCheck_MouseL])
+	{
+		m_bCheck[bCheck::bCheck_MouseL] = true;
+		Set_StateToAnimation(State::State_Attack, vPos, vDir, fTimeDelta);
+		m_bCheck[bCheck::bCheck_MouseL_Already] = false;
+
+	}
+	//////////////////////////////////////////////////////////////////// 무기 체인지
+	else if ((Engine::Get_DIKeyState(DIK_TAB) & 0x80) && m_TimeCheck[TimeCheck_Cool_Tab] <= 0.f) {
+		Change_Weapon();
+	}
+	//////////////////////////////////////////////////////////////////// 이동
+	else if (Engine::Get_DIKeyState(DIK_W) & 0x80)
+	{
+		if (m_bCheck[bCheck::bCheck_DBKeyW]) {
+			if (m_bCheck[bCheck::bCheck_DBKeyA]) {
+				m_EnumDir = EnumDir::UpLeft;
+			}
+			else if (m_bCheck[bCheck::bCheck_DBKeyD]) {
+				m_EnumDir = EnumDir::UpRight;
+			}
+			else {
+				m_EnumDir = EnumDir::Up;
+			}
+			Set_StateToAnimation(State::State_Dash);
+			m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
+		}
+		else {
+			if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
+				vDir2 = { -vDir.z, 0.f, vDir.x };
+				vDir2 += vDir;
+				D3DXVec3Normalize(&vDir2, &vDir2);
+				m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
+				m_pMeshCom->Set_AniAngle(220.f);
+				Set_StateToAnimation(State::State_Move);
+			}
+			else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
+				vDir2 = { vDir.z, 0.f, -vDir.x };
+				vDir2 += vDir;
+				D3DXVec3Normalize(&vDir2, &vDir2);
+				m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
+				m_pMeshCom->Set_AniAngle(310.f);
+				Set_StateToAnimation(State::State_Move);
+			}
+			else {
+				m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
+				m_pMeshCom->Set_AniAngle(265.f);
+				Set_StateToAnimation(State::State_Move);
+			}
+		}
+	}
+	else if (Engine::Get_DIKeyState(DIK_S) & 0x80)
+	{
+		if (m_bCheck[bCheck::bCheck_DBKeyS]) {
+			if (m_bCheck[bCheck::bCheck_DBKeyA]) {
+				m_EnumDir = EnumDir::DownLeft;
+			}
+			else if (m_bCheck[bCheck::bCheck_DBKeyD]) {
+				m_EnumDir = EnumDir::DownRight;
+			}
+			else {
+				m_EnumDir = EnumDir::Down;
+			}
+			Set_StateToAnimation(State::State_Dash);
+			m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
+		}
+		else if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
+			vDir2 = { vDir.z, 0.f, -vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_fSpeed), &m_dwNaviIndex));
+
+			m_pMeshCom->Set_AniAngle(175.f);
+			Set_StateToAnimation(State::State_MoveSA);
+		}
+		else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
+			vDir2 = { -vDir.z, 0.f, vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_fSpeed), &m_dwNaviIndex));
+
+			m_pMeshCom->Set_AniAngle(355.f);
+			Set_StateToAnimation(State::State_MoveSD);
+		}
+		else {
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * -m_fSpeed), &m_dwNaviIndex));
+
+			m_pMeshCom->Set_AniAngle(85.f);
+			Set_StateToAnimation(State::State_Move);
+		}
+	}
+	else if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
+		m_State = State::State_Move;
+		if (m_bCheck[bCheck::bCheck_DBKeyA]) {
+			if (m_bCheck[bCheck::bCheck_DBKeyW]) {
+				m_EnumDir = EnumDir::UpLeft;
+			}
+			else if (m_bCheck[bCheck::bCheck_DBKeyS]) {
+				m_EnumDir = EnumDir::DownLeft;
+			}
+			else {
+				m_EnumDir = EnumDir::Left;
+			}
+			Set_StateToAnimation(State::State_Dash);
+			m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
+		}
+		else {
+			vDir2 = { -vDir.z, 0.f, vDir.x };
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
+			m_pMeshCom->Set_AniAngle(175.f);
+			Set_StateToAnimation(State::State_Move);
+		}
+	}
+	else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
+		m_State = State::State_Move;
+		if (m_bCheck[bCheck::bCheck_DBKeyD]) {
+			if (m_bCheck[bCheck::bCheck_DBKeyW]) {
+				m_EnumDir = EnumDir::UpRight;
+			}
+			else if (m_bCheck[bCheck::bCheck_DBKeyS]) {
+				m_EnumDir = EnumDir::DownRight;
+			}
+			else {
+				m_EnumDir = EnumDir::Right;
+			}
+			Set_StateToAnimation(State::State_Dash);
+			m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
+		}
+		else {
+			vDir2 = { vDir.z, 0.f, -vDir.x };
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
+			m_pMeshCom->Set_AniAngle(355.f);
+			Set_StateToAnimation(State::State_Move);
+		}
+	}
+
+	//if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
+	//{
+	//	_vec3	vPickPos = PickUp_OnTerrain();
+	//	m_pTransformCom->Pick_Pos(&vPickPos, m_fSpeed, fTimeDelta);
+	//	
+	//}
+	//if (Engine::Get_DIMouseState(Engine::DIM_RB) & 0x80)
+	//{
+	//	m_pMeshCom->Set_AnimationSet(30);
+	//}
+	//if (!m_bCheck[bCheck::bCheck_MoveAni] && true == m_pMeshCom->Is_AnimationSetEnd() && m_AniEnd) {
+	//	m_AniSpeed = 1.f;
+	//	//m_pMeshCom->Set_AniAngle(265.f);
+	//	m_pMeshCom->Set_AnimationSet(243);
+	//	m_AniEnd = false;
+	//}
+	if ((m_State == State::State_Move || m_State == State::State_MoveSA || m_State == State::State_MoveSD)
+		&& !(Engine::Get_DIKeyState(DIK_W) & 0x80) && !(Engine::Get_DIKeyState(DIK_S) & 0x80) && !(Engine::Get_DIKeyState(DIK_A) & 0x80) && !(Engine::Get_DIKeyState(DIK_D) & 0x80)) {
+		m_State = State::State_Idle;
+	}
+
+	if ((m_State == State::State_Idle || m_State == State::State_Move || m_State == State::State_MoveSA || m_State == State::State_MoveSD)
+		&& Engine::Get_DIKeyState(DIK_SPACE) & 0x80) {
+		m_JumpIdleState = JumpIdleAni::JumpIdle_JumpStart;
+	}
+	// Jump 가 끝났을때 모션
+	if (m_State == State::State_JumpEnd) {
+		if (m_pMeshCom->Is_AnimationSetEnd(0.3f)) {
+			Set_StateToAnimation(State::State_Idle);
+		}
+		return;
+	}
+	// Idle 모션
+	else if (m_State == State::State_Idle) {
+		Set_StateToAnimation(State::State_Idle);
+	}
+
+
+}
+
+void Client::CPlayer::Set_StateToAnimation_Jump(State _state, _vec3 _vPos, _vec3 _vDir, float fTimeDelta) {
+	if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer) {
+		switch (_state)
+		{
+		case Client::CPlayer::State_Idle: {
+			m_AniSpeed = 1.f;
+			if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
+				m_Hammer->Set_Pos();
+			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
+			m_Attack_State = Attack_State::StateA_None;
+			switch (m_JumpIdleState)
+			{
 			case JumpIdleAni::JumpIdle_JumpStart: {
 				//m_pMeshCom->Set_AnimationSet(273);
 				m_JumpIdleState = JumpIdleAni::JumpIdle_JumpUp;
@@ -607,74 +1127,169 @@ void Client::CPlayer::Set_StateToAnimation_Jump(State _state) {
 				m_pMeshCom->Set_AnimationSet(279);
 				break;
 			}
+			}
+			m_fSpeed = m_fInitSpeed;
+			break;
 		}
-		m_fSpeed = m_fInitSpeed;
-		break;
-	}
-	case Client::CPlayer::State_Dash: {
-		m_pMeshCom->Set_AnimationSet(266);
-		m_fSpeed = 3.5f * m_fInitSpeed;
-		m_AniSpeed = 1.8f;
-		break;
-	}
-	case Client::CPlayer::State_Attack: {
-		m_Attack_State = (Attack_State)((int)m_Attack_State + 1);
-		Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
-		m_pMeshCom->Set_AniAngle(265.f);
-		//if (m_Attack_State == Attack_State::StateA_End)
-		//	m_Attack_State = Attack_State::StateA_Basic1;
-		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.1f;
-		m_fJumpAccel = 1.2f;
-		switch (m_Attack_State)
-		{
-		case Client::CPlayer::StateA_Basic1:
-			m_pMeshCom->Set_AnimationSet(154);
+		case Client::CPlayer::State_Dash: {
+			m_pMeshCom->Set_AnimationSet(266);
+			m_fSpeed = 3.5f * m_fInitSpeed;
+			m_AniSpeed = 1.8f;
 			break;
-		case Client::CPlayer::StateA_Basic2:
-			m_pMeshCom->Set_AnimationSet(153);
+		}
+		case Client::CPlayer::State_Attack: {
+			m_Attack_State = (Attack_State)((int)m_Attack_State + 1);
+			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+			m_pMeshCom->Set_AniAngle(265.f);
+			//if (m_Attack_State == Attack_State::StateA_End)
+			//	m_Attack_State = Attack_State::StateA_Basic1;
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.1f;
+			m_fJumpAccel = 1.2f;
+			switch (m_Attack_State)
+			{
+			case Client::CPlayer::StateA_Basic1:
+				m_pMeshCom->Set_AnimationSet(154);
+				break;
+			case Client::CPlayer::StateA_Basic2:
+				m_pMeshCom->Set_AnimationSet(153);
+				break;
+			case Client::CPlayer::StateA_Basic3:
+				m_pMeshCom->Set_AnimationSet(152);
+				break;
+			case Client::CPlayer::StateA_Basic4:
+				m_pMeshCom->Set_AnimationSet(150);
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
+				break;
+			default:
+				break;
+			}
+			if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer) {
+				m_State = _state;
+				m_Hammer->Set_Pos();
+			}
 			break;
-		case Client::CPlayer::StateA_Basic3:
-			m_pMeshCom->Set_AnimationSet(152);
+		}
+		case Client::CPlayer::State_JumpEnd: {
+			m_pMeshCom->Set_AnimationSet(277);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.f;
 			break;
-		case Client::CPlayer::StateA_Basic4:
-			m_pMeshCom->Set_AnimationSet(150);
-			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
+		}
+		case Client::CPlayer::State_Damaged: {
+			m_pMeshCom->Set_AnimationSet(183);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.4f;
+			if (m_fJumpAccel < 1.42f) {
+				m_fJumpAccel = 1.42f;
+			}
 			break;
+		}
+		case Client::CPlayer::State_End: {
+			break;
+		}
 		default:
 			break;
 		}
-		if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer) {
-			m_State = _state;
-			m_Hammer->Set_Pos();
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////////// LongBow
+	else if (m_WeaponEquip == Weapon_Equip::Weapon_LongBow) {
+		switch (_state)
+		{
+		case Client::CPlayer::State_Idle: {
+			m_AniSpeed = 1.f;
+			if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
+				m_LongBow->Set_Pos();
+			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
+			m_Attack_State = Attack_State::StateA_None;
+			switch (m_JumpIdleState)
+			{
+			case JumpIdleAni::JumpIdle_JumpStart: {
+				//m_pMeshCom->Set_AnimationSet(273);
+				m_JumpIdleState = JumpIdleAni::JumpIdle_JumpUp;
+				m_AniSpeed = 1.f;
+				m_pMeshCom->Set_AnimationSet(275);
+				break;
+			}
+			case JumpIdleAni::JumpIdle_JumpUp: {
+				m_AniSpeed = 1.f;
+				m_pMeshCom->Set_AnimationSet(275);
+				break;
+			}
+			case JumpIdleAni::JumpIdle_JumpDown: {
+				m_AniSpeed = 1.f;
+				m_pMeshCom->Set_AnimationSet(279);
+				break;
+			}
+			}
+			m_fSpeed = m_fInitSpeed;
+			break;
 		}
-		break;
-	}
-	case Client::CPlayer::State_JumpEnd: {
-		m_pMeshCom->Set_AnimationSet(277);
-		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.f;
-		break;
-	}
-	case Client::CPlayer::State_Damaged: {
-		m_pMeshCom->Set_AnimationSet(183);
-		m_fSpeed = m_fInitSpeed;
-		m_AniSpeed = 1.4f;
-		if (m_fJumpAccel < 1.42f) {
-			m_fJumpAccel = 1.42f;
+		case Client::CPlayer::State_Dash: {
+			m_pMeshCom->Set_AnimationSet(266);
+			m_fSpeed = 3.5f * m_fInitSpeed;
+			m_AniSpeed = 1.8f;
+			break;
 		}
-		break;
-	}
-	case Client::CPlayer::State_End: {
-		break;
-	}
-	default:
-		break;
+		case Client::CPlayer::State_Attack: {
+			m_Attack_State = (Attack_State)((int)m_Attack_State + 1);
+			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+			m_pMeshCom->Set_AniAngle(265.f);
+			//if (m_Attack_State == Attack_State::StateA_End)
+			//	m_Attack_State = Attack_State::StateA_Basic1;
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.1f;
+			m_fJumpAccel = 1.2f;
+			switch (m_Attack_State)
+			{
+			case Client::CPlayer::StateA_Basic1:
+				m_pMeshCom->Set_AnimationSet(154);
+				break;
+			case Client::CPlayer::StateA_Basic2:
+				m_pMeshCom->Set_AnimationSet(153);
+				break;
+			case Client::CPlayer::StateA_Basic3:
+				m_pMeshCom->Set_AnimationSet(152);
+				break;
+			case Client::CPlayer::StateA_Basic4:
+				m_pMeshCom->Set_AnimationSet(150);
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
+				break;
+			default:
+				break;
+			}
+			if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer) {
+				m_State = _state;
+				m_LongBow->Set_Pos();
+			}
+			break;
+		}
+		case Client::CPlayer::State_JumpEnd: {
+			m_pMeshCom->Set_AnimationSet(277);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.f;
+			break;
+		}
+		case Client::CPlayer::State_Damaged: {
+			m_pMeshCom->Set_AnimationSet(183);
+			m_fSpeed = m_fInitSpeed;
+			m_AniSpeed = 1.4f;
+			if (m_fJumpAccel < 1.42f) {
+				m_fJumpAccel = 1.42f;
+			}
+			break;
+		}
+		case Client::CPlayer::State_End: {
+			break;
+		}
+		default:
+			break;
+		}
 	}
 	m_State = _state;
 }
 
-void Client::CPlayer::Key_InputOfJump(const _float& fTimeDelta)
+void Client::CPlayer::Hammer_Key_InputOfJump(const _float& fTimeDelta)
 {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Engine::CNaviMesh* pNaviMeshCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_NaviTerrain->m_pNaviMeshCom;
@@ -819,6 +1434,152 @@ void Client::CPlayer::Key_InputOfJump(const _float& fTimeDelta)
 
 }
 
+
+void Client::CPlayer::LongBow_Key_InputOfJump(const _float& fTimeDelta)
+{
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Engine::CNaviMesh* pNaviMeshCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_NaviTerrain->m_pNaviMeshCom;
+	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &m_vDir);
+	_vec3	vPos, vDir, vDir2;
+	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+	D3DXVec3Normalize(&vDir, &vDir);
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	if (m_State == State::State_Attack) {
+		if (m_Attack_State == Attack_State::StateA_Basic4) {
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed * 1.4f), &m_dwNaviIndex));
+		}
+		else {
+			if (m_bCheck[bCheck::bCheck_MouseL_Already]) {
+				if (m_Attack_State == Attack_State::StateA_Basic1) {
+					if (m_pMeshCom->Is_AnimationSetEnd(0.5f)) {
+						Set_StateToAnimation_Jump(State::State_Attack);
+						m_bCheck[bCheck::bCheck_MouseL_Already] = false;
+						Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
+					}
+				}
+				else if (m_Attack_State == Attack_State::StateA_Basic2) {
+					if (m_pMeshCom->Is_AnimationSetEnd(0.2f)) {
+						Set_StateToAnimation_Jump(State::State_Attack);
+						m_bCheck[bCheck::bCheck_MouseL_Already] = false;
+						Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
+					}
+				}
+				else if (m_Attack_State == Attack_State::StateA_Basic3) {
+					if (m_pMeshCom->Is_AnimationSetEnd(0.2f)) {
+						Set_StateToAnimation_Jump(State::State_Attack);
+						m_bCheck[bCheck::bCheck_MouseL_Already] = false;
+						Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
+					}
+				}
+			}
+			else if (m_Attack_State == Attack_State::StateA_Basic1 && m_pMeshCom->Is_AnimationSetEnd(0.2f)) {
+				Set_StateToAnimation_Jump(State::State_Idle);
+			}
+			else if (m_Attack_State == Attack_State::StateA_Basic2 && m_pMeshCom->Is_AnimationSetEnd(0.02f)) {
+				Set_StateToAnimation_Jump(State::State_Idle);
+			}
+			else if (m_Attack_State == Attack_State::StateA_Basic3 && m_pMeshCom->Is_AnimationSetEnd(0.05f)) {
+				Set_StateToAnimation_Jump(State::State_Idle);
+			}
+			else if ((Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80) &&
+				(m_Attack_State == Attack_State::StateA_Basic1 || m_Attack_State == Attack_State::StateA_Basic2 || m_Attack_State == Attack_State::StateA_Basic3)) {
+				float aniPos = m_pMeshCom->Get_AnimationTrackPos();
+
+				if (aniPos > 0.35f) {
+					m_bCheck[bCheck::bCheck_MouseL_Already] = true;
+				}
+			}
+			//공격모션 동안 움직임
+			float trackPos = m_pMeshCom->Get_AnimationTrackPos();
+			if (trackPos < 0.3f && trackPos > 0.15f) {
+				m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+			}
+			if (trackPos > 0.2f && trackPos < 0.9f) {
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+			}
+			else {
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
+			}
+		}
+	}
+	else if ((Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80) && !m_bCheck[bCheck::bCheck_MouseL])
+	{
+		m_bCheck[bCheck::bCheck_MouseL] = true;
+		Set_StateToAnimation_Jump(State::State_Attack);
+		m_bCheck[bCheck::bCheck_MouseL_Already] = false;
+	}
+	else if (Engine::Get_DIKeyState(DIK_W) & 0x80)
+	{
+		if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
+			vDir2 = { -vDir.z, 0.f, vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
+			m_pMeshCom->Set_AniAngle(220.f);
+		}
+		else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
+			vDir2 = { vDir.z, 0.f, -vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
+			m_pMeshCom->Set_AniAngle(310.f);
+		}
+		else {
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
+			m_pMeshCom->Set_AniAngle(265.f);
+		}
+		Set_StateToAnimation_Jump(State::State_Idle);
+	}
+	else if (Engine::Get_DIKeyState(DIK_S) & 0x80)
+	{
+		if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
+			vDir2 = { vDir.z, 0.f, -vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_fSpeed), &m_dwNaviIndex));
+
+			m_pMeshCom->Set_AniAngle(175.f);
+		}
+		else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
+			vDir2 = { -vDir.z, 0.f, vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_fSpeed), &m_dwNaviIndex));
+
+			m_pMeshCom->Set_AniAngle(355.f);
+		}
+		else {
+			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * -m_fSpeed), &m_dwNaviIndex));
+
+			m_pMeshCom->Set_AniAngle(85.f);
+		}
+		Set_StateToAnimation_Jump(State::State_Idle);
+	}
+	else if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
+		vDir2 = { -vDir.z, 0.f, vDir.x };
+		m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
+		m_pMeshCom->Set_AniAngle(175.f);
+		Set_StateToAnimation_Jump(State::State_Idle);
+	}
+	else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
+		vDir2 = { vDir.z, 0.f, -vDir.x };
+		m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+
+		m_pMeshCom->Set_AniAngle(355.f);
+		Set_StateToAnimation_Jump(State::State_Idle);
+	}
+	else {
+		Set_StateToAnimation_Jump(State::State_Idle);
+	}
+
+}
+
 CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 {
 	CPlayer*	pInstance = new CPlayer(pGraphicDev);
@@ -851,16 +1612,26 @@ Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 
 	Calc_Time(fTimeDelta);
 	if (m_JumpIdleState != JumpIdleAni::JumpIdle_None) {
-		Key_InputOfJump(fTimeDelta);
+		if(m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
+			Hammer_Key_InputOfJump(fTimeDelta);
+		else if (m_WeaponEquip == Weapon_Equip::Weapon_LongBow)
+			LongBow_Key_InputOfJump(fTimeDelta);
 		Jump_Control(fTimeDelta);
 	}
 	else {
 		SetUp_OnTerrain();
-		Key_Input(fTimeDelta);
+		if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
+			Hammer_Key_Input(fTimeDelta);
+		else if (m_WeaponEquip == Weapon_Equip::Weapon_LongBow)
+			LongBow_Key_Input(fTimeDelta);
 	}
 	//
 	//CameraControl(fTimeDelta);
 	//
+	Set_RenderCollSphere();
+	if (Engine::Get_DIKeyState(DIK_F11) & 0x80) {
+		m_pTransformCom->Set_Pos(&Engine::_vec3{ 54.f, 0.f, 54.f });
+	}
 
 	CUnit_D::Update_Object(fTimeDelta);
 	m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
@@ -869,6 +1640,7 @@ Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 
 	return 0;
 }
+
 void Client::CPlayer::Render_Object(void)
 {
 	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
@@ -999,7 +1771,7 @@ void Client::CPlayer::Jump_Control(const _float& fTimeDelta)
 
 	_float fHeight = m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
 
-	if (m_State == State::State_Idle || m_Attack_State == Attack_State::StateA_Basic4) {
+	if (m_State == State::State_Idle || (m_WeaponEquip == Weapon_Equip::Weapon_Hammer && m_Attack_State == Attack_State::StateA_Basic4)) {
 		if (m_State == State::State_Idle) {
 			if (m_fJumpAccel < 1.42f) {
 				m_fJumpAccel += 2.4f * fTimeDelta;
@@ -1097,7 +1869,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 	}
 }
 
-void CPlayer::Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)
+void CPlayer::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)
 {
 	//충돌체가 같은 팀이었을경우
 	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
@@ -1146,4 +1918,56 @@ void CPlayer::Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, C
 		}
 	}
 	//TODO: 점프해서 맞는거 아직 구현이 안되있음.
+}
+
+void CPlayer::Set_RenderCollSphere() {
+	if (Engine::Get_DIKeyState(DIK_F2) & 0x80) {
+		if (!m_bCheck[bCheck_KeyF2]) {
+			if (m_bCheck[bCheck_RenderSphere])
+				m_bCheck[bCheck_RenderSphere] = false;
+			else
+				m_bCheck[bCheck_RenderSphere] = true;
+			m_bCheck[bCheck_KeyF2] = true;
+		}
+	}
+	else {
+		m_bCheck[bCheck_KeyF2] = false;
+	}
+}
+
+void CPlayer::Change_Weapon() {
+	Engine::CLayer* pLayer = Engine::CManagement::GetInstance()->m_pScene->Get_Layer(Engine::CLayer::LayerName::Layer_Static);
+	m_TimeCheck[TimeCheck_Cool_Tab] = 2.f;
+	if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer) {
+		m_Hammer->m_IsDead = true;
+		m_Hammer = nullptr;
+		Engine::CGameObject* pGameObject = CLongBow::Create(m_pGraphicDev);
+		pLayer->Add_GameObject(L"CLongBow", pGameObject);
+
+		m_WeaponEquip = Weapon_Equip::Weapon_LongBow;
+	}
+	else if (m_WeaponEquip == Weapon_Equip::Weapon_LongBow) {
+		m_LongBow->m_IsDead = true;
+		m_LongBow = nullptr;
+		Engine::CGameObject* pGameObject = CHammer::Create(m_pGraphicDev);
+		pLayer->Add_GameObject(L"CHammer", pGameObject);
+
+		m_WeaponEquip = Weapon_Equip::Weapon_Hammer;
+	}
+}
+
+void CPlayer::Create_ArrowShot(_vec3 _vPos, _vec3 _vDir, float fTimeDelta)
+{
+	CUnit* pUnit;
+	Engine::CGameObject* pGameObject = pUnit = CArrow::Create(m_pGraphicDev);
+	pUnit->m_pTransformCom->m_vInfo[Engine::INFO_POS] = _vPos + _vDir * 2.f;
+	pUnit->m_pTransformCom->m_vInfo[Engine::INFO_POS].y += 1.2f + m_LookAtY * 0.2f;
+	pUnit->m_vDir = _vDir;
+	
+	//pUnit->m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian((m_RocateY - 90.f) * 3.f)); // 절대 못구함 ㅅㅂ
+	pUnit->m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(m_RocateY - 90.f)); // 합0도는 정상 합180도면 뒤바꿔야함
+	pUnit->CUnit::Update_Object(fTimeDelta);
+	pUnit->m_fAttack = m_fAttack;
+	Engine::CLayer* pLayer = Engine::CManagement::GetInstance()->m_pScene->Get_Layer(Engine::CLayer::LayerName::Layer_Static);
+	pLayer->Add_GameObject(L"Arrow", pGameObject);
 }

@@ -3,19 +3,29 @@
 
 #include "GameObject.h"
 #include "Define.h"
-
+#include "Player.h"
 BEGIN(Engine)
 
 class CRcTex;
 class CTexture;
 class CRenderer;
 class CTransform;
+class CShader;
 
 END
 
 BEGIN(Client)
 class CUI : public Engine::CGameObject
 {
+public:
+	enum UIKind {
+		UIK_None,
+		UIK_SkillZ_GH, UIK_SkillQ_GH, UIK_SkillE_GH, UIK_SkillF_GH, UIK_SkillLShift, UIK_SkillTab,
+		UIK_SkillZ_LB, UIK_SkillQ_LB, UIK_SkillE_LB, UIK_SkillF_LB,
+		UIK_SkillFrameZ, UIK_SkillFrameQ, UIK_SkillFrameE, UIK_SkillFrameF, UIK_FrameLShift, UIK_FrameTab,
+		UIK_KeyQ, UIK_KeyE, UIK_KeyF, UIK_KeyZ, UIK_KeyLShift, UIK_KeyTab,
+		UIK_End
+	};
 private:
 	explicit CUI(LPDIRECT3DDEVICE9 pGraphicDev);
 	virtual ~CUI(void);
@@ -24,16 +34,20 @@ public:
 	virtual HRESULT Ready_Object(void) override;
 	virtual _int Update_Object(const _float& fTimeDelta) override;
 	virtual void Render_Object(void) override;
-
+	void Set_PosToSize(float fX, float fY, float fSizeX, float fSizeY) {
+		m_fX = fX, m_fY = fY, m_fSizeX = fSizeX, m_fSizeY = fSizeY;
+	}
 private:
 	HRESULT		Add_Component(void);
 
-private:
+public:
 	Engine::CRcTex*				m_pBufferCom = nullptr;
 	Engine::CTexture*			m_pTextureCom = nullptr;
 	Engine::CRenderer*			m_pRendererCom = nullptr;
 	Engine::CTransform*			m_pTransformCom = nullptr;
-
+	Engine::CShader*			m_pShaderCom = nullptr;
+	UIKind						m_UIKind = UIKind::UIK_End;
+	CPlayer::Weapon_Equip		m_Weapon = CPlayer::Weapon_Equip::Weapon_None;
 private:
 	_matrix						m_matProj;
 	_float						m_fX, m_fY;

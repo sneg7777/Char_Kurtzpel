@@ -39,6 +39,7 @@ private:
 	HRESULT		Ready_Environment_Layer(const _tchar* pLayerTag);
 	HRESULT		Ready_GameLogic_Dynamic_Layer(const _tchar* pLayerTag);
 	HRESULT		Ready_GameLogic_Static_Layer(const _tchar* pLayerTag);
+	HRESULT		Ready_GameLogic_Decoration_Layer(const _tchar* pLayerTag);
 	HRESULT		Ready_UI_Layer(const _tchar* pLayerTag);
 
 	HRESULT		Ready_LightInfo(void);
@@ -48,7 +49,8 @@ public:
 	static CStage*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 private:
 	virtual void Free(void) override;
-	void Collision_Object(const _float& fTimeDelta);
+	void Collision_OnlyDynamic_Object(const _float& fTimeDelta);
+	void Collision_StaticToDynamic_Object(const _float& fTimeDelta);
 	HRESULT Load_StaticObject(Engine::CLayer* _layer, const _tchar* pLayerTag);
 };
 

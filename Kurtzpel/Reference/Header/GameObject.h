@@ -23,7 +23,9 @@ public:
 	_float			Get_ViewZ(void) const { return m_fViewZ; }
 
 	void			Compute_ViewZ(const _vec3* pPos);
-
+	void			Emplace_mapComponent(COMPONENTID _comId, _tchar* _name, CComponent* _com) {
+		m_mapComponent[_comId].emplace(_name, _com);
+	}
 public:
 	virtual HRESULT			Ready_Object(void) { return S_OK; };
 	virtual _int			Update_Object(const _float& fTimeDelta);

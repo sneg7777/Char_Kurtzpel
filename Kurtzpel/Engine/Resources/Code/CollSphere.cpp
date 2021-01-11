@@ -118,8 +118,8 @@ void Engine::CCollSphere::Free(void)
 {
 	CVIBuffer::Free();
 
-	Safe_Release(m_pVB);
-	Safe_Release(m_pIB);
+	//Safe_Release(m_pVB);
+	//Safe_Release(m_pIB);
 	
 	int i = Safe_Release(pMesh);
 	

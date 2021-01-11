@@ -215,6 +215,9 @@
     <ClInclude Include="..\Code\Shader_Blend.hpp">
       <Filter>09. Shader\hpp</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\Shader_Test.hpp">
+      <Filter>09. Shader\hpp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Header\Export_Utility.inl">

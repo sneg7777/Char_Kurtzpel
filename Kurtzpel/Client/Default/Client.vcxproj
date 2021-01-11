@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\ApostleOfGreed.h" />
+    <ClInclude Include="..\Code\Arrow.h" />
     <ClInclude Include="..\Code\BackGround.h" />
     <ClInclude Include="..\Code\DynamicCamera.h" />
     <ClInclude Include="..\Code\Effect.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="..\Code\Hammer.h" />
     <ClInclude Include="..\Code\Loading.h" />
     <ClInclude Include="..\Code\Logo.h" />
+    <ClInclude Include="..\Code\LongBow.h" />
     <ClInclude Include="..\Code\MainApp.h" />
     <ClInclude Include="..\Code\Monster.h" />
     <ClInclude Include="..\Code\MonsterTemp.h" />
@@ -196,6 +198,8 @@
     <ClInclude Include="..\Code\TestPlayer.h" />
     <ClInclude Include="..\Code\Tree.h" />
     <ClInclude Include="..\Code\UI.h" />
+    <ClInclude Include="..\Code\UI_Manager.h" />
+    <ClInclude Include="..\Code\Unit.h" />
     <ClInclude Include="..\Code\Unit_D.h" />
     <ClInclude Include="..\Header\Define.h" />
     <ClInclude Include="..\Header\Function.h" />
@@ -208,6 +212,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Code\ApostleOfGreed.cpp" />
+    <ClCompile Include="..\Code\Arrow.cpp" />
     <ClCompile Include="..\Code\BackGround.cpp" />
     <ClCompile Include="..\Code\DynamicCamera.cpp" />
     <ClCompile Include="..\Code\Effect.cpp" />
@@ -215,6 +220,7 @@
     <ClCompile Include="..\Code\Hammer.cpp" />
     <ClCompile Include="..\Code\Loading.cpp" />
     <ClCompile Include="..\Code\Logo.cpp" />
+    <ClCompile Include="..\Code\LongBow.cpp" />
     <ClCompile Include="..\Code\MainApp.cpp" />
     <ClCompile Include="..\Code\Monster.cpp" />
     <ClCompile Include="..\Code\MonsterTemp.cpp" />
@@ -232,6 +238,8 @@
     <ClCompile Include="..\Code\TestPlayer.cpp" />
     <ClCompile Include="..\Code\Tree.cpp" />
     <ClCompile Include="..\Code\UI.cpp" />
+    <ClCompile Include="..\Code\UI_Manager.cpp" />
+    <ClCompile Include="..\Code\Unit.cpp" />
     <ClCompile Include="..\Code\Unit_D.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">

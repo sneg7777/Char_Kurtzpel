@@ -17,6 +17,7 @@ class CShader;
 END
 BEGIN(Client)
 class CHammer;
+class CLongBow;
 class CPlayer : public CUnit_D
 {
 public:
@@ -50,7 +51,7 @@ public:
 	};
 	enum bCheck {
 		bCheck_DBKeyW, bCheck_DBKeyA, bCheck_DBKeyS, bCheck_DBKeyD,
-		bCheck_KeyW, bCheck_KeyA, bCheck_KeyS, bCheck_KeyD,
+		bCheck_KeyW, bCheck_KeyA, bCheck_KeyS, bCheck_KeyD, bCheck_KeyF2, bCheck_RenderSphere,
 		bCheck_MouseL, bCheck_MouseR, bCheck_MouseL_Already, bCheck_MouseR_Already,
 		bCheck_Skill_F1, bCheck_Skill_F2,
 		bCheck_DamagedUp,
@@ -58,12 +59,12 @@ public:
 	};
 	enum TimeCheck {
 		TimeCheck_Dash, TimeCheck_KeyW, TimeCheck_KeyA, TimeCheck_KeyS, TimeCheck_KeyD,
-		TimeCheck_Cool_Q, TimeCheck_Cool_E, TimeCheck_Cool_F,
+		TimeCheck_Cool_Q, TimeCheck_Cool_E, TimeCheck_Cool_F, TimeCheck_Cool_Tab,
 		TimeCheck_Invin,
 		TimeCheck_End
 	};
 	enum Weapon_Equip {
-		Weapon_Hammer, Weapon_Bow, Weapon_End
+		Weapon_None, Weapon_Hammer, Weapon_LongBow, Weapon_End
 	};
 	enum AnimationClip {
 		Ani_1, Ani_2, Ani_3, Ani_4, Ani_5, Ani_End
@@ -82,15 +83,20 @@ public:
 
 private:
 	HRESULT		Add_Component(void);
-	void		Set_StateToAnimation(State _state);
-	void		Set_StateToAnimation_Jump(State _state);
-	void		Key_Input(const _float& fTimeDelta);
-	void		Key_InputOfJump(const _float& fTimeDelta);
+	void		Set_StateToAnimation(State _state, _vec3 _vPos = { 0.f, 0.f, 0.f }, _vec3 _vDir = { 0.f, 0.f, 0.f }, float fTimeDelta = 0.f);
+	void		Set_StateToAnimation_Jump(State _state, _vec3 _vPos = { 0.f, 0.f, 0.f }, _vec3 _vDir = { 0.f, 0.f, 0.f }, float fTimeDelta = 0.f);
+	void		Hammer_Key_Input(const _float& fTimeDelta);
+	void		LongBow_Key_Input(const _float& fTimeDelta);
+	void		Hammer_Key_InputOfJump(const _float& fTimeDelta);
+	void		LongBow_Key_InputOfJump(const _float& fTimeDelta);
 	void		Calc_Time(_float fTimeDelta);
 	void		Key_DoubleInput(const _float& fTimeDelta);
 	void		Jump_Control(const _float& fTimeDelta);
 	void		Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _vec3 vPos, _vec3 vDir);
-	virtual void		Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
+	virtual void		Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
+	void				Set_RenderCollSphere();
+	void		Change_Weapon();
+	void		Create_ArrowShot(_vec3 _vPos, _vec3 _vDir, float fTimeDelta);
 	_vec3		PickUp_OnTerrain(void);
 
 private:
@@ -109,8 +115,9 @@ public:
 	AnimationClip				m_AniClip = AnimationClip::Ani_End;
 	//¹«±â
 	Weapon_Equip				m_WeaponEquip;
-	CHammer*					m_Hammer;
-
+	CHammer*					m_Hammer = nullptr;
+	CLongBow*					m_LongBow =  nullptr;
+	float						m_RocateY = 0.f;
 public:
 	static CPlayer*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

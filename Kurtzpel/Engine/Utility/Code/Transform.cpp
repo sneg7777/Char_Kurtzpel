@@ -144,11 +144,13 @@ void Engine::CTransform::Pick_Pos(const _vec3* pPos, const _float & fSpeed, cons
 	m_vInfo[INFO_POS] += vDir * fSpeed * fTimeDelta;
 }
 
-void CTransform::Set_Pos(const _vec3* pPos)
+void CTransform::Set_Pos(const _vec3* pPos, bool checkY)
 {
 	//m_vInfo[INFO_POS] = *pPos;
 	m_vInfo[INFO_POS].x = pPos->x;
 	m_vInfo[INFO_POS].z = pPos->z;
+	if(checkY)
+		m_vInfo[INFO_POS].y = pPos->y;
 }
 
 void CTransform::Set_Pos(const _float & fX, const _float & fY, const _float & fZ)

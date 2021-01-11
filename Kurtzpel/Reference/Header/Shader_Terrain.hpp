@@ -21,7 +21,7 @@ texture			g_BaseTexture1;
 
 sampler BaseSampler1 = sampler_state
 {
-	texture = g_BaseTexture1;
+	texture = g_BaseTexture1;	
 
 	minfilter = linear;
 	magfilter = linear;
@@ -123,6 +123,7 @@ PS_OUT		PS_MAIN(PS_IN In)
 		g_vPlayerPos.z + g_fRange > In.vAuraPixelPos.z)
 	{
 		float2 vTexUV;
+		
 		
 		// 0 ~ 1로 만들기 위한 공식
 		vTexUV.x = (In.vAuraPixelPos.x - (g_vPlayerPos.x - g_fRange)) / (g_fRange * 2.f);

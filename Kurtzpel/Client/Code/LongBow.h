@@ -1,5 +1,5 @@
-#ifndef Hammer_h__
-#define Hammer_h__
+#ifndef LongBow_h__
+#define LongBow_h__
 
 #include "Unit.h"
 #include "Define.h"
@@ -16,29 +16,29 @@ class CShader;
 END
 
 BEGIN(Client)
-class CHammer : public CUnit
+class CLongBow : public CUnit
 {
 public:
-	enum HammerState {
-		HammerState_Idle, HammerState_Attack, HammerState_End
+	enum LongBowState {
+		LongBowState_Idle, LongBowState_Attack, LongBowState_End
 	};
 public:
-	static CHammer* CHammer::GetInstance(void) {
+	static CLongBow* CLongBow::GetInstance(void) {
 		if (nullptr == m_pInstance) {
 			return nullptr;
 		}
 		return m_pInstance;
 	}
-	static void CHammer::DestroyInstance(void) {
+	static void CLongBow::DestroyInstance(void) {
 		if (nullptr != m_pInstance) {
 			delete m_pInstance;
 			m_pInstance = NULL;
 		}
 	}
-	static CHammer* m_pInstance;
+	static CLongBow* m_pInstance;
 private:
-	explicit CHammer(LPDIRECT3DDEVICE9 pGraphicDev);
-	virtual ~CHammer(void);
+	explicit CLongBow(LPDIRECT3DDEVICE9 pGraphicDev);
+	virtual ~CLongBow(void);
 
 public:
 	virtual HRESULT Ready_Object(void) override;
@@ -54,15 +54,15 @@ private:
 	_bool		Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 
 private:
-	
-	//_bool						m_bColl = false;
+
 	const	_matrix*			m_pParentBoneMatrix = nullptr;
 	const	_matrix*			m_pParentWorldMatrix = nullptr;
 
 	float	m_RocationX = 0.f;
+	float	m_RocationY = 0.f;
 	float	m_RocationZ = 0.f;
 public:
-	static CHammer*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
+	static CLongBow*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 
 private:
 	virtual void Free(void) override;

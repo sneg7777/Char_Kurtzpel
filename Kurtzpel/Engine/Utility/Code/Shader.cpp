@@ -36,6 +36,7 @@ HRESULT Engine::CShader::Ready_Shader(const _tchar* pFilePath)
 										pFilePath,
 										NULL, // 매크로의 주소 (쉐이더 내부에 지원하는)
 										NULL,  // 포함 파일의 주소(쉐이더 내부에 지원하는)
+										//D3DXSHADER_ENABLE_BACKWARDS_COMPATIBILITY,
 										D3DXSHADER_DEBUG, // 쉐이더를 디버깅하겠다는 의미(외부 라이브러리를 이용할 것을 대비하여 넣어놓은 인자)
 										NULL,		// 각종 리소스 정보를 어디에 저장할 것인가(Null인 경우 기본값으로 장치에 저장이 됨)
 										&m_pEffect, 

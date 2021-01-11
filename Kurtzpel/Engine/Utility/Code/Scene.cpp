@@ -92,3 +92,13 @@ Engine::CGameObject* Engine::CScene::Get_GameObject(const _tchar* pLayerTag, con
 
 	return iter2->second;
 }
+
+CLayer* Engine::CScene::Get_Layer(CLayer::LayerName _layerName)
+{
+	for (auto& _layer : m_mapLayer) {
+		if (_layer.second->m_LayerName == _layerName) {
+			return _layer.second;
+		}
+	}
+	return nullptr;
+}

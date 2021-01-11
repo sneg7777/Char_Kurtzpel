@@ -3,7 +3,9 @@
 
 namespace Client
 {
-#define  WINCX 800
+//#define  WINCX 800
+//#define  WINCY 600
+#define  WINCX 1024
 #define  WINCY 600
 
 #define VTXCNTX 129

@@ -24,7 +24,7 @@ Engine::CNaviMesh::~CNaviMesh(void)
 
 HRESULT Engine::CNaviMesh::Ready_NaviMeshes(void)
 {
-	TCHAR szDataPath[MAX_PATH] = L"../Bin/save.dat";
+	TCHAR szDataPath[MAX_PATH] = L"../Bin/save2.dat";
 
 	HANDLE hFile = CreateFile(szDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 

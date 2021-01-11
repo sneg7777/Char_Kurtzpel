@@ -22,6 +22,7 @@ public:
 		BonePart_CollBody,
 		BonePart_Weapon, BonePart_BodyWeapon, BonePart_RHand,
 		BonePart_PlayerHammer,
+		BonePart_Static,
 		BonePart_End
 	};
 	enum BoneTeam {
@@ -37,6 +38,8 @@ public:
 	virtual void Render_Object(void) override;
 
 	bool Check_DamagedObject(Engine::CGameObject* _obj);
+
+	void Set_Transform(float _scale, Engine::_vec3 _pos = {0.f, 0.f, 0.f});
 
 private:
 	HRESULT		Add_Component(void);
@@ -56,8 +59,8 @@ public:
 	//list<Engine::VTXCOL*> list_pVtx;
 	bool m_Dead = false;
 	//자기자신
-	Engine::CGameObject* m_pDynamicMesh = nullptr;
-
+	Engine::CGameObject* m_pDynamicThis = nullptr;
+	Engine::CGameObject* m_pStaticThis = nullptr;
 
 	_bool						m_bColl = false;
 	const	_matrix* m_pParentBoneMatrix = nullptr;
@@ -66,6 +69,7 @@ public:
 	bool m_FrameNameCheck = false;
 	bool m_WeaponAttack = false;
 	float m_WeaponPower = 1.f;
+	bool m_Static = false;
 
 	BonePart m_BonePart = BonePart::BonePart_End;
 	BoneTeam m_BoneTeam = BoneTeam::BoneTeam_End;

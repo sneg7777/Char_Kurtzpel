@@ -5,7 +5,6 @@
 
 
 BEGIN(Client)
-
 class CApostleOfGreed : public CMonster
 {
 public:
@@ -47,7 +46,7 @@ private:
 	void		Init_BoneAttack();
 	void		Set_StateToAnimation(State _state, Skill_Ap _skill = Skill_Ap_None);
 	void		Pattern(_float fTimeDelta);
-	virtual void	 Collision(CSphereCollider* _mySphere, Engine::CGameObject* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
+	virtual void	 Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
 	void		Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _vec3 vPos, _vec3 vDir, float playerTodisTance);
 	bool		Random_Skill(float playerTodisTance);
 	_vec3		PickUp_OnTerrain(void);

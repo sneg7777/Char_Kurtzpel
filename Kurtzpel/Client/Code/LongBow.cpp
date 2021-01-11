@@ -1,68 +1,44 @@
 #include "stdafx.h"
-#include "Hammer.h"
+#include "LongBow.h"
 #include "Export_Function.h"
 #include "Player.h"
 
-CHammer* CHammer::m_pInstance = nullptr;
+CLongBow* CLongBow::m_pInstance = nullptr;
 
-CHammer::CHammer(LPDIRECT3DDEVICE9 pGraphicDev)
+CLongBow::CLongBow(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit(pGraphicDev)
 {
 	
 }
 
-CHammer::~CHammer(void)
+CLongBow::~CLongBow(void)
 {
 
 }
 
-HRESULT Client::CHammer::Add_Component(void)
+HRESULT Client::CLongBow::Add_Component(void)
 {
 	Engine::CComponent*		pComponent = nullptr;
 	
+	CUnit::Add_Component();
+
 	// Mesh
-	pComponent = m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Hammer"));
+	pComponent = m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_LongBow"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
 
-	// Transform
-	pComponent = m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_DYNAMIC].emplace(L"Com_Transform", pComponent);
+	m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 5.f, -15.f, 10.f };
+	m_pTransformCom->m_vScale = { 1.f, 1.f, 1.f };
 
-	// Renderer
-	pComponent = m_pRendererCom = Engine::Get_Renderer();
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	Safe_AddRef(pComponent);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Renderer", pComponent);
-
-	// Calculator
-	pComponent = m_pCalculatorCom = dynamic_cast<Engine::CCalculator*>(Engine::Clone(L"Proto_Calculator"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Calculator", pComponent);
-
-	// Collider 
-	//pComponent = m_pColliderCom = Engine::CCollider::Create(m_pGraphicDev, m_pMeshCom->Get_VtxPos(), m_pMeshCom->Get_NumVtx(), m_pMeshCom->Get_Stride());
-	//NULL_CHECK_RETURN(pComponent, E_FAIL);
-	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Collider", pComponent);
-
-	// Shader
-	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Mesh"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
-
-	m_pTransformCom->m_vInfo[Engine::INFO_POS] = { -25.f, 50.f, 0.f };
-	m_pTransformCom->m_vScale = { 0.7f, 0.7f, 0.7f };
-
-	CPlayer::GetInstance()->m_Hammer = this;
-	CPlayer::GetInstance()->m_WeaponEquip = CPlayer::Weapon_Hammer;
+	CPlayer::GetInstance()->m_LongBow = this;
+	CPlayer::GetInstance()->m_WeaponEquip = CPlayer::Weapon_LongBow;
 	return S_OK;
 }
 
 
-CHammer* CHammer::Create(LPDIRECT3DDEVICE9 pGraphicDev)
+CLongBow* CLongBow::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 {
-	CHammer*	pInstance = new CHammer(pGraphicDev);
+	CLongBow*	pInstance = new CLongBow(pGraphicDev);
 
 	if (FAILED(pInstance->Ready_Object()))
 		Client::Safe_Release(pInstance);
@@ -70,23 +46,26 @@ CHammer* CHammer::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 	return pInstance;
 }
 
-void CHammer::Free(void)
+void CLongBow::Free(void)
 {
 	CUnit::Free();
 }
 
 
-HRESULT Client::CHammer::Ready_Object(void)
+HRESULT Client::CLongBow::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(172.5f));
-	m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(22.5f));
-	m_RocationX = 172.5f;
-	m_RocationZ = 22.5f;
+	//m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(82.f));
+	m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(204.f));
+	m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(211.f));
+	m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(128.f));
+	m_RocationX = 204.f;
+	m_RocationY = 211.f;
+	m_RocationZ = 128.f;
 	return S_OK;
 }
-Client::_int Client::CHammer::Update_Object(const _float& fTimeDelta)
+Client::_int Client::CLongBow::Update_Object(const _float& fTimeDelta)
 {
 	if (m_IsDead) {
 		return 1;
@@ -105,10 +84,34 @@ Client::_int Client::CHammer::Update_Object(const _float& fTimeDelta)
 	//m_bColl = Collision_ToObject(L"GameLogic", L"Player");
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
-
+	
+	//if (Engine::Get_DIKeyState(DIK_X) & 0x80) {
+	//	/*m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(-m_RocationX));
+	//	m_RocationX++;
+	//	m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(m_RocationX));
+	//	if (m_RocationX > 360.f)
+	//		m_RocationX -= 360.f;*/
+	//	m_pTransformCom->m_vInfo[Engine::INFO_POS].x++;
+	//}
+	//if (Engine::Get_DIKeyState(DIK_C) & 0x80) {
+	//	/*m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-m_RocationY));
+	//	m_RocationY++;
+	//	m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(m_RocationY));
+	//	if (m_RocationY > 360.f)
+	//		m_RocationY -= 360.f;*/
+	//	m_pTransformCom->m_vInfo[Engine::INFO_POS].y++;
+	//}
+	//if (Engine::Get_DIKeyState(DIK_V) & 0x80) {
+	//	/*m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-m_RocationZ));
+	//	m_RocationZ++;
+	//	m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(m_RocationZ));
+	//	if (m_RocationZ > 360.f)
+	//		m_RocationZ -= 360.f;*/
+	//	m_pTransformCom->m_vInfo[Engine::INFO_POS].z++;
+	//}
 	return 0;
 }
-void Client::CHammer::Render_Object(void)
+void Client::CLongBow::Render_Object(void)
 {
 	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
@@ -134,31 +137,36 @@ void Client::CHammer::Render_Object(void)
 	m_pColliderCom->Render_Collider(Engine::COL_TRUE, &matWorld);*/
 }
 
-void CHammer::Set_Pos() {
+void CLongBow::Set_Pos() {
 	CPlayer* pPlayer = CPlayer::GetInstance();
 	if (pPlayer->m_State == CPlayer::State::State_Attack || pPlayer->m_State == CPlayer::State::State_Skill) {
 		m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 0.f, 0.f, 0.f };
 		BoneAttach("Weapon_Hand_R");
 		if (m_RocationX != 0.f) {
+			m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 0.f, 0.f, 0.f };
 			m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(-m_RocationX + 0.f));
-			m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-m_RocationZ));
+			m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-m_RocationY + 0.f));
+			m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-m_RocationZ + 0.f));
 			m_RocationX = 0.f;
+			m_RocationY = 0.f;
 			m_RocationZ = 0.f;
 		}
 	}
 	else {
-		m_pTransformCom->m_vInfo[Engine::INFO_POS] = { -25.f, 50.f, 0.f };
 		BoneAttach("Weapon_R");
-		if (m_RocationX != 172.5f) {
-			m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(-m_RocationX + 172.5f));
-			m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-m_RocationZ + 22.5f));
-			m_RocationX = 172.5f;
-			m_RocationZ = 22.5f;
+		if (m_RocationX != 204.f) {
+			m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 5.f, -15.f, 10.f };
+			m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(-m_RocationX + 204.f));
+			m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-m_RocationY + 211.f));
+			m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-m_RocationZ + 128.f));
+			m_RocationX = 204.f;
+			m_RocationY = 211.f;
+			m_RocationZ = 128.f;
 		}
 	}
 }
 
-void CHammer::BoneAttach(string _frame)
+void CLongBow::BoneAttach(string _frame)
 {
 	Engine::CDynamicMesh* pPlayerMeshCom = CPlayer::GetInstance()->m_pMeshCom;
 	//dynamic_cast<Engine::CDynamicMesh*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Mesh", Engine::ID_STATIC));
@@ -175,7 +183,7 @@ void CHammer::BoneAttach(string _frame)
 	m_pParentWorldMatrix = pPlayerTransCom->Get_WorldMatrix();
 }
 
-_bool CHammer::Collision_ToObject(const _tchar * pLayerTag, const _tchar * pObjTag)
+_bool CLongBow::Collision_ToObject(const _tchar * pLayerTag, const _tchar * pObjTag)
 {
 	Engine::CCollider*	pPlayerColliderCom = dynamic_cast<Engine::CCollider*>(Engine::Get_Component(pLayerTag, pObjTag, L"Com_Collider", Engine::ID_STATIC));
 	NULL_CHECK_RETURN(pPlayerColliderCom, false);
@@ -195,7 +203,7 @@ _bool CHammer::Collision_ToObject(const _tchar * pLayerTag, const _tchar * pObjT
 		m_pColliderCom->Get_CollMatrix());
 }
 
-HRESULT Client::CHammer::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
+HRESULT Client::CLongBow::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
 	_matrix		matWorld, matView, matProj;
 

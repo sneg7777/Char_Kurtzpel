@@ -103,11 +103,17 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Player", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Player/Ma.jpg"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Monster", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Monster%d.png"), E_FAIL);
 
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev,
+	//FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev,
+	//											Engine::RESOURCE_STAGE,
+	//											L"Texture_Terrain",
+	//											Engine::TEX_NORMAL,
+	//											L"../Bin/Resource/Texture/Terrain/Grass_%d.tga", 2),
+	//											E_FAIL);
+		FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev,
 												Engine::RESOURCE_STAGE,
 												L"Texture_Terrain",
 												Engine::TEX_NORMAL,
-												L"../Bin/Resource/Texture/Terrain/Grass_%d.tga", 2),
+												L"../Bin/Resource/Texture/Terrain/Ground_%d.tga", 2),
 												E_FAIL);
 
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev,
@@ -133,17 +139,31 @@ _uint CLoading::Loading_ForStage(void)
 
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Explosion/Explosion%d.png", 90), E_FAIL);
 
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/hpbar.png") , E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillFrame", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/SkillFrame.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_RageSkillFrame", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/RageSkillFrame.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillZ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/GH_RageSkill.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillE", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/GH_SkillE.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillF", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/GH_SkillF.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillQ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/GH_SkillQ.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillZ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/LB_RageSkill.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillAvoid", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Skill_Avoid.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillWeaponChange", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Skill_WeaponChange.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyQ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Key_Q.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyE", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Key_E.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyF", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Key_F.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyZ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Key_Z.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyTab", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Key_Tab.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyLShift", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Key_LShift.tga"), E_FAIL);
 	
 	lstrcpy(m_szLoading, L"Mesh Loading.............................");
 	///////////////////////////////////////////////// Static Mesh
-	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+	/*FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 												Engine::RESOURCE_STAGE,
 												L"Mesh_Stone", 
 												Engine::TYPE_STATIC, 
 												L"../Bin/Resource/Mesh/StaticMesh/TombStone/",
 												L"TombStone.X"),
-												E_FAIL);
+												E_FAIL);*/
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 												Engine::RESOURCE_STAGE,
 												L"Mesh_ZonePlace", 
@@ -151,6 +171,63 @@ _uint CLoading::Loading_ForStage(void)
 												L"../Bin/Resource/Mesh/StaticMesh/ZonePlace/",
 												L"Zone_Place.X"),
 												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_PillarTo", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/PillarTo/",
+												L"PillarTo.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_GlassTo", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/GlassTo/",
+												L"GlassTo.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_GlassTo2", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/GlassTo2/",
+												L"GlassTo2.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_Door", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/Door/",
+												L"Door.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_Fence", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/Fence/",
+												L"Fence.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_Platform", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/Platform/",
+												L"Platform.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_ShapeCell", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/ShapeCell/",
+												L"ShapeCell.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_Arrow", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/Arrow/",
+												L"Arrow.X"),
+												E_FAIL);
+
 	/////////////////////////////////////////////////
 
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
@@ -191,6 +268,13 @@ _uint CLoading::Loading_ForStage(void)
 													Engine::TYPE_STATIC,
 													L"../Bin/Resource/Mesh/StaticMesh/Hammer/",
 													L"Hammer.X"),
+													E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+													Engine::RESOURCE_STAGE,
+													L"Mesh_LongBow",
+													Engine::TYPE_STATIC,
+													L"../Bin/Resource/Mesh/StaticMesh/LongBow/",
+													L"LongBow.X"),
 													E_FAIL);
 	/*FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 		Engine::RESOURCE_STAGE,

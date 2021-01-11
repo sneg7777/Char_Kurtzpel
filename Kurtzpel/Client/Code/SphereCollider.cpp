@@ -3,7 +3,7 @@
 #include "Export_Function.h"
 #include "ApostleOfGreed.h"
 #include "Unit_D.h"
-
+#include "Player.h"
 
 CSphereCollider::CSphereCollider(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
@@ -78,46 +78,61 @@ _int CSphereCollider::Update_Object(const _float& fTimeDelta)
 	if (m_Dead)
 		return 1;
 	
-	m_pTransformCom->m_vScale;
-	m_pTransformCom->m_vInfo[Engine::INFO_POS];
-	if (nullptr == m_pParentBoneMatrix)
-	{
-		if (m_pDynamicMesh == nullptr)
-			return 0;
-		if (!m_FrameNameCheck)
-			return 0;
-		
-		//다이나믹을 안쓰고 C스타일의 강제 형변환을 써서 m_pMeshCom 를 참조해도 된다함.
-		//if(nullptr == dynamic_cast<CMonster*>(m_pDynamicMesh));
-		//	return 0;
-		
-		const Engine::D3DXFRAME_DERIVED* pFrame = ((Client::CUnit_D*)m_pDynamicMesh)->m_pMeshCom->Get_FrameByName(m_FrameName.c_str());
+	if (!m_Static) {
+		if (nullptr == m_pParentBoneMatrix)
+		{
+			if (m_pDynamicThis == nullptr)
+				return 0;
+			if (!m_FrameNameCheck)
+				return 0;
 
-		m_pParentBoneMatrix = &pFrame->CombinedTransformationMatrix;
+			//다이나믹을 안쓰고 C스타일의 강제 형변환을 써서 m_pMeshCom 를 참조해도 된다함.
+			//if(nullptr == dynamic_cast<CMonster*>(m_pDynamicMesh));
+			//	return 0;
 
-		Engine::CTransform* pPlayerTransCom = ((Client::CUnit_D*)m_pDynamicMesh)->m_pTransformCom;
-		
-		NULL_CHECK_RETURN(pPlayerTransCom, 0);
-		m_pParentWorldMatrix = pPlayerTransCom->Get_WorldMatrix();
+			const Engine::D3DXFRAME_DERIVED* pFrame = ((Client::CUnit_D*)m_pDynamicThis)->m_pMeshCom->Get_FrameByName(m_FrameName.c_str());
+
+			m_pParentBoneMatrix = &pFrame->CombinedTransformationMatrix;
+
+			Engine::CTransform* pPlayerTransCom = ((Client::CUnit_D*)m_pDynamicThis)->m_pTransformCom;
+
+			NULL_CHECK_RETURN(pPlayerTransCom, 0);
+			m_pParentWorldMatrix = pPlayerTransCom->Get_WorldMatrix();
+		}
+
+		Engine::CGameObject::Update_Object(fTimeDelta);
+
+		m_pTransformCom->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
+
+
+		//m_bColl = Collision_ToObject(L"GameLogic", L"Player");
+
+		m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	}
-
-	Engine::CGameObject::Update_Object(fTimeDelta);
-
-	m_pTransformCom->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
-
-
-	//m_bColl = Collision_ToObject(L"GameLogic", L"Player");
-
-	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
+	else {
+		Engine::CGameObject::Update_Object(fTimeDelta);
+		_vec3 vPos;
+		dynamic_cast<CUnit*>(m_pStaticThis)->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+		m_pTransformCom->m_vInfo[Engine::INFO_POS] = vPos;
+		
+		m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
+	}
 
 	return 0;
 }
 void CSphereCollider::Render_Object(void)
 {
+	if (!CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck_RenderSphere])
+		return;
 	if (m_BonePart != BonePart::BonePart_CollBody && !m_WeaponAttack)
 		return;
 	/*if (m_BonePart == BonePart::BonePart_PlayerHammer && !m_WeaponAttack)
 		return;*/
+	if (m_BonePart == BonePart::BonePart_Static) {
+		_vec3 vPos;
+		m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+		int i = 0;
+	}
 
 	m_pTransformCom->Set_Transform(m_pGraphicDev);
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -156,4 +171,11 @@ bool CSphereCollider::Check_DamagedObject(Engine::CGameObject* _obj)
 			return true;
 	}
 	return false;
+}
+
+void CSphereCollider::Set_Transform(float _scale, Engine::_vec3 _pos)
+{
+	m_pTransformCom->m_vScale = { _scale , _scale , _scale };
+	m_pTransformCom->m_vInfo[Engine::INFO_POS] = _pos;
+	m_Static = true;
 }

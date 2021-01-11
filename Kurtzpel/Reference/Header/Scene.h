@@ -15,6 +15,8 @@ public:
 
 	Engine::CGameObject* Get_GameObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 
+	CLayer* Get_Layer(CLayer::LayerName _layerName);
+
 public:
 	virtual HRESULT		Ready_Scene(void);
 	virtual _int		Update_Scene(const _float& fTimeDelta);
