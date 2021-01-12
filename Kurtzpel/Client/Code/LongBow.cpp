@@ -141,7 +141,7 @@ void CLongBow::Set_Pos() {
 	CPlayer* pPlayer = CPlayer::GetInstance();
 	if (pPlayer->m_State == CPlayer::State::State_Attack || pPlayer->m_State == CPlayer::State::State_Skill) {
 		m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 0.f, 0.f, 0.f };
-		BoneAttach("Weapon_Hand_R");
+		BoneAttach("Weapon_Hand_L");
 		if (m_RocationX != 0.f) {
 			m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 0.f, 0.f, 0.f };
 			m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(-m_RocationX + 0.f));

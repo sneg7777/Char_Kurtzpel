@@ -2,6 +2,7 @@
 #include "NaviTerrain.h"
 #include "Export_Function.h"
 #include "NaviMesh.h"
+#include "Player.h"
 
 CNaviTerrain::CNaviTerrain(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
@@ -59,7 +60,8 @@ Client::_int Client::CNaviTerrain::Update_Object(const _float& fTimeDelta)
 {
 	CGameObject::Update_Object(fTimeDelta);
 
-	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
+	if(CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck::bCheck_RenderSphere])
+		m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
 	return 0;
 }

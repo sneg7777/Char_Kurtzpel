@@ -35,7 +35,8 @@ void Engine::CTimer::SetUp_TimeDelta(void)
 		m_FixTime = m_FrameTime;
 	}
 
-	m_fTimeDelta = (_float(m_FrameTime.QuadPart) - _float(m_LastTime.QuadPart)) / (_float)m_CpuTick.QuadPart;
+	//m_fTimeDelta = (_float(m_FrameTime.QuadPart) - _float(m_LastTime.QuadPart)) / (_float)m_CpuTick.QuadPart;
+	m_fTimeDelta = (m_FrameTime.QuadPart - m_LastTime.QuadPart) / (_float)m_CpuTick.QuadPart;
 
 	m_LastTime = m_FrameTime;
 }

@@ -28,6 +28,7 @@ HRESULT CStage::Ready_Scene(void)
 	FAILED_CHECK_RETURN(Ready_Environment_Layer(L"Environment"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_GameLogic_Dynamic_Layer(L"GameLogic"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_GameLogic_Static_Layer(L"GameLogic_Static"), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_GameLogic_StaticNoColl_Layer(L"GameLogic_StaticNoColl"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_GameLogic_Decoration_Layer(L"GameLogic_Decoration"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_UI_Layer(L"UI"), E_FAIL);
 	
@@ -172,14 +173,26 @@ HRESULT CStage::Ready_GameLogic_Static_Layer(const _tchar* pLayerTag)
 
 	Engine::CGameObject* pGameObject = nullptr;
 
-	/*pGameObject = CHammer::Create(m_pGraphicDev);
+	pGameObject = CHammer::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CHammer", pGameObject), E_FAIL);*/
-	pGameObject = CLongBow::Create(m_pGraphicDev);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CHammer", pGameObject), E_FAIL);
+	/*pGameObject = CLongBow::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CLongBow", pGameObject), E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CLongBow", pGameObject), E_FAIL);*/
 
 	pLayer->m_LayerName = Engine::CLayer::LayerName::Layer_Static;
+	m_mapLayer.emplace(pLayerTag, pLayer);
+
+	return S_OK;
+}
+
+HRESULT CStage::Ready_GameLogic_StaticNoColl_Layer(const _tchar* pLayerTag)
+{
+	Engine::CLayer* pLayer = Engine::CLayer::Create();
+	NULL_CHECK_RETURN(pLayer, E_FAIL);
+
+
+	pLayer->m_LayerName = Engine::CLayer::LayerName::Layer_StaticNoColl;
 	m_mapLayer.emplace(pLayerTag, pLayer);
 
 	return S_OK;

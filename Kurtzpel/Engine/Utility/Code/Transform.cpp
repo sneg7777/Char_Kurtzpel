@@ -161,9 +161,12 @@ void CTransform::Set_Pos(const _float & fX, const _float & fY, const _float & fZ
 
 }
 
-void CTransform::Rotation(ROTATION eType, const _float & fAngle)
+void CTransform::Rotation(ROTATION eType, const _float & fAngle, bool substitution)
 {
-	*(((_float*)&m_vAngle) + eType) += fAngle;
+	if(!substitution)
+		*(((_float*)&m_vAngle) + eType) += fAngle;
+	else
+		*(((_float*)&m_vAngle) + eType) = fAngle;
 }
 
 void CTransform::Set_WorldMatrix(const _matrix * pMatrix)

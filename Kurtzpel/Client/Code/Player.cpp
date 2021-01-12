@@ -8,10 +8,14 @@
 #include "Stage.h"
 #include "NaviTerrain.h"
 #include "Arrow.h"
+#include "SkillCollider.h"
 
-#define COOLTIME_Q 5.f
-#define COOLTIME_E 5.f
-#define COOLTIME_F 5.f
+#define COOLTIME_GH_Q 5.f
+#define COOLTIME_GH_E 5.f
+#define COOLTIME_GH_F 5.f
+#define COOLTIME_LB_Q 5.f
+#define COOLTIME_LB_E 5.f
+#define COOLTIME_LB_F 5.f
 #define COLLDOWNPOWER 2.5f
 CPlayer* CPlayer::m_pInstance = nullptr;
 
@@ -239,7 +243,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			m_pMeshCom->Set_AnimationSet(243);
 			m_AniSpeed = 1.f;
 			m_LongBow->Set_Pos();
-			
+			m_Attack_State = Attack_State::StateA_None;
 			//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
 			break;
 		}
@@ -275,7 +279,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			//if (m_Attack_State == Attack_State::StateA_End)
 			//	m_Attack_State = Attack_State::StateA_Basic1;
 			m_fSpeed = m_fInitSpeed;
-			m_AniSpeed = 3.f;
+			m_AniSpeed = 2.7f;
 			switch (m_Attack_State)
 			{
 			case Client::CPlayer::StateA_Basic1:
@@ -309,8 +313,9 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 				break;
 			case Client::CPlayer::StateA_SkillE: {
-				m_pMeshCom->Set_AnimationSet(134);
-				m_AniSpeed = 1.2f;
+				m_AniClip = AnimationClip::Ani_1;
+				m_pMeshCom->Set_AnimationSet(31);
+				m_AniSpeed = 3.f;
 				break;
 			}
 			case Client::CPlayer::StateA_SkillF: {
@@ -380,10 +385,10 @@ void Client::CPlayer::Hammer_Key_Input(const _float& fTimeDelta)
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Engine::CNaviMesh* pNaviMeshCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_NaviTerrain->m_pNaviMeshCom;
 	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &m_vDir);
+	D3DXVec3Normalize(&m_vDir, &m_vDir);
 	_vec3	vPos, vDir, vDir2;
 	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
-	D3DXVec3Normalize(&vDir, &vDir);
+	vDir = m_vDir;
 	Key_DoubleInput(fTimeDelta);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -529,17 +534,17 @@ void Client::CPlayer::Hammer_Key_Input(const _float& fTimeDelta)
 	}
 	//////////////////////////////////////////////////////////////////// 실제 키 입력부분
 	else if ((Engine::Get_DIKeyState(DIK_F) & 0x80) && m_TimeCheck[TimeCheck_Cool_F] <= 0.f) {
-		m_TimeCheck[TimeCheck_Cool_F] = COOLTIME_F;
+		m_TimeCheck[TimeCheck_Cool_F] = COOLTIME_GH_F;
 		m_Attack_State = Attack_State::StateA_SkillF;
 		Set_StateToAnimation(State::State_Skill);
 	}
 	else if ((Engine::Get_DIKeyState(DIK_E) & 0x80) && m_TimeCheck[TimeCheck_Cool_E] <= 0.f) {
-		m_TimeCheck[TimeCheck_Cool_E] = COOLTIME_E;
+		m_TimeCheck[TimeCheck_Cool_E] = COOLTIME_GH_E;
 		m_Attack_State = Attack_State::StateA_SkillE;
 		Set_StateToAnimation(State::State_Skill);
 	}
 	else if ((Engine::Get_DIKeyState(DIK_Q) & 0x80) && m_TimeCheck[TimeCheck_Cool_Q] <= 0.f) {
-		m_TimeCheck[TimeCheck_Cool_Q] = COOLTIME_Q;
+		m_TimeCheck[TimeCheck_Cool_Q] = COOLTIME_GH_Q;
 		m_Attack_State = Attack_State::StateA_SkillQ;
 	Set_StateToAnimation(State::State_Skill);
 	}
@@ -735,10 +740,10 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Engine::CNaviMesh* pNaviMeshCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_NaviTerrain->m_pNaviMeshCom;
 	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &m_vDir);
+	D3DXVec3Normalize(&m_vDir, &m_vDir);
 	_vec3	vPos, vDir, vDir2;
 	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
-	D3DXVec3Normalize(&vDir, &vDir);
+	vDir = m_vDir;
 	Key_DoubleInput(fTimeDelta);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -811,7 +816,7 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 		else if ((Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80) && (m_Attack_State == Attack_State::StateA_Basic1 || m_Attack_State == Attack_State::StateA_Basic2)) {
 			float aniPos = m_pMeshCom->Get_AnimationTrackPos();
 
-			if (aniPos > 0.35f) {
+			if (aniPos > 0.5f) {
 				m_bCheck[bCheck::bCheck_MouseL_Already] = true;
 			}
 		}
@@ -820,12 +825,7 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 		if (trackPos < 0.3f && trackPos > 0.1f) {
 			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
 		}
-		if (trackPos > 0.1f && trackPos < 0.7f) {
-			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
-		}
-		else {
-			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
-		}
+
 	}
 	else if (m_State == State::State_JumpComboEnd) { ////////////////////////////////////////////////////////////////////// JumpComboEnd
 		if (m_pMeshCom->Is_AnimationSetEnd(0.05f)) {
@@ -897,30 +897,39 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 
 	}
 	//////////////////////////////////////////////////////////////////// 실제 키 입력부분
-	else if ((Engine::Get_DIKeyState(DIK_F) & 0x80) && m_TimeCheck[TimeCheck_Cool_F] <= 0.f) {
-		m_TimeCheck[TimeCheck_Cool_F] = COOLTIME_F;
-		m_Attack_State = Attack_State::StateA_SkillF;
-		Set_StateToAnimation(State::State_Skill);
-	}
+	//else if (!m_bCheck[bCheck_LB_SkillE] && (Engine::Get_DIKeyState(DIK_F) & 0x80) && m_TimeCheck[TimeCheck_Cool_F] <= 0.f) {
+	//	m_TimeCheck[TimeCheck_Cool_F] = COOLTIME_LB_F;
+	//	m_Attack_State = Attack_State::StateA_SkillF;
+	//	Set_StateToAnimation(State::State_Skill);
+	//}
 	else if ((Engine::Get_DIKeyState(DIK_E) & 0x80) && m_TimeCheck[TimeCheck_Cool_E] <= 0.f) {
-		m_TimeCheck[TimeCheck_Cool_E] = COOLTIME_E;
-		m_Attack_State = Attack_State::StateA_SkillE;
-		Set_StateToAnimation(State::State_Skill);
+		m_TimeCheck[TimeCheck_Cool_E] = COOLTIME_LB_E;
+		m_bCheck[bCheck_LB_SkillE] = true;
+		//m_Attack_State = Attack_State::StateA_SkillE;
+		//Set_StateToAnimation(State::State_Skill);
 	}
-	else if ((Engine::Get_DIKeyState(DIK_Q) & 0x80) && m_TimeCheck[TimeCheck_Cool_Q] <= 0.f) {
-		m_TimeCheck[TimeCheck_Cool_Q] = COOLTIME_Q;
-		m_Attack_State = Attack_State::StateA_SkillQ;
-		Set_StateToAnimation(State::State_Skill);
-	}
-	else if ((Engine::Get_DIKeyState(DIK_Z) & 0x80)) {
-		m_Attack_State = Attack_State::StateA_SkillZ;
-		Set_StateToAnimation(State::State_Skill);
-	}
+	//else if (!m_bCheck[bCheck_LB_SkillE] && (Engine::Get_DIKeyState(DIK_Q) & 0x80) && m_TimeCheck[TimeCheck_Cool_Q] <= 0.f) {
+	//	m_TimeCheck[TimeCheck_Cool_Q] = COOLTIME_LB_Q;
+	//	m_Attack_State = Attack_State::StateA_SkillQ;
+	//	Set_StateToAnimation(State::State_Skill);
+	//}
+	//else if (!m_bCheck[bCheck_LB_SkillE] && (Engine::Get_DIKeyState(DIK_Z) & 0x80)) {
+	//	m_Attack_State = Attack_State::StateA_SkillZ;
+	//	Set_StateToAnimation(State::State_Skill);
+	//}
 	//////////////////////////////////////////////////////////////////// 좌클릭공격
-	else if ((Engine::Get_DIMouseState(Engine::DIM_RB) & 0x80) && !m_bCheck[bCheck::bCheck_MouseL])
+	else if ((Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80) && !m_bCheck[bCheck::bCheck_MouseL])
 	{
+		if (m_bCheck[bCheck_LB_SkillE]) {
+			m_bCheck[bCheck_LB_SkillE] = false;
+			m_TimeCheck[TimeCheck::TimeCheck_LB_SkillE_Ready] = 4.f;
+			m_Attack_State = Attack_State::StateA_SkillE;
+			Set_StateToAnimation(State::State_Skill);
+		}
+		else {
+			Set_StateToAnimation(State::State_Attack, vPos, vDir, fTimeDelta);
+		}
 		m_bCheck[bCheck::bCheck_MouseL] = true;
-		Set_StateToAnimation(State::State_Attack, vPos, vDir, fTimeDelta);
 		m_bCheck[bCheck::bCheck_MouseL_Already] = false;
 
 	}
@@ -1074,6 +1083,16 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 	//	m_pMeshCom->Set_AnimationSet(243);
 	//	m_AniEnd = false;
 	//}
+	if (m_bCheck[bCheck_LB_SkillE]) {
+		m_LB_SkillE_Pos = vPos + (vDir * (13.5f + m_LookAtY * 4.5f));
+	}
+	if (m_TimeCheck[TimeCheck::TimeCheck_LB_SkillE_Attack_Arrow_Start_Total] > 0.f && m_TimeCheck[TimeCheck::TimeCheck_LB_SkillE_Attack_Arrow_Start_Total] < 2.f) {
+		if (m_TimeCheck[TimeCheck::TimeCheck_LB_SkillE_Attack_Arrow_Start] <= 0.f) {
+			m_TimeCheck[TimeCheck::TimeCheck_LB_SkillE_Attack_Arrow_Start] = 0.05f;
+			Create_ArrowShot_SkillE_Start();
+		}
+	}
+
 	if ((m_State == State::State_Move || m_State == State::State_MoveSA || m_State == State::State_MoveSD)
 		&& !(Engine::Get_DIKeyState(DIK_W) & 0x80) && !(Engine::Get_DIKeyState(DIK_S) & 0x80) && !(Engine::Get_DIKeyState(DIK_A) & 0x80) && !(Engine::Get_DIKeyState(DIK_D) & 0x80)) {
 		m_State = State::State_Idle;
@@ -1294,9 +1313,10 @@ void Client::CPlayer::Hammer_Key_InputOfJump(const _float& fTimeDelta)
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Engine::CNaviMesh* pNaviMeshCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_NaviTerrain->m_pNaviMeshCom;
 	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &m_vDir);
+	D3DXVec3Normalize(&m_vDir, &m_vDir);
 	_vec3	vPos, vDir, vDir2;
 	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+	vDir = m_vDir;
 	D3DXVec3Normalize(&vDir, &vDir);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1440,10 +1460,10 @@ void Client::CPlayer::LongBow_Key_InputOfJump(const _float& fTimeDelta)
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Engine::CNaviMesh* pNaviMeshCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_NaviTerrain->m_pNaviMeshCom;
 	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &m_vDir);
+	D3DXVec3Normalize(&m_vDir, &m_vDir);
 	_vec3	vPos, vDir, vDir2;
 	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
-	D3DXVec3Normalize(&vDir, &vDir);
+	vDir = m_vDir;
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	if (m_State == State::State_Attack) {
@@ -1670,11 +1690,11 @@ void Client::CPlayer::Render_Object(void)
 }
 void CPlayer::Add_LookAtY(float lookat)
 {
-	if (m_LookAtY + lookat > 7.5f) {
-		m_LookAtY = 7.5f;
+	if (m_LookAtY + lookat > 4.5f) {
+		m_LookAtY = 4.5f;
 	}
-	else if (m_LookAtY + lookat < -2.5f) {
-		m_LookAtY = -2.5f;
+	else if (m_LookAtY + lookat < -1.5f) {
+		m_LookAtY = -1.5f;
 	}
 	else {
 		m_LookAtY += lookat;
@@ -1810,61 +1830,95 @@ void Client::CPlayer::Jump_Control(const _float& fTimeDelta)
 }
 
 void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _vec3 vPos, _vec3 vDir) {
-	if (m_Attack_State == Attack_State::StateA_SkillF) {
-		if (m_pMeshCom->Is_AnimationSetEnd(0.35f)) {
-			Set_StateToAnimation(State::State_Idle);
-		}
-		float trackPos = m_pMeshCom->Get_AnimationTrackPos();
-		if (!m_bCheck[bCheck::bCheck_Skill_F1] && trackPos > 0.7f) {
-			m_bCheck[bCheck::bCheck_Skill_F1] = true;
-			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
-		}
-		else if (!m_bCheck[bCheck::bCheck_Skill_F2] && trackPos > 2.f) {
-			m_bCheck[bCheck::bCheck_Skill_F2] = true;
-			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
-		}
-		if (1.6f < trackPos && trackPos < 2.3f) {
-			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed * 0.5f), &m_dwNaviIndex));
-		}
-	}
-	else if (m_Attack_State == Attack_State::StateA_SkillE) {
-		if (m_pMeshCom->Is_AnimationSetEnd(0.3f)) {
-			Set_StateToAnimation(State::State_Idle);
-		}
-		float trackPos = m_pMeshCom->Get_AnimationTrackPos();
-		if (trackPos > 0.7f) {
-			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
-		}
-	}
-	else if (m_Attack_State == Attack_State::StateA_SkillQ) {
-		if (m_AniClip == AnimationClip::Ani_1) {
-			if (m_pMeshCom->Is_AnimationSetEnd(0.05f)) {
-				m_AniClip = AnimationClip::Ani_2;
-				m_pMeshCom->Set_AnimationSet(124);
-			}
-		}
-		else if (m_AniClip == AnimationClip::Ani_2) {
-			bool colCheck;
-			m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed * 4.f), &m_dwNaviIndex, &colCheck));
-			if (colCheck) {
-				m_AniClip = AnimationClip::Ani_3;
-				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
-				m_pMeshCom->Set_AnimationSet(125);
-			}
-		}
-		else if (m_AniClip == AnimationClip::Ani_3) {
-			if (m_pMeshCom->Is_AnimationSetEnd(0.66f)) {
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////// Hammer Skill
+	if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer) {
+		if (m_Attack_State == Attack_State::StateA_SkillF) {
+			if (m_pMeshCom->Is_AnimationSetEnd(0.35f)) {
 				Set_StateToAnimation(State::State_Idle);
 			}
+			float trackPos = m_pMeshCom->Get_AnimationTrackPos();
+			if (!m_bCheck[bCheck::bCheck_Skill_F1] && trackPos > 0.7f) {
+				m_bCheck[bCheck::bCheck_Skill_F1] = true;
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+			}
+			else if (!m_bCheck[bCheck::bCheck_Skill_F2] && trackPos > 2.f) {
+				m_bCheck[bCheck::bCheck_Skill_F2] = true;
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+			}
+			if (1.6f < trackPos && trackPos < 2.3f) {
+				m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed * 0.5f), &m_dwNaviIndex));
+			}
+		}
+		else if (m_Attack_State == Attack_State::StateA_SkillE) {
+			if (m_pMeshCom->Is_AnimationSetEnd(0.3f)) {
+				Set_StateToAnimation(State::State_Idle);
+			}
+			float trackPos = m_pMeshCom->Get_AnimationTrackPos();
+			if (trackPos > 0.7f) {
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+			}
+		}
+		else if (m_Attack_State == Attack_State::StateA_SkillQ) {
+			if (m_AniClip == AnimationClip::Ani_1) {
+				if (m_pMeshCom->Is_AnimationSetEnd(0.05f)) {
+					m_AniClip = AnimationClip::Ani_2;
+					m_pMeshCom->Set_AnimationSet(124);
+				}
+			}
+			else if (m_AniClip == AnimationClip::Ani_2) {
+				bool colCheck;
+				m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed * 4.f), &m_dwNaviIndex, &colCheck));
+				if (colCheck) {
+					m_AniClip = AnimationClip::Ani_3;
+					Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+					m_pMeshCom->Set_AnimationSet(125);
+				}
+			}
+			else if (m_AniClip == AnimationClip::Ani_3) {
+				if (m_pMeshCom->Is_AnimationSetEnd(0.66f)) {
+					Set_StateToAnimation(State::State_Idle);
+				}
+			}
+		}
+		else if (m_Attack_State == Attack_State::StateA_SkillZ) {
+			if (m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
+				Set_StateToAnimation(State::State_Idle);
+			}
+			float trackPos = m_pMeshCom->Get_AnimationTrackPos();
+			if (trackPos > 0.7f) {
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+			}
 		}
 	}
-	else if (m_Attack_State == Attack_State::StateA_SkillZ) {
-		if (m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
-			Set_StateToAnimation(State::State_Idle);
-		}
-		float trackPos = m_pMeshCom->Get_AnimationTrackPos();
-		if (trackPos > 0.7f) {
-			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////// LongBow Skill
+	if (m_WeaponEquip == Weapon_Equip::Weapon_LongBow) {
+		if (m_Attack_State == Attack_State::StateA_SkillE) {
+			if (m_AniClip == AnimationClip::Ani_1) {
+				if (m_pMeshCom->Is_AnimationSetEnd(0.6f)) {
+					m_AniClip = AnimationClip::Ani_2;
+					m_TimeCheck[TimeCheck::TimeCheck_LB_SkillE_Attack] = 1.4f;
+					m_TimeCheck[TimeCheck::TimeCheck_LB_SkillE_Attack_Arrow_Start_Total] = 2.5f;
+					m_pMeshCom->Set_AnimationSet(32);
+					m_AniSpeed = 1.f;
+					CSkillCollider::Create(m_pGraphicDev)->Set_Collider(m_LB_SkillE_Pos, 5.f, CSphereCollider::BoneTeam_Player, m_fAttack * 0.4f, 3.f, 0.3f, 0.05f, 0.7f);
+				}
+			}
+			else if (m_AniClip == AnimationClip::Ani_2) {
+				if (m_TimeCheck[TimeCheck::TimeCheck_LB_SkillE_Attack] <= 0.f) {
+					m_AniClip = AnimationClip::Ani_3;
+					m_pMeshCom->Set_AnimationSet(33);
+					m_AniSpeed = 3.f;
+				}
+				if (m_TimeCheck[TimeCheck_LB_SkillE_Attack_Arrow] <= 0.f) {
+					m_TimeCheck[TimeCheck_LB_SkillE_Attack_Arrow] = 0.2f;
+					Create_ArrowShot_SkillE_Ready(vPos, _vec3{ 0.f, 1.f, 0.f });
+				}
+			}
+			else if (m_AniClip == AnimationClip::Ani_3) {
+				if (m_pMeshCom->Is_AnimationSetEnd(0.4f)) {
+					Set_StateToAnimation(State::State_Idle);
+				}
+			}
 		}
 	}
 }
@@ -1947,6 +2001,8 @@ void CPlayer::Change_Weapon() {
 		m_WeaponEquip = Weapon_Equip::Weapon_LongBow;
 	}
 	else if (m_WeaponEquip == Weapon_Equip::Weapon_LongBow) {
+		m_bCheck[bCheck::bCheck_LB_SkillE] = false;
+		m_TimeCheck[TimeCheck_LB_SkillE_Ready] = 0.f;
 		m_LongBow->m_IsDead = true;
 		m_LongBow = nullptr;
 		Engine::CGameObject* pGameObject = CHammer::Create(m_pGraphicDev);
@@ -1960,14 +2016,62 @@ void CPlayer::Create_ArrowShot(_vec3 _vPos, _vec3 _vDir, float fTimeDelta)
 {
 	CUnit* pUnit;
 	Engine::CGameObject* pGameObject = pUnit = CArrow::Create(m_pGraphicDev);
-	pUnit->m_pTransformCom->m_vInfo[Engine::INFO_POS] = _vPos + _vDir * 2.f;
-	pUnit->m_pTransformCom->m_vInfo[Engine::INFO_POS].y += 1.2f + m_LookAtY * 0.2f;
+	dynamic_cast<CArrow*>(pUnit)->Create_Coll();
+	pUnit->m_pTransformCom->m_vInfo[Engine::INFO_POS] = _vPos + _vDir * 3.2f;
+	pUnit->m_pTransformCom->m_vInfo[Engine::INFO_POS].y += 1.2f;
+	_vDir.y = -0.4f + m_LookAtY * 0.25f;
+	D3DXVec3Normalize(&_vDir, &_vDir);
 	pUnit->m_vDir = _vDir;
 	
-	//pUnit->m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian((m_RocateY - 90.f) * 3.f)); // 절대 못구함 ㅅㅂ
-	pUnit->m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(m_RocateY - 90.f)); // 합0도는 정상 합180도면 뒤바꿔야함
-	pUnit->CUnit::Update_Object(fTimeDelta);
+	dynamic_cast<CArrow*>(pUnit)->Update_Object(0.f);
 	pUnit->m_fAttack = m_fAttack;
 	Engine::CLayer* pLayer = Engine::CManagement::GetInstance()->m_pScene->Get_Layer(Engine::CLayer::LayerName::Layer_Static);
 	pLayer->Add_GameObject(L"Arrow", pGameObject);
+}
+
+void CPlayer::Create_ArrowShot_SkillE_Ready(_vec3 _vPos, _vec3 _vDir)
+{
+	CUnit* pUnit;
+	Engine::CGameObject* pGameObject = pUnit = CArrow::Create(m_pGraphicDev);
+	//dynamic_cast<CArrow*>(pUnit)->Create_Coll();
+	pUnit->m_pTransformCom->m_vInfo[Engine::INFO_POS] = _vPos;
+	pUnit->m_pTransformCom->m_vInfo[Engine::INFO_POS].y += 5.f;
+	pUnit->m_vDir = _vDir;
+
+	dynamic_cast<CArrow*>(pUnit)->Update_Object(0.f);
+	//pUnit->m_fAttack = m_fAttack;
+	Engine::CLayer* pLayer = Engine::CManagement::GetInstance()->m_pScene->Get_Layer(Engine::CLayer::LayerName::Layer_StaticNoColl);
+	pLayer->Add_GameObject(L"Arrow_SkillE_Ready", pGameObject);
+}
+
+void CPlayer::Create_ArrowShot_SkillE_Start()
+{
+	int dist = CRandom_Manager::Random() % 6;
+	
+	float degree = (float)(CRandom_Manager::Random() % 360);
+	float Radian = D3DXToRadian(degree);
+
+	_vec3 vecSpawnPosition;
+	vecSpawnPosition.x = dist;
+	vecSpawnPosition.z = 0;
+
+	float movePositionX = cosf(Radian) * vecSpawnPosition.x - sinf(Radian) * vecSpawnPosition.z + m_LB_SkillE_Pos.x;
+	float movePositionZ = sinf(Radian) * vecSpawnPosition.x + cosf(Radian) * vecSpawnPosition.z + m_LB_SkillE_Pos.z;
+
+	_vec3 vecRain_Pos = { movePositionX, 0.f, movePositionZ };
+
+	_vec3 vecRandomDir = { float(CRandom_Manager::Random() % 11), 50.f, float(CRandom_Manager::Random() % 11) };
+	D3DXVec3Normalize(&vecRandomDir, &vecRandomDir);
+	//
+	CUnit* pUnit;
+	Engine::CGameObject* pGameObject = pUnit = CArrow::Create(m_pGraphicDev);
+	//dynamic_cast<CArrow*>(pUnit)->Create_Coll();
+	pUnit->m_pTransformCom->m_vInfo[Engine::INFO_POS] = vecRain_Pos + vecRandomDir * 40.f;
+	pUnit->m_vDir = -vecRandomDir;
+	dynamic_cast<CArrow*>(pUnit)->Set_SpeedToLife(100.f, 1.2f);
+
+	dynamic_cast<CArrow*>(pUnit)->Update_Object(0.f);
+	//pUnit->m_fAttack = m_fAttack;
+	Engine::CLayer* pLayer = Engine::CManagement::GetInstance()->m_pScene->Get_Layer(Engine::CLayer::LayerName::Layer_StaticNoColl);
+	pLayer->Add_GameObject(L"Arrow_SkillE_Start", pGameObject);
 }

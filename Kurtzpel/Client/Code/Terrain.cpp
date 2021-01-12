@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Terrain.h"
 #include "Export_Function.h"
+#include "Player.h"
 
 CTerrain::CTerrain(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
@@ -33,7 +34,7 @@ HRESULT Client::CTerrain::Add_Component(void)
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Filter", pComponent);
 
 	// Auratexture
-	pComponent = m_pAuraCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_Aura"));
+	pComponent = m_pAuraCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_SkillE_Terrain"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Aura", pComponent);
 
@@ -178,19 +179,26 @@ HRESULT CTerrain::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 
 	pEffect->SetFloat("g_fDetail", fDetail);
 
-//#pragma region Aura
-//	
-//	Engine::CTransform*	pPlayerTransform = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
-//	NULL_CHECK_RETURN(pPlayerTransform, E_FAIL);
-//
-//	_vec3		vPlayerPos;
-//	pPlayerTransform->Get_Info(Engine::INFO_POS, &vPlayerPos);
-//
-//	pEffect->SetVector("g_vPlayerPos", &_vec4(vPlayerPos, 1.f));
-//
-//	_float	fRange = 3.f;
-//	pEffect->SetFloat("g_fRange", fRange);
-//#pragma endregion Aura
+#pragma region Aura
+	CPlayer* pPlayer = CPlayer::GetInstance();
+	
+	pPlayer = CPlayer::GetInstance();
+	//Engine::CTransform* pPlayerTransform = pPlayer->m_pTransformCom;//dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
+	//NULL_CHECK_RETURN(pPlayerTransform, E_FAIL);
+
+	//_vec3	vPlayerPos;
+	//pPlayerTransform->Get_Info(Engine::INFO_POS, &vPlayerPos);
+
+	//float lookatY = pPlayer->m_LookAtY;
+	//_vec3 dir = pPlayer->m_vDir;
+	if (pPlayer->m_bCheck[CPlayer::bCheck::bCheck_LB_SkillE] || (pPlayer->m_TimeCheck[CPlayer::TimeCheck_LB_SkillE_Attack_Arrow_Start] > 0.f))
+		pEffect->SetVector("g_vPlayerPos", &_vec4(pPlayer->m_LB_SkillE_Pos, 1.f));
+	else
+		pEffect->SetVector("g_vPlayerPos", &_vec4(_vec3{0.f, 0.f, 0.f}, 1.f));
+	_float	fRange = 6.f;
+	pEffect->SetFloat("g_fRange", fRange);
+	
+#pragma endregion Aura
 
 	return S_OK;
 }

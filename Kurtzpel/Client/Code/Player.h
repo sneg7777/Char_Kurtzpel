@@ -53,13 +53,14 @@ public:
 		bCheck_DBKeyW, bCheck_DBKeyA, bCheck_DBKeyS, bCheck_DBKeyD,
 		bCheck_KeyW, bCheck_KeyA, bCheck_KeyS, bCheck_KeyD, bCheck_KeyF2, bCheck_RenderSphere,
 		bCheck_MouseL, bCheck_MouseR, bCheck_MouseL_Already, bCheck_MouseR_Already,
-		bCheck_Skill_F1, bCheck_Skill_F2,
+		bCheck_Skill_F1, bCheck_Skill_F2, bCheck_LB_SkillE,
 		bCheck_DamagedUp,
 		bCheck_End
 	};
 	enum TimeCheck {
 		TimeCheck_Dash, TimeCheck_KeyW, TimeCheck_KeyA, TimeCheck_KeyS, TimeCheck_KeyD,
 		TimeCheck_Cool_Q, TimeCheck_Cool_E, TimeCheck_Cool_F, TimeCheck_Cool_Tab,
+		TimeCheck_LB_SkillE_Ready, TimeCheck_LB_SkillE_Attack/*마법진시전*/, TimeCheck_LB_SkillE_Attack_Arrow/*위로쏘는캐릭터모션*/, TimeCheck_LB_SkillE_Attack_Arrow_Start/*화살내려앉는*/, TimeCheck_LB_SkillE_Attack_Arrow_Start_Total,
 		TimeCheck_Invin,
 		TimeCheck_End
 	};
@@ -97,16 +98,18 @@ private:
 	void				Set_RenderCollSphere();
 	void		Change_Weapon();
 	void		Create_ArrowShot(_vec3 _vPos, _vec3 _vDir, float fTimeDelta);
+	void		Create_ArrowShot_SkillE_Ready(_vec3 _vPos, _vec3 _vDir);
+	void		Create_ArrowShot_SkillE_Start();
 	_vec3		PickUp_OnTerrain(void);
 
 private:
-	float						m_TimeCheck[TimeCheck::TimeCheck_End];
 	//점프
 	_float						m_fJumpPower = 0.12f;
 	_float						m_fJumpAccel = 0.f;
 public:
 	_float						m_LookAtY = 2.5f;
 	_float						m_CameraDist = 320.f;
+	float						m_TimeCheck[TimeCheck::TimeCheck_End];
 	bool						m_bCheck[bCheck::bCheck_End];
 	State						m_State =  State::State_Idle;
 	Attack_State				m_Attack_State = Attack_State::StateA_None;
@@ -118,6 +121,8 @@ public:
 	CHammer*					m_Hammer = nullptr;
 	CLongBow*					m_LongBow =  nullptr;
 	float						m_RocateY = 0.f;
+	_vec3						m_LB_SkillE_Pos = { 0.f, 0.f, 0.f };
+	//_vec3						m_SkillPosSave = { 0.f, 0.f, 0.f };
 public:
 	static CPlayer*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

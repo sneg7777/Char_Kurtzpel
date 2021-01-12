@@ -1,5 +1,5 @@
-#ifndef Arrow_h__
-#define Arrow_h__
+#ifndef Arrow_SkillQ_h__
+#define Arrow_SkillQ_h__
 
 #include "Unit.h"
 #include "Define.h"
@@ -16,10 +16,10 @@ class CShader;
 END
 
 BEGIN(Client)
-class CArrow : public CUnit {
+class CArrow_SkillE : public CUnit {
 private:
-	explicit CArrow(LPDIRECT3DDEVICE9 pGraphicDev);
-	virtual ~CArrow(void);
+	explicit CArrow_SkillE(LPDIRECT3DDEVICE9 pGraphicDev);
+	virtual ~CArrow_SkillE(void);
 
 public:
 	virtual HRESULT Ready_Object(void) override;
@@ -38,7 +38,7 @@ private:
 	float		m_LifeTime = 0.f;
 
 public:
-	static CArrow*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
+	static CArrow_SkillE*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 
 private:
 	virtual void Free(void) override;

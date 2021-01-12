@@ -125,9 +125,10 @@ _uint CLoading::Loading_ForStage(void)
 
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev,
 		Engine::RESOURCE_STAGE,
-		L"Texture_Aura",
+		L"Texture_SkillE_Terrain",
 		Engine::TEX_NORMAL,
-		L"../Bin/Resource/Texture/Terrain/Aura0.tga", 1),
+		L"../Bin/Resource/Texture/UI/LB_SkillE_Terrain.tga", 1),
+		//L"../Bin/Resource/Texture/Terrain/Aura0.tga", 1),
 		E_FAIL);
 
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev,
@@ -139,21 +140,24 @@ _uint CLoading::Loading_ForStage(void)
 
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Explosion/Explosion%d.png", 90), E_FAIL);
 
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillFrame", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/SkillFrame.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_RageSkillFrame", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/RageSkillFrame.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillZ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/GH_RageSkill.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillE", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/GH_SkillE.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillF", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/GH_SkillF.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillQ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/GH_SkillQ.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillZ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/LB_RageSkill.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillAvoid", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Skill_Avoid.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillWeaponChange", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Skill_WeaponChange.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyQ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Key_Q.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyE", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Key_E.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyF", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Key_F.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyZ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Key_Z.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyTab", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Key_Tab.tga"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyLShift", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Ul/Key_LShift.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillFrame", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/SkillFrame.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_RageSkillFrame", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/RageSkillFrame.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillZ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/GH_RageSkill.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillE", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/GH_SkillE.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillF", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/GH_SkillF.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillQ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/GH_SkillQ.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillZ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/LB_RageSkill.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillE", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/LB_SkillE.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillF", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/LB_SkillF.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillQ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/LB_SkillQ.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillAvoid", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Skill_Avoid.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillWeaponChange", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Skill_WeaponChange.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyQ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_Q.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyE", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_E.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyF", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_F.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyZ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_Z.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyTab", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_Tab.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyLShift", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_LShift.tga"), E_FAIL);
 	
 	lstrcpy(m_szLoading, L"Mesh Loading.............................");
 	///////////////////////////////////////////////// Static Mesh

@@ -225,6 +225,12 @@
     <ClInclude Include="..\Code\Arrow.h">
       <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\SkillCollider.h">
+      <Filter>02. GameObject\02. Public\99. SphereCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Arrow_SkillQ.h">
+      <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -321,6 +327,12 @@
       <Filter>02. GameObject\02. Public\01. Unit</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\Arrow.cpp">
+      <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\SkillCollider.cpp">
+      <Filter>02. GameObject\02. Public\99. SphereCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Arrow_SkillQ.cpp">
       <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
     </ClCompile>
   </ItemGroup>

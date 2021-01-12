@@ -24,7 +24,7 @@ public:
 	void			Set_Pos(const _vec3* pPos, bool checkY = false);
 	void			Set_Pos(const _float& fX, const _float& fY, const _float& fZ);
 	void			Move_Pos(const float& fX, const float& fY, const float& fZ);
-	void			Rotation(ROTATION eType, const _float& fAngle);
+	void			Rotation(ROTATION eType, const _float& fAngle, bool substitution = false);
 	
 	void			Set_WorldMatrix(const _matrix* pMatrix);
 	void			Set_ParentMatrix(const _matrix* pParent);

@@ -1,22 +1,22 @@
 #include "stdafx.h"
-#include "Arrow.h"
+#include "Arrow_SkillQ.h"
 #include "Export_Function.h"
 #include "Player.h"
 
 
-CArrow::CArrow(LPDIRECT3DDEVICE9 pGraphicDev)
+CArrow_SkillE::CArrow_SkillE(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit(pGraphicDev)
 {
 	m_fSpeed = 30.f;
 	m_LifeTime = 4.5f;
 }
 
-CArrow::~CArrow(void)
+CArrow_SkillE::~CArrow_SkillE(void)
 {
 
 }
 
-HRESULT Client::CArrow::Add_Component(void)
+HRESULT Client::CArrow_SkillE::Add_Component(void)
 {
 	Engine::CComponent*		pComponent = nullptr;
 	
@@ -34,9 +34,9 @@ HRESULT Client::CArrow::Add_Component(void)
 }
 
 
-CArrow* CArrow::Create(LPDIRECT3DDEVICE9 pGraphicDev)
+CArrow_SkillE* CArrow_SkillE::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 {
-	CArrow*	pInstance = new CArrow(pGraphicDev);
+	CArrow_SkillE*	pInstance = new CArrow_SkillE(pGraphicDev);
 
 	if (FAILED(pInstance->Ready_Object()))
 		Client::Safe_Release(pInstance);
@@ -44,19 +44,19 @@ CArrow* CArrow::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 	return pInstance;
 }
 
-void CArrow::Free(void)
+void CArrow_SkillE::Free(void)
 {
 	Engine::CGameObject::Free();
 }
 
 
-HRESULT Client::CArrow::Ready_Object(void)
+HRESULT Client::CArrow_SkillE::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
 	return S_OK;
 }
-Client::_int Client::CArrow::Update_Object(const _float& fTimeDelta)
+Client::_int Client::CArrow_SkillE::Update_Object(const _float& fTimeDelta)
 {
 	if (m_IsDead || m_LifeTime < 0.f) {
 		return 1;
@@ -101,7 +101,7 @@ Client::_int Client::CArrow::Update_Object(const _float& fTimeDelta)
 
 	return 0;
 }
-void Client::CArrow::Render_Object(void)
+void Client::CArrow_SkillE::Render_Object(void)
 {
 	
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -128,7 +128,7 @@ void Client::CArrow::Render_Object(void)
 	m_pColliderCom->Render_Collider(Engine::COL_TRUE, &matWorld);*/
 }
 
-HRESULT Client::CArrow::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
+HRESULT Client::CArrow_SkillE::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
 	_matrix		matWorld, matView, matProj;
 
@@ -143,7 +143,7 @@ HRESULT Client::CArrow::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	return S_OK;
 }
 
-void Client::CArrow::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)
+void Client::CArrow_SkillE::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)
 {
 	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
 		return;
@@ -152,7 +152,7 @@ void Client::CArrow::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereC
 	
 }
 
-void Client::CArrow::Create_Coll()
+void Client::CArrow_SkillE::Create_Coll()
 {
 	CSphereCollider* sphereCol = CSphereCollider::Create(m_pGraphicDev);
 	sphereCol->Set_Transform(1.f);
@@ -164,7 +164,7 @@ void Client::CArrow::Create_Coll()
 	m_VecSphereCollider.emplace_back(sphereCol);
 }
 
-void Client::CArrow::Set_SpeedToLife(float _speed, float _life)
+void Client::CArrow_SkillE::Set_SpeedToLife(float _speed, float _life)
 {
 	m_fSpeed = _speed;
 	if (_life > 0)

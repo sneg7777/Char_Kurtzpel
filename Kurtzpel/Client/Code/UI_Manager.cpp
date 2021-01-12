@@ -51,7 +51,7 @@ void Client::CUI_Manager::Render_Object(void)
 }
 
 void Client::CUI_Manager::Ready_SkillIcon() {
-	for (int i = 0; i < 19; i++)
+	for (int i = 0; i < 22; i++)
 	{
 		CUI* pUI = CUI::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pUI, );
@@ -184,6 +184,27 @@ void Client::CUI_Manager::Init_SkillIcon(CUI* pUI, int number) {
 		pUI->Set_PosToSize(90.f, 506.f, 102.4f, 102.4f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillZ"));
 		pUI->m_UIKind = CUI::UIKind::UIK_SkillZ_LB;
+		pUI->m_Weapon = CPlayer::Weapon_LongBow;
+		break;
+	}
+	case 19: {
+		pUI->Set_PosToSize(184.f, 484.f, 65.6f, 65.6f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillQ"));
+		pUI->m_UIKind = CUI::UIKind::UIK_SkillQ_LB;
+		pUI->m_Weapon = CPlayer::Weapon_LongBow;
+		break;
+	}
+	case 20: {
+		pUI->Set_PosToSize(242.f, 484.f, 65.6f, 65.6f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillE"));
+		pUI->m_UIKind = CUI::UIKind::UIK_SkillE_LB;
+		pUI->m_Weapon = CPlayer::Weapon_LongBow;
+		break;
+	}
+	case 21: {
+		pUI->Set_PosToSize(300.f, 484.f, 65.6f, 65.6f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillF"));
+		pUI->m_UIKind = CUI::UIKind::UIK_SkillF_LB;
 		pUI->m_Weapon = CPlayer::Weapon_LongBow;
 		break;
 	}
