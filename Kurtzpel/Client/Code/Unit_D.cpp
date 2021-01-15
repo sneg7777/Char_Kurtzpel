@@ -149,3 +149,10 @@ void CUnit_D::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider
 {
 
 }
+
+void CUnit_D::Init_BoneAttack(bool _attack) {
+	for (auto& bone : m_VecSphereCollider)
+	{
+		bone->m_WeaponAttack = _attack;
+	}
+}

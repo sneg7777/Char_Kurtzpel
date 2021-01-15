@@ -108,6 +108,9 @@
     <ClCompile Include="..\Code\CollSphere.cpp">
       <Filter>00. Resources\00. VIBuffer\04. CollSphere</Filter>
     </ClCompile>
+    <ClCompile Include="..\Code\ArrowNaviMesh.cpp">
+      <Filter>00. Resources\02. Mesh\02. NaviMesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\Resources.h">
@@ -163,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="..\Code\CollSphere.h">
       <Filter>00. Resources\00. VIBuffer\04. CollSphere</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\ArrowNaviMesh.h">
+      <Filter>00. Resources\02. Mesh\02. NaviMesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -61,9 +61,6 @@
     <Filter Include="02. GameObject\02. Public">
       <UniqueIdentifier>{c2c6d62a-edca-4e8f-8f02-21eebea93c21}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\02. Public\00. DynamicCamera">
-      <UniqueIdentifier>{b393d07e-efcc-4ed5-8b5b-06d5a4ad893d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\01. Stage\01. SkyBox">
       <UniqueIdentifier>{b31838b3-b35f-44cb-9c87-1365b2987d00}</UniqueIdentifier>
     </Filter>
@@ -108,6 +105,9 @@
     </Filter>
     <Filter Include="02. GameObject\01. Stage\10.Equip\LongBow">
       <UniqueIdentifier>{a2c5b966-ddc2-4173-b5e3-cc8569d32a43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\02. Public\00. DynamicCamera">
+      <UniqueIdentifier>{b393d07e-efcc-4ed5-8b5b-06d5a4ad893d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -231,6 +231,15 @@
     <ClInclude Include="..\Code\Arrow_SkillQ.h">
       <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\Arrow_SkillF.h">
+      <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\ArrowNaviTerrain.h">
+      <Filter>02. GameObject\01. Stage\00. Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Phoenix.h">
+      <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -333,6 +342,15 @@
       <Filter>02. GameObject\02. Public\99. SphereCollider</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\Arrow_SkillQ.cpp">
+      <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Arrow_SkillF.cpp">
+      <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\ArrowNaviTerrain.cpp">
+      <Filter>02. GameObject\01. Stage\00. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Phoenix.cpp">
       <Filter>02. GameObject\01. Stage\10.Equip\LongBow</Filter>
     </ClCompile>
   </ItemGroup>

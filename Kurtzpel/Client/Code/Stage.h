@@ -19,6 +19,7 @@
 
 BEGIN(Client)
 class CNaviTerrain;
+class CArrowNaviTerrain;
 
 class CStage : public Engine::CScene
 {
@@ -47,6 +48,7 @@ private:
 	CDynamicCamera* m_Camera = nullptr;
 public:
 	CNaviTerrain* m_NaviTerrain = nullptr;
+	CArrowNaviTerrain* m_ArrowNaviTerrain = nullptr;
 	static CStage*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 private:
 	virtual void Free(void) override;

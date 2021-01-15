@@ -38,7 +38,7 @@ public:
 	enum State {
 		State_Idle, State_Move, State_MoveSA, State_MoveSD, State_Dash, State_Attack, State_Skill,
 		State_JumpEnd, State_JumpComboEnd,
-		State_Damaged, State_DamagedDown,
+		State_Damaged, State_DamagedDown, State_Rolling,
 		State_End
 	};
 	enum Attack_State {
@@ -53,7 +53,7 @@ public:
 		bCheck_DBKeyW, bCheck_DBKeyA, bCheck_DBKeyS, bCheck_DBKeyD,
 		bCheck_KeyW, bCheck_KeyA, bCheck_KeyS, bCheck_KeyD, bCheck_KeyF2, bCheck_RenderSphere,
 		bCheck_MouseL, bCheck_MouseR, bCheck_MouseL_Already, bCheck_MouseR_Already,
-		bCheck_Skill_F1, bCheck_Skill_F2, bCheck_LB_SkillE,
+		bCheck_Skill_F1, bCheck_Skill_F2, bCheck_LB_SkillE, bCheck_LB_Phoenix_SkillZ,
 		bCheck_DamagedUp,
 		bCheck_End
 	};
@@ -98,8 +98,12 @@ private:
 	void				Set_RenderCollSphere();
 	void		Change_Weapon();
 	void		Create_ArrowShot(_vec3 _vPos, _vec3 _vDir, float fTimeDelta);
+	void		Create_ArrowShot_SkillF(_vec3 _vPos, _vec3 _vDir, float fTimeDelta);
 	void		Create_ArrowShot_SkillE_Ready(_vec3 _vPos, _vec3 _vDir);
 	void		Create_ArrowShot_SkillE_Start();
+	void		Create_ArrowShot_SkillQ(_vec3 _vPos, _vec3 _vDir);
+	void		Create_Phoenix_SkillZ(_vec3 _vPos, _vec3 _vDir);
+	void		Move_AccelSpeed(_vec3 vPos, _vec3 vDir, float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom);
 	_vec3		PickUp_OnTerrain(void);
 
 private:
@@ -123,6 +127,9 @@ public:
 	float						m_RocateY = 0.f;
 	_vec3						m_LB_SkillE_Pos = { 0.f, 0.f, 0.f };
 	//_vec3						m_SkillPosSave = { 0.f, 0.f, 0.f };
+	int							m_LB_Arrow_Count = 0;
+	float						m_AccelSpeed = 0.f;
+	float						m_AccelSpeedInit = 0.f;
 public:
 	static CPlayer*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

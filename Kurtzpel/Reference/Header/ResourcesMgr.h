@@ -14,6 +14,7 @@
 #include "StaticMesh.h"
 #include "DynamicMesh.h"
 #include "NaviMesh.h"
+#include "ArrowNaviMesh.h"
 
 BEGIN(Engine)
 

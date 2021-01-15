@@ -138,7 +138,7 @@ void Client::CDynamicCamera::Mouse_Move(void)
 
 	CPlayer::State pState = CPlayer::GetInstance()->m_State;
 	if (!(pState == CPlayer::State_Idle || pState == CPlayer::State_Move || pState == CPlayer::State_MoveSA || pState == CPlayer::State_MoveSD
-		|| pState == CPlayer::State_JumpEnd || pState == CPlayer::State_Damaged))
+		|| pState == CPlayer::State_JumpEnd || pState == CPlayer::State_Damaged) && (CPlayer::GetInstance()->m_LB_Arrow_Count == 0))
 		return;
 
 	if (dwMouseMove = Engine::Get_DIMouseMove(Engine::DIMS_X))

@@ -118,6 +118,10 @@ HRESULT Engine::CResourcesMgr::Ready_Meshes(LPDIRECT3DDEVICE9 pGraphicDev,
 	case TYPE_NAVI:
 		pResources = CNaviMesh::Create(pGraphicDev);
 		break;
+
+	case TYPE_ARROWNAVI:
+		pResources = CArrowNaviMesh::Create(pGraphicDev);
+		break;
 	}
 
 	if (nullptr == pResources)

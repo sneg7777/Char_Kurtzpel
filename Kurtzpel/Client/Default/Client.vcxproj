@@ -173,6 +173,8 @@
   <ItemGroup>
     <ClInclude Include="..\Code\ApostleOfGreed.h" />
     <ClInclude Include="..\Code\Arrow.h" />
+    <ClInclude Include="..\Code\ArrowNaviTerrain.h" />
+    <ClInclude Include="..\Code\Arrow_SkillF.h" />
     <ClInclude Include="..\Code\Arrow_SkillQ.h" />
     <ClInclude Include="..\Code\BackGround.h" />
     <ClInclude Include="..\Code\DynamicCamera.h" />
@@ -186,6 +188,7 @@
     <ClInclude Include="..\Code\Monster.h" />
     <ClInclude Include="..\Code\MonsterTemp.h" />
     <ClInclude Include="..\Code\NaviTerrain.h" />
+    <ClInclude Include="..\Code\Phoenix.h" />
     <ClInclude Include="..\Code\Player.h" />
     <ClInclude Include="..\Code\Random_Manager.h" />
     <ClInclude Include="..\Code\SkillCollider.h" />
@@ -215,6 +218,8 @@
   <ItemGroup>
     <ClCompile Include="..\Code\ApostleOfGreed.cpp" />
     <ClCompile Include="..\Code\Arrow.cpp" />
+    <ClCompile Include="..\Code\ArrowNaviTerrain.cpp" />
+    <ClCompile Include="..\Code\Arrow_SkillF.cpp" />
     <ClCompile Include="..\Code\Arrow_SkillQ.cpp" />
     <ClCompile Include="..\Code\BackGround.cpp" />
     <ClCompile Include="..\Code\DynamicCamera.cpp" />
@@ -228,6 +233,7 @@
     <ClCompile Include="..\Code\Monster.cpp" />
     <ClCompile Include="..\Code\MonsterTemp.cpp" />
     <ClCompile Include="..\Code\NaviTerrain.cpp" />
+    <ClCompile Include="..\Code\Phoenix.cpp" />
     <ClCompile Include="..\Code\Player.cpp" />
     <ClCompile Include="..\Code\Random_Manager.cpp" />
     <ClCompile Include="..\Code\SkillCollider.cpp" />

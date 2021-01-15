@@ -1,5 +1,5 @@
-#ifndef Arrow_SkillQ_h__
-#define Arrow_SkillQ_h__
+#ifndef Arrow_SkillF_h__
+#define Arrow_SkillF_h__
 
 #include "Unit.h"
 #include "Define.h"
@@ -16,11 +16,10 @@ class CShader;
 END
 
 BEGIN(Client)
-class CArrow_SkillQ : public CUnit {
+class CArrow_SkillF : public CUnit {
 private:
-	explicit CArrow_SkillQ(LPDIRECT3DDEVICE9 pGraphicDev);
-	explicit CArrow_SkillQ(CArrow_SkillQ* _copy);
-	virtual ~CArrow_SkillQ(void);
+	explicit CArrow_SkillF(LPDIRECT3DDEVICE9 pGraphicDev);
+	virtual ~CArrow_SkillF(void);
 
 public:
 	virtual HRESULT Ready_Object(void) override;
@@ -31,18 +30,15 @@ public:
 	virtual void Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
 	void Create_Coll();
 	void Set_SpeedToLife(float _speed, float _life = -1.f);
-	void Set_SplitCount(int _count) { m_SplitCount = _count; }
 	//
 private:
 	HRESULT		Add_Component(void);
 
 private:
 	float		m_LifeTime = 0.f;
-	int			m_SplitCount = 0;
-public:
-	static CArrow_SkillQ*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
-	static CArrow_SkillQ*	Create(CArrow_SkillQ* _copy);
 
+public:
+	static CArrow_SkillF*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 
 private:
 	virtual void Free(void) override;

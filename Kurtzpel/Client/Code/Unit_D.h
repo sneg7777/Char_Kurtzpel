@@ -25,6 +25,8 @@ public:
 	virtual void Render_Object(void) override;
 	virtual void Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
 
+	void Init_BoneAttack(bool _attack = false);
+
 
 protected:
 	HRESULT		Add_Component(void);
