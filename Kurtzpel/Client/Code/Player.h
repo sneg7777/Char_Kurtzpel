@@ -130,6 +130,8 @@ public:
 	int							m_LB_Arrow_Count = 0;
 	float						m_AccelSpeed = 0.f;
 	float						m_AccelSpeedInit = 0.f;
+	float						m_MaxDashGauge = 0.f;
+	float						m_DashGauge = 0.f;
 public:
 	static CPlayer*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

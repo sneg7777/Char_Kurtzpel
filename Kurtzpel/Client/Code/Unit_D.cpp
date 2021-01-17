@@ -101,7 +101,7 @@ Client::_int Client::CUnit_D::Update_Object(const _float& fTimeDelta)
 }
 void Client::CUnit_D::Render_Object(void)
 {
-	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
+	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
 	Engine::Safe_AddRef(pEffect);
 
@@ -111,7 +111,7 @@ void Client::CUnit_D::Render_Object(void)
 
 	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-	m_pMeshCom->Render_Meshes(pEffect);
+	m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
 
 	pEffect->End();
 
@@ -122,7 +122,7 @@ HRESULT Client::CUnit_D::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
 	_matrix		matWorld, matView, matProj;
 
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 

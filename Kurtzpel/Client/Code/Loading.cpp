@@ -158,6 +158,14 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyZ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_Z.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyTab", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_Tab.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyLShift", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_LShift.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp0", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Player_Hp_0.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp1", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Player_Hp_1.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp2", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Player_Hp_2.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp3", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Player_Hp_3.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp0", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Monster_Hp_0.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp1", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Monster_Hp_1.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp2", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Monster_Hp_2.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp3", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Monster_Hp_3.tga"), E_FAIL);
 	
 	lstrcpy(m_szLoading, L"Mesh Loading.............................");
 	///////////////////////////////////////////////// Static Mesh

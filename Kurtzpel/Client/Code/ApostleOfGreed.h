@@ -49,6 +49,8 @@ private:
 	virtual void	 Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
 	void		Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _vec3 vPos, _vec3 vDir, float playerTodisTance);
 	bool		Random_Skill(float playerTodisTance);
+	void		Emplace_DelayHpDec(float _attack);
+	void		Update_DelayHpDec(float fTimeDelta);
 	_vec3		PickUp_OnTerrain(void);
 
 

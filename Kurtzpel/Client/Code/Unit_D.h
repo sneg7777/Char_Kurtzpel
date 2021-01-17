@@ -33,15 +33,10 @@ protected:
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
 public:
 
-	Engine::CDynamicMesh*		m_pMeshCom = nullptr;
-
 	//_bool						m_bColl = false;
 	//_bool						m_bDraw = false;
 	_float						m_AniSpeed = 1.f;
-	_float						m_fMaxKnockBackHp = 0.f;
-	_float						m_fKnockBackHp = 0.f;
-	_float						m_fKnockBackPower = 1.f;
-	_vec3						m_fKnockBackDir;
+
 public:
 	_int Load_ColliderFile(_tchar* pFilePath);
 

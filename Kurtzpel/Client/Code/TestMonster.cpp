@@ -65,7 +65,7 @@ Client::_int Client::CTestMonster::Update_Object(const _float& fTimeDelta)
 	_vec3	vPlayerPos;
 	pPlayerTransform->Get_Info(Engine::INFO_POS, &vPlayerPos);
 
-	m_pTransformCom->Chase_Target(&vPlayerPos, m_fSpeed, fTimeDelta);
+	m_pTransformCom->Chase_Target(&vPlayerPos, m_sStat.m_fSpeed, fTimeDelta);
 
 	return 0;
 }

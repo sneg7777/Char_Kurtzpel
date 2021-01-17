@@ -11,8 +11,8 @@ CPhoenix::CPhoenix(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit_D(pGraphicDev)
 {
 	m_LifeTime = 10.f;
-	m_fInitSpeed = 25.f;
-	m_fSpeed = m_fInitSpeed;
+	m_sStat.m_fInitSpeed = 25.f;
+	m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 }
 
 CPhoenix::~CPhoenix(void)
@@ -26,10 +26,10 @@ HRESULT Client::CPhoenix::Add_Component(void)
 
 	CUnit_D::Add_Component();
 	// Mesh
-	pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Phoenix"));
+	pComponent = m_sComponent.m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Phoenix"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
-	m_pMeshCom->Set_AniAngle(95.f);
+	m_sComponent.m_pMeshCom->Set_AniAngle(95.f);
 	//m_pMeshCom->Set_AniAngle(275.f);
 	//
 	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
@@ -55,7 +55,7 @@ HRESULT CPhoenix::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
 	_matrix		matWorld, matView, matProj;
 
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 
@@ -86,15 +86,15 @@ HRESULT Client::CPhoenix::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pTransformCom->Set_Scale(0.018f, 0.018f, 0.018f);
-	m_pMeshCom->Set_AnimationSet(0);
+	m_sComponent.m_pTransformCom->Set_Scale(0.018f, 0.018f, 0.018f);
+	m_sComponent.m_pMeshCom->Set_AnimationSet(0);
 
 	return S_OK;
 }
 
 Client::_int Client::CPhoenix::Update_Object(const _float& fTimeDelta)
 {
-	if (m_IsDead || m_LifeTime < 0.f) {
+	if (m_sStat.m_IsDead || m_LifeTime < 0.f) {
 		return 1;
 	}
 	Calc_Time(fTimeDelta);
@@ -102,24 +102,24 @@ Client::_int Client::CPhoenix::Update_Object(const _float& fTimeDelta)
 
 
 	_vec3	vPos, vPosAfter;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 	//SetUp_OnTerrain();
 	Pattern(fTimeDelta, vPos);
 
 	CUnit::Update_Object(fTimeDelta);
-	m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
+	m_sComponent.m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
 
-	vPosAfter = vPos + m_vDir * m_fSpeed * 5.f;// * fTimeDelta;
+	vPosAfter = vPos + m_sStat.m_vDir * m_sStat.m_fSpeed * 5.f;// * fTimeDelta;
 	//m_pTransformCom->Set_Pos(&vPosAfter, true);
 	if(!m_AniClip)
-		m_pTransformCom->Chase_Target(&vPosAfter, 0.f, fTimeDelta);
+		m_sComponent.m_pTransformCom->Chase_Target(&vPosAfter, 0.f, fTimeDelta);
 	else
-		m_pTransformCom->Chase_Target(&vPosAfter, m_fSpeed, fTimeDelta);
+		m_sComponent.m_pTransformCom->Chase_Target(&vPosAfter, m_sStat.m_fSpeed, fTimeDelta);
 
 	//m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-30.f), true);
-	m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(265.f), true);
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(265.f), true);
 
-	m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
+	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
 
 	return 0;
 }
@@ -134,7 +134,7 @@ Client::_int Client::CPhoenix::LateUpdate_Object(const _float& fTimeDelta)
 
 void Client::CPhoenix::Render_Object(void)
 {
-	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
+	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
 	Engine::Safe_AddRef(pEffect);
 
@@ -145,7 +145,7 @@ void Client::CPhoenix::Render_Object(void)
 
 	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-	m_pMeshCom->Render_Meshes(pEffect);
+	m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
 
 	pEffect->EndPass();
 	pEffect->End();
@@ -163,14 +163,14 @@ void Client::CPhoenix::Render_Object(void)
 void Client::CPhoenix::SetUp_OnTerrain(void)
 {
 	_vec3	vPosition;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
 
 	Engine::CTerrainTex*		pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
 	NULL_CHECK(pTerrainBufferCom);
 
-	_float fHeight = m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
+	_float fHeight = m_sComponent.m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
 
-	m_pTransformCom->Move_Pos(vPosition.x, fHeight, vPosition.z);
+	m_sComponent.m_pTransformCom->Move_Pos(vPosition.x, fHeight, vPosition.z);
 }
 
 
@@ -183,15 +183,15 @@ void Client::CPhoenix::Calc_Time(_float fTimeDelta)
 
 void Client::CPhoenix::Pattern(_float fTimeDelta, _vec3 vPos)
 {
-	if (!m_AniClip && m_pMeshCom->Is_AnimationSetEnd(0.3f)) {
+	if (!m_AniClip && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.3f)) {
 		m_AniClip = true;
-		m_pMeshCom->Set_AnimationSet(1);
+		m_sComponent.m_pMeshCom->Set_AnimationSet(1);
 		(*m_VecSphereCollider.begin())->m_WeaponAttack = true;
 	}
 	else if (!m_AniClip) {
-		if (m_pMeshCom->Get_AnimationTrackPos() > 1.f) {
+		if (m_sComponent.m_pMeshCom->Get_AnimationTrackPos() > 1.f) {
 			_vec3 vAfterPos = vPos + _vec3{ 0.f, -10.f, 0.f } *fTimeDelta;
-			m_pTransformCom->Set_Pos(&vAfterPos, true);
+			m_sComponent.m_pTransformCom->Set_Pos(&vAfterPos, true);
 		}
 	}
 	if (m_IntervalTime < 0.f) {

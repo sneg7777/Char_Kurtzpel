@@ -190,7 +190,7 @@ HRESULT CTerrain::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	//pPlayerTransform->Get_Info(Engine::INFO_POS, &vPlayerPos);
 
 	//float lookatY = pPlayer->m_LookAtY;
-	//_vec3 dir = pPlayer->m_vDir;
+	//_vec3 dir = pPlayer->m_sStat.m_vDir;
 	if (pPlayer->m_bCheck[CPlayer::bCheck::bCheck_LB_SkillE] || (pPlayer->m_TimeCheck[CPlayer::TimeCheck_LB_SkillE_Attack_Arrow_Start] > 0.f))
 		pEffect->SetVector("g_vPlayerPos", &_vec4(pPlayer->m_LB_SkillE_Pos, 1.f));
 	else

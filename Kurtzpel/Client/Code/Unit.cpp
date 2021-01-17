@@ -24,18 +24,18 @@ HRESULT Client::CUnit::Add_Component(void)
 	Engine::CComponent* pComponent = nullptr;
 
 	// Transform
-	pComponent = m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
+	pComponent = m_sComponent.m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_DYNAMIC].emplace(L"Com_Transform", pComponent);
 
 	// Renderer
-	pComponent = m_pRendererCom = Engine::Get_Renderer();
+	pComponent = m_sComponent.m_pRendererCom = Engine::Get_Renderer();
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	Safe_AddRef(pComponent);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Renderer", pComponent);
 
 	// Calculator
-	pComponent = m_pCalculatorCom = dynamic_cast<Engine::CCalculator*>(Engine::Clone(L"Proto_Calculator"));
+	pComponent = m_sComponent.m_pCalculatorCom = dynamic_cast<Engine::CCalculator*>(Engine::Clone(L"Proto_Calculator"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Calculator", pComponent);
 
@@ -50,7 +50,7 @@ HRESULT Client::CUnit::Add_Component(void)
 	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Optimization", pComponent);
 
 	// Shader
-	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Mesh"));
+	pComponent = m_sComponent.m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Mesh"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
@@ -69,13 +69,14 @@ CSphereCollider* CUnit::Get_BonePartCollider(CSphereCollider::BonePart _bonePart
 	return nullptr;
 }
 
-void CUnit::Set_BonePartColliderAttack(CSphereCollider::BonePart _bonePart, bool _attack, float _power)
+void CUnit::Set_BonePartColliderAttack(CSphereCollider::BonePart _bonePart, float _fattack, bool _battack, float _power)
 {
 	for (auto& col : m_VecSphereCollider)
 	{
 		if (col->m_BonePart == _bonePart) {
-			col->m_WeaponAttack = _attack;
+			col->m_WeaponAttack = _battack;
 			col->m_WeaponPower = _power;
+			col->Get_sStat()->m_fAttack = _fattack;
 			return;
 		}
 	}
@@ -87,7 +88,7 @@ void CUnit::Set_StaticSphere()
 	if (m_VecSphereCollider.size() == 0)
 		return;
 	_vec3	vPos;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 	(*m_VecSphereCollider.begin())->m_pTransformCom->m_vInfo[Engine::INFO_POS] = vPos;
 }
 
@@ -101,15 +102,15 @@ HRESULT Client::CUnit::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pTransformCom->Set_Pos(&_vec3(5.f, 0.f, 5.f));
-	m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(45.f));
+	m_sComponent.m_pTransformCom->Set_Pos(&_vec3(5.f, 0.f, 5.f));
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(45.f));
 
 	return S_OK;
 }
 Client::_int Client::CUnit::Update_Object(const _float& fTimeDelta)
 {
 	Engine::CGameObject::Update_Object(fTimeDelta);
-	if (m_pStaticMeshCom != nullptr)
+	if (m_sComponent.m_pStaticMeshCom != nullptr)
 		Set_StaticSphere();
 
 	for (auto& sphere : m_VecSphereCollider)
@@ -121,7 +122,7 @@ Client::_int Client::CUnit::Update_Object(const _float& fTimeDelta)
 }
 void Client::CUnit::Render_Object(void)
 {
-	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
+	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
 	Engine::Safe_AddRef(pEffect);
 
@@ -131,7 +132,7 @@ void Client::CUnit::Render_Object(void)
 
 	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-	m_pStaticMeshCom->Render_Meshes(pEffect);
+	m_sComponent.m_pStaticMeshCom->Render_Meshes(pEffect);
 
 	pEffect->End();
 
@@ -141,21 +142,21 @@ void Client::CUnit::Render_Object(void)
 void Client::CUnit::SetUp_OnTerrain(void)
 {
 	_vec3	vPosition;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
 
 	Engine::CTerrainTex* pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
 	NULL_CHECK(pTerrainBufferCom);
 
-	_float fHeight = m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
+	_float fHeight = m_sComponent.m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
 
-	m_pTransformCom->Move_Pos(vPosition.x, fHeight, vPosition.z);
+	m_sComponent.m_pTransformCom->Move_Pos(vPosition.x, fHeight, vPosition.z);
 }
 
 HRESULT Client::CUnit::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
 	_matrix		matWorld, matView, matProj;
 
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 
@@ -190,12 +191,12 @@ _bool CUnit::Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag)
 											m_pColliderCom->Get_Max(),
 											m_pColliderCom->Get_CollMatrix());*/
 
-	return m_pCalculatorCom->Collision_OBB(pPlayerColliderCom->Get_Min(),
+	return m_sComponent.m_pCalculatorCom->Collision_OBB(pPlayerColliderCom->Get_Min(),
 		pPlayerColliderCom->Get_Max(),
 		pPlayerColliderCom->Get_CollMatrix(),
-		m_pColliderCom->Get_Min(),
-		m_pColliderCom->Get_Max(),
-		m_pColliderCom->Get_CollMatrix());
+		m_sComponent.m_pColliderCom->Get_Min(),
+		m_sComponent.m_pColliderCom->Get_Max(),
+		m_sComponent.m_pColliderCom->Get_CollMatrix());
 }
 
 void CUnit::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)

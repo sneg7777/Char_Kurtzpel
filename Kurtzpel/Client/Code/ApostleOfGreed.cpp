@@ -7,6 +7,7 @@
 #include "Stage.h"
 #include "NaviTerrain.h"
 #include "Random_Manager.h"
+#include "UI_Manager.h"
 
 #define PLAYER_SEARCH_DISTANCE 20.f
 #define PLAYER_ATTACK_DISTANCE 10.f
@@ -31,14 +32,12 @@ CApostleOfGreed::CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev)
 	{
 		m_SkillCool[i] = 0.f;
 	}
-	m_fInitSpeed = 9.f;
-	m_fSpeed = m_fInitSpeed;
-	m_fMaxHp = 12000.f;
-	m_fHp = m_fMaxHp;
-	m_fMaxKnockBackHp = 1000.f;
-	m_fKnockBackHp = m_fMaxKnockBackHp;
-	m_fAttack = 100.f;
-	m_dwNaviIndex = 0;
+	m_sStat.m_fInitSpeed = 9.f;
+	m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
+	m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp = m_sStat.m_fHp = m_sStat.m_fMaxHp = 16000.f;
+	m_sStat.m_fKnockBackHp =  m_sStat.m_fMaxKnockBackHp = 3200.f;
+	m_sStat.m_fAttack = 100.f;
+	m_sStat.m_dwNaviIndex = 0;
 }
 
 CApostleOfGreed::~CApostleOfGreed(void)
@@ -54,7 +53,7 @@ Client::_vec3 Client::CApostleOfGreed::PickUp_OnTerrain(void)
 	Engine::CTransform*		pTerrainTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Transform", Engine::ID_DYNAMIC));
 	NULL_CHECK_RETURN(pTerrainTransformCom, _vec3(0.f, 0.f, 0.f));
 
-	return m_pCalculatorCom->Picking_OnTerrain(g_hWnd, pTerrainBufferCom, pTerrainTransformCom);
+	return m_sComponent.m_pCalculatorCom->Picking_OnTerrain(g_hWnd, pTerrainBufferCom, pTerrainTransformCom);
 }
 
 HRESULT Client::CApostleOfGreed::Add_Component(void)
@@ -63,13 +62,13 @@ HRESULT Client::CApostleOfGreed::Add_Component(void)
 
 	CMonster::Add_Component();
 	// Mesh
-	pComponent = m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_M_ApostleOfGreed"));
+	pComponent = m_sComponent.m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_M_ApostleOfGreed"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
-	m_pMeshCom->Set_AniAngle(95.f);
+	m_sComponent.m_pMeshCom->Set_AniAngle(95.f);
 	//m_pMeshCom->Set_AniAngle(275.f);
 	//
-	m_pTransformCom->Set_Pos(&_vec3(72.f, 0.f, 72.f));
+	m_sComponent.m_pTransformCom->Set_Pos(&_vec3(72.f, 0.f, 72.f));
 	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	Engine::CGameObject::Update_Object(1.f);
 	
@@ -101,7 +100,7 @@ HRESULT CApostleOfGreed::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
 	_matrix		matWorld, matView, matProj;
 
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 
@@ -132,26 +131,27 @@ HRESULT Client::CApostleOfGreed::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pTransformCom->Set_Scale(0.018f, 0.018f, 0.018f);
-	m_pMeshCom->Set_AnimationSet(25);
+	m_sComponent.m_pTransformCom->Set_Scale(0.018f, 0.018f, 0.018f);
+	m_sComponent.m_pMeshCom->Set_AnimationSet(25);
 
 	return S_OK;
 }
 
 Client::_int Client::CApostleOfGreed::Update_Object(const _float& fTimeDelta)
 {
-	if (m_IsDead || m_fHp < 0.f)
+	if (m_sStat.m_IsDead || m_sStat.m_fHp < 0.f)
 		return 1;
 
 	Calc_Time(fTimeDelta);
 
 	SetUp_OnTerrain();
 	Pattern(fTimeDelta);
+	Update_DelayHpDec(fTimeDelta);
 
 	CMonster::Update_Object(fTimeDelta);
-	m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
+	m_sComponent.m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
 
-	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
+	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
 	return 0;
 }
@@ -166,7 +166,7 @@ Client::_int Client::CApostleOfGreed::LateUpdate_Object(const _float& fTimeDelta
 
 void Client::CApostleOfGreed::Render_Object(void)
 {
-	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
+	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
 	Engine::Safe_AddRef(pEffect);
 
@@ -177,7 +177,7 @@ void Client::CApostleOfGreed::Render_Object(void)
 
 	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-	m_pMeshCom->Render_Meshes(pEffect);
+	m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
 
 	pEffect->EndPass();
 	pEffect->End();
@@ -195,14 +195,14 @@ void Client::CApostleOfGreed::Render_Object(void)
 void Client::CApostleOfGreed::SetUp_OnTerrain(void)
 {
 	_vec3	vPosition;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
 
 	Engine::CTerrainTex*		pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
 	NULL_CHECK(pTerrainBufferCom);
 
-	_float fHeight = m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
+	_float fHeight = m_sComponent.m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
 
-	m_pTransformCom->Move_Pos(vPosition.x, fHeight, vPosition.z);
+	m_sComponent.m_pTransformCom->Move_Pos(vPosition.x, fHeight, vPosition.z);
 }
 
 
@@ -229,40 +229,40 @@ void Client::CApostleOfGreed::Set_StateToAnimation(State _state, Skill_Ap _skill
 	switch (_state)
 	{
 	case Client::CApostleOfGreed::State_Wait:
-		m_pMeshCom->Set_AnimationSet(25);
+		m_sComponent.m_pMeshCom->Set_AnimationSet(25);
 		m_AniSpeed = 1.f;
 		Init_BoneAttack();
 		break;
 	case Client::CApostleOfGreed::State_Move:
-		m_pMeshCom->Set_AnimationSet(28);
-		m_fSpeed = m_fInitSpeed;
+		m_sComponent.m_pMeshCom->Set_AnimationSet(28);
+		m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 		m_AniSpeed = 1.f;
 		break;
 	case Client::CApostleOfGreed::State_Rocate:
-		m_pMeshCom->Set_AnimationSet(24);
+		m_sComponent.m_pMeshCom->Set_AnimationSet(24);
 		m_AniSpeed = 1.f;
 		break;
 	case Client::CApostleOfGreed::State_Skill: {
 		m_SkillState = _skill;
 		if (m_SkillState == Skill_Ap_1) {
 			m_SkillCool[SKill_Cool_Ap::SCool_Ap_1] = ApSkill_Cool1;
-			m_pMeshCom->Set_AnimationSet(17);
-			m_fSpeed = m_fInitSpeed;
+			m_sComponent.m_pMeshCom->Set_AnimationSet(17);
+			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.3f;
-			Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, false);
+			Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, false);
 		}
 		else if (m_SkillState == Skill_Ap_3) {
 			m_SkillCool[SKill_Cool_Ap::SCool_Ap_3] = ApSkill_Cool3;
-			m_pMeshCom->Set_AnimationSet(14);
-			m_fSpeed = m_fInitSpeed;
+			m_sComponent.m_pMeshCom->Set_AnimationSet(14);
+			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.3f;
-			Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, false, 4.f);
-			Set_BonePartColliderAttack(CSphereCollider::BonePart_RHand, false, 4.f);
+			Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, false, 4.f);
+			Set_BonePartColliderAttack(CSphereCollider::BonePart_RHand, m_sStat.m_fAttack, false, 4.f);
 		}
 		else if (m_SkillState == Skill_Ap_7) {
 			m_SkillCool[SKill_Cool_Ap::SCool_Ap_7] = ApSkill_Cool7;
-			m_pMeshCom->Set_AnimationSet(7);
-			m_fSpeed = m_fInitSpeed;
+			m_sComponent.m_pMeshCom->Set_AnimationSet(7);
+			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 0.8f;
 		}
 	}
@@ -270,16 +270,16 @@ void Client::CApostleOfGreed::Set_StateToAnimation(State _state, Skill_Ap _skill
 	case Client::CApostleOfGreed::State_JumpEnd:
 		break;
 	case Client::CApostleOfGreed::State_KnockBack:
-		m_pMeshCom->Set_AnimationSet(18);
+		m_sComponent.m_pMeshCom->Set_AnimationSet(18);
 		m_AniSpeed = 1.f;
 		break;
 	case Client::CApostleOfGreed::State_Groggy:
-		m_pMeshCom->Set_AnimationSet(19);
+		m_sComponent.m_pMeshCom->Set_AnimationSet(19);
 		m_AniSpeed = 1.f;
 		m_TimeGroggy = GROGGY;
 		break;
 	case Client::CApostleOfGreed::State_GroggyUp:
-		m_pMeshCom->Set_AnimationSet(20);
+		m_sComponent.m_pMeshCom->Set_AnimationSet(20);
 		m_AniSpeed = 1.f;
 		break;
 	case Client::CApostleOfGreed::State_End:
@@ -298,8 +298,8 @@ void Client::CApostleOfGreed::Pattern(_float fTimeDelta)
 	CPlayer* player = CPlayer::GetInstance();
 	Set_PlayerTowardAngle();
 	_vec3	vPos, vDir;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
 	D3DXVec3Normalize(&vDir, &vDir);
 	//¹¹Áö?
 	vDir *= -1.f;
@@ -312,8 +312,8 @@ void Client::CApostleOfGreed::Pattern(_float fTimeDelta)
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
-	if (m_fKnockBackHp < 0.f) {
-		m_fKnockBackHp = m_fMaxKnockBackHp;
+	if (m_sStat.m_fKnockBackHp <= 0.f && (m_State == State::State_Wait || m_State == State::State_Move || m_State == State::State_Rocate)) {
+		m_sStat.m_fKnockBackHp = 0.f;
 		Set_StateToAnimation(State::State_KnockBack);
 	}
 	if (!m_isSearch) {
@@ -326,7 +326,7 @@ void Client::CApostleOfGreed::Pattern(_float fTimeDelta)
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	if (m_State == State::State_KnockBack) {
-		if (m_pMeshCom->Is_AnimationSetEnd(0.2f)) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.2f)) {
 			Set_StateToAnimation(State::State_Groggy);
 		}
 	}
@@ -336,9 +336,10 @@ void Client::CApostleOfGreed::Pattern(_float fTimeDelta)
 		}
 	}
 	else if (m_State == State::State_GroggyUp) {
-		if (m_pMeshCom->Is_AnimationSetEnd(0.2f)) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.2f)) {
+			m_sStat.m_fKnockBackHp = m_sStat.m_fMaxKnockBackHp;
 			m_State = State::State_Wait;
-			m_pMeshCom->Set_AnimationSet(25);
+			m_sComponent.m_pMeshCom->Set_AnimationSet(25);
 		}
 	}
 	else if (m_State == State::State_Skill) {
@@ -346,11 +347,11 @@ void Client::CApostleOfGreed::Pattern(_float fTimeDelta)
 	}
 	else if (m_State == State::State_Move) {
 
-		m_vDir = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_pTransformCom->m_vInfo[Engine::INFO_POS];
+		m_sStat.m_vDir = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS];
 		Rocate_PlayerToWardAngle(fTimeDelta, 180.f);
-		//_vec3 afterPos = m_pTransformCom->m_vInfo[Engine::INFO_POS] + (m_vDir * fTimeDelta * m_fSpeed);
+		//_vec3 afterPos = m_pTransformCom->m_vInfo[Engine::INFO_POS] + (m_sStat.m_vDir * fTimeDelta * m_sStat.m_fSpeed);
 		//m_pTransformCom->Set_Pos(&afterPos);
-		m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+		m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
 
 		Set_StateToAnimation(State::State_Move);
 		//
@@ -387,9 +388,20 @@ void CApostleOfGreed::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphere
 			&& */_colSphere->m_WeaponAttack) {
 			if (!_colSphere->Check_DamagedObject(this)) {
 				_colSphere->m_VecDamagedObject.emplace_back(this);
-				m_fHp -= _col->m_fAttack;
-				m_fKnockBackHp -= _col->m_fAttack;
+				m_sStat.m_fHp -= _col->Get_sStat()->m_fAttack;
+				Emplace_DelayHpDec(_col->Get_sStat()->m_fAttack);
+				if (m_sStat.m_fKnockBackHp >= 0.f) {
+					m_sStat.m_fKnockBackHp -= _col->Get_sStat()->m_fAttack;
+					if (m_sStat.m_fKnockBackHp < 0.f)
+						m_sStat.m_fKnockBackHp = 0.f;
+				}
+				
 				m_isSearch = true;
+				CUI_Manager::Get_Instance()->Set_DamagedTime(TIME_ENEMYHPBAR);
+				if (m_sStat.m_fHp > 0.f)
+					CUI_Manager::Get_Instance()->Set_DamagedEnemy(this);
+				else
+					CUI_Manager::Get_Instance()->Set_DamagedEnemy(nullptr);
 			}
 		}
 	}
@@ -398,33 +410,33 @@ void CApostleOfGreed::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphere
 
 void CApostleOfGreed::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _vec3 vPos, _vec3 vDir, float playerTodisTance) {
 	if (m_SkillState == Skill_Ap::Skill_Ap_1) {
-		if (m_pMeshCom->Is_AnimationSetEnd(0.15f)) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.15f)) {
 			Set_StateToAnimation(State::State_Wait);
 		}
 		else {
-			float trackPos = m_pMeshCom->Get_AnimationTrackPos();
-			//m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+			float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
+			//m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
 
 			if (trackPos > 1.6f) {
-				Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, true);
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, true);
 			}
 			else {
-				Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, false);
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, false);
 			}
 			return;
 		}
 	}
 	else if (m_SkillState == Skill_Ap::Skill_Ap_3) {
-		if (m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
 			Set_StateToAnimation(State::State_Wait);
 		}
 		else {
-			float trackPos = m_pMeshCom->Get_AnimationTrackPos();
-			//m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed), &m_dwNaviIndex));
+			float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
+			//m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
 
 			if (2.66f < trackPos && trackPos < 3.33f) {
-				Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, true, 4.f);
-				Set_BonePartColliderAttack(CSphereCollider::BonePart_RHand, true, 4.f);
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, true, 4.f);
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_RHand, m_sStat.m_fAttack, true, 4.f);
 			}
 			else {
 				Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, false, 4.f);
@@ -432,23 +444,23 @@ void CApostleOfGreed::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMesh
 			}
 
 			if (2.9f < trackPos && trackPos < 3.1f) {
-				m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * 30.f), &m_dwNaviIndex));
+				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * 30.f), &m_sStat.m_dwNaviIndex));
 			}
 			return;
 		}
 	}
 	else if (m_SkillState == Skill_Ap::Skill_Ap_7) {
-		if (m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
 			Set_StateToAnimation(State::State_Wait);
 		}
 		else {
-			float trackPos = m_pMeshCom->Get_AnimationTrackPos();
+			float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
 			if (0.16f < trackPos && trackPos < 0.76f) {
-				Set_BonePartColliderAttack(CSphereCollider::BonePart_BodyWeapon, true, 3.f);
-				m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_PlayerDistanceSave * fTimeDelta * 1.4f), &m_dwNaviIndex));
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_BodyWeapon, m_sStat.m_fAttack, true, 3.f);
+				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_PlayerDistanceSave * fTimeDelta * 1.4f), &m_sStat.m_dwNaviIndex));
 			}
 			else {
-				Set_BonePartColliderAttack(CSphereCollider::BonePart_BodyWeapon, false);
+				Set_BonePartColliderAttack(CSphereCollider::BonePart_BodyWeapon, m_sStat.m_fAttack, false);
 			}
 		}
 	}
@@ -483,7 +495,7 @@ bool CApostleOfGreed::Random_Skill(float playerTodisTance) {
 	case 2: {
 		if (m_SkillCool[SKill_Cool_Ap::SCool_Ap_7] <= 0.f && PLAYER_SEARCH_DISTANCE < playerTodisTance && playerTodisTance < ApSkill_Cool7_DisTance && m_AngleOfSame) {
 			Set_StateToAnimation(State::State_Skill, Skill_Ap::Skill_Ap_7);
-			m_PlayerDistanceSave = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_pTransformCom->m_vInfo[Engine::INFO_POS];
+			m_PlayerDistanceSave = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS];
 			return true;
 		}
 		else {
@@ -495,4 +507,37 @@ bool CApostleOfGreed::Random_Skill(float playerTodisTance) {
 		break;
 	}
 	return false;
+}
+
+void CApostleOfGreed::Emplace_DelayHpDec(float _attack) {
+	sDelayHpDec* pDelayHpDec = new sDelayHpDec;
+	pDelayHpDec->m_fDelayTime = 2.f;
+	pDelayHpDec->m_fHpDec = _attack;
+	m_VecDelayHpDec.emplace_back(pDelayHpDec);
+	return;
+}
+
+void CApostleOfGreed::Update_DelayHpDec(float fTimeDelta) {
+	for (auto& iter = m_VecDelayHpDec.begin(); iter!= m_VecDelayHpDec.end();)
+	{
+		(*iter)->m_fDelayTime -= fTimeDelta;
+		if ((*iter)->m_fDelayTime < 0.f)
+		{
+			m_sStat.m_fMaxDelayHp -= (*iter)->m_fHpDec;
+			Safe_Delete(*iter);
+			iter = m_VecDelayHpDec.erase(iter);
+		}
+		else
+		{
+			iter++;
+		}
+	}
+
+	if (m_sStat.m_fMaxDelayHp < m_sStat.m_fDelayHp)
+	{
+		m_sStat.m_fDelayHp -= fTimeDelta * 2200.f;
+		if (m_sStat.m_fMaxDelayHp > m_sStat.m_fDelayHp)
+			m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp;
+	}
+	return;
 }

@@ -76,8 +76,8 @@ void CStage::CameraControl(_float fTimeDelta)
 		player->m_CameraDist += fTimeDelta * 1200.f;
 	}
 	_vec3	vPos, vDir;
-	player->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-	player->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+	player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
 
 	*m_Camera->Get_pPos() = vPos - (vDir * player->m_CameraDist);
 	m_Camera->Get_pPos()->y += 3.5f - player->m_LookAtY * 0.72f;
@@ -360,7 +360,7 @@ void CStage::Collision_OnlyDynamic_Object(const _float& fTimeDelta)
 					float dist = sqrtf(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
 					// 거리가 반지름의 합보다 작으면 충돌
 					float scale = obj_1_Sphere->m_pTransformCom->m_vScale.x + obj_2_Sphere->m_pTransformCom->m_vScale.x;
-					float Meshscale = (obj_1Unit->m_pTransformCom->m_vScale.x + obj_2Unit->m_pTransformCom->m_vScale.x) * 0.5f;
+					float Meshscale = (obj_1Unit->Get_sComponent()->m_pTransformCom->m_vScale.x + obj_2Unit->Get_sComponent()->m_pTransformCom->m_vScale.x) * 0.5f;
 					if (dist < scale * Meshscale)
 					{
 						obj_1Unit->Collision(obj_1_Sphere, obj_2Unit, obj_2_Sphere, fTimeDelta);
@@ -422,7 +422,7 @@ void CStage::Collision_StaticToDynamic_Object(const _float& fTimeDelta)
 				_vec3 dir = obj_1_Pos - obj_2_Pos;
 				float dist = sqrtf(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
 				// 거리가 반지름의 합보다 작으면 충돌
-				float scale = obj_1_Sphere->m_pTransformCom->m_vScale.x + (obj_2_Sphere->m_pTransformCom->m_vScale.x * obj_2Unit->m_pTransformCom->m_vScale.x);
+				float scale = obj_1_Sphere->m_pTransformCom->m_vScale.x + (obj_2_Sphere->m_pTransformCom->m_vScale.x * obj_2Unit->Get_sComponent()->m_pTransformCom->m_vScale.x);
 				
 				if (dist < scale)
 				{

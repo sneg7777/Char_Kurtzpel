@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "UI.h"
 #include "Export_Function.h"
+#include "UI_Manager.h"
 
 CUI::CUI(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
@@ -78,6 +79,48 @@ Client::_int Client::CUI::Update_Object(const _float& fTimeDelta)
 	if (m_Weapon != CPlayer::Weapon_None && m_Weapon != CPlayer::GetInstance()->m_WeaponEquip) {
 		return 0;
 	}
+	CPlayer* pPlayer = CPlayer::GetInstance();
+	if (m_UIKind == UIKind::UIK_Player_Hp1) {
+		float hpPer = (pPlayer->Get_sStat()->m_fHp / pPlayer->Get_sStat()->m_fMaxHp);
+		m_fX = 390.8f + 121.2f * hpPer;
+		m_fSizeX = (pPlayer->Get_sStat()->m_fHp / pPlayer->Get_sStat()->m_fMaxHp) * 242.4f;
+	}
+	else if (m_UIKind == UIKind::UIK_Player_Hp2) {
+		float dashPer = (pPlayer->m_DashGauge / pPlayer->m_MaxDashGauge);
+		m_fX = 390.8f + 121.2f * dashPer;
+		m_fSizeX = (pPlayer->m_DashGauge / pPlayer->m_MaxDashGauge) * 242.4f;
+	}
+	else if (m_UIKind == UIKind::UIK_Player_Hp3) {
+		float mpPer = (pPlayer->Get_sStat()->m_fMp / pPlayer->Get_sStat()->m_fMaxMp);
+		m_fX = 390.8f + 121.2f * mpPer;
+		m_fSizeX = (pPlayer->Get_sStat()->m_fMp / pPlayer->Get_sStat()->m_fMaxMp) * 242.4f;
+	}
+	//////
+	if (m_UIKind == UIKind::UIK_Monster_Hp0 || m_UIKind == UIKind::UIK_Monster_Hp1 || m_UIKind == UIKind::UIK_Monster_Hp2 || m_UIKind == UIKind::UIK_Monster_Hp3)
+	{
+		CUnit* pEnemy = CUI_Manager::Get_Instance()->Get_DamagedEnemy();
+		if (pEnemy == nullptr && m_UIKind != UIKind::UIK_Monster_Hp0)
+			return 0;
+		if (CUI_Manager::Get_Instance()->Get_DamagedTime() <= 0.f)
+			return 0;
+
+		if (m_UIKind == UIKind::UIK_Monster_Hp1) {
+			float hpPer = (pEnemy->Get_sStat()->m_fHp / pEnemy->Get_sStat()->m_fMaxHp);
+			m_fX = 340.5f + 171.5f * hpPer;
+			m_fSizeX = (pEnemy->Get_sStat()->m_fHp / pEnemy->Get_sStat()->m_fMaxHp) * 343.f;
+		}
+		else if (m_UIKind == UIKind::UIK_Monster_Hp2) {
+			float hpPer = (pEnemy->Get_sStat()->m_fDelayHp / pEnemy->Get_sStat()->m_fMaxHp);
+			m_fX = 340.5f + 171.5f * hpPer;
+			m_fSizeX = (pEnemy->Get_sStat()->m_fDelayHp / pEnemy->Get_sStat()->m_fMaxHp) * 343.f;
+		}
+		else if (m_UIKind == UIKind::UIK_Monster_Hp3) {
+			float knockPer = (pEnemy->Get_sStat()->m_fKnockBackHp / pEnemy->Get_sStat()->m_fMaxKnockBackHp);
+			m_fX = 340.5f + 171.5f * knockPer;
+			m_fSizeX = (pEnemy->Get_sStat()->m_fKnockBackHp / pEnemy->Get_sStat()->m_fMaxKnockBackHp) * 343.f;
+		}
+	}
+
 	Engine::CGameObject::Update_Object(fTimeDelta);
 		
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);

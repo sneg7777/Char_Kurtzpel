@@ -43,6 +43,13 @@ Client::_int Client::CUI_Manager::Update_Object(const _float& fTimeDelta)
 		_ui->Update_Object(fTimeDelta);
 	}
 
+	if (m_DamagedInitTime > 0.f) {
+		m_DamagedInitTime -= fTimeDelta;
+		if (m_DamagedInitTime <= 0.f) {
+			m_DamagedInitTime = 0.f;
+			m_pDamagedEnemy = nullptr;
+		}
+	}
 	return 0;
 }
 void Client::CUI_Manager::Render_Object(void)
@@ -51,7 +58,7 @@ void Client::CUI_Manager::Render_Object(void)
 }
 
 void Client::CUI_Manager::Ready_SkillIcon() {
-	for (int i = 0; i < 22; i++)
+	for (int i = 0; i < 30; i++)
 	{
 		CUI* pUI = CUI::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pUI, );
@@ -206,6 +213,54 @@ void Client::CUI_Manager::Init_SkillIcon(CUI* pUI, int number) {
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillF"));
 		pUI->m_UIKind = CUI::UIKind::UIK_SkillF_LB;
 		pUI->m_Weapon = CPlayer::Weapon_LongBow;
+		break;
+	}
+	case 22: {
+		pUI->Set_PosToSize(512.f, 565.f, 248.8f, 33.6f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp0"));
+		pUI->m_UIKind = CUI::UIKind::UIK_Player_Hp0;
+		break;
+	}
+	case 23: {
+		pUI->Set_PosToSize(512.f, 555.6f, 242.4f, 8.f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp1"));
+		pUI->m_UIKind = CUI::UIKind::UIK_Player_Hp1;
+		break;
+	}
+	case 24: {
+		pUI->Set_PosToSize(512.f, 569.f, 242.4f, 4.8f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp2"));
+		pUI->m_UIKind = CUI::UIKind::UIK_Player_Hp2;
+		break;
+	}
+	case 25: {
+		pUI->Set_PosToSize(512.f, 577.f, 242.4f, 4.8f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp3"));
+		pUI->m_UIKind = CUI::UIKind::UIK_Player_Hp3;
+		break;
+	}
+	case 26: {
+		pUI->Set_PosToSize(512.f, 95.f, 350.f, 24.5f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp0"));
+		pUI->m_UIKind = CUI::UIKind::UIK_Monster_Hp0;
+		break;
+	}
+	case 27: {
+		pUI->Set_PosToSize(512.f, 90.f, 343.f, 9.1f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp2"));
+		pUI->m_UIKind = CUI::UIKind::UIK_Monster_Hp2;
+		break;
+	}
+	case 28: {
+		pUI->Set_PosToSize(512.f, 90.f, 343.f, 9.1f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp1"));
+		pUI->m_UIKind = CUI::UIKind::UIK_Monster_Hp1;
+		break;
+	}
+	case 29: {
+		pUI->Set_PosToSize(512.f, 102.f, 343.f, 4.9f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp3"));
+		pUI->m_UIKind = CUI::UIKind::UIK_Monster_Hp3;
 		break;
 	}
 	default:

@@ -4,7 +4,7 @@
 
 CTestPlayer::CTestPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
-	, m_vDir(0.f, 0.f, 0.f)
+//	, m_sStat.m_vDir(0.f, 0.f, 0.f)
 {
 
 }
@@ -37,18 +37,18 @@ HRESULT Client::CTestPlayer::Add_Component(void)
 
 void Client::CTestPlayer::Key_Input(const _float& fTimeDelta)
 {
-	m_pTransformCom->Get_Info(Engine::INFO_UP, &m_vDir);
+	m_pTransformCom->Get_Info(Engine::INFO_UP, &m_sStat.m_vDir);
 
 	if (GetAsyncKeyState(VK_UP) & 0x8000)
 	{
-		D3DXVec3Normalize(&m_vDir, &m_vDir);
-		m_pTransformCom->Move_Pos(&(m_vDir * m_fSpeed * fTimeDelta));
+		D3DXVec3Normalize(&m_sStat.m_vDir, &m_sStat.m_vDir);
+		m_pTransformCom->Move_Pos(&(m_sStat.m_vDir * m_sStat.m_fSpeed * fTimeDelta));
 	}
 
 	if (GetAsyncKeyState(VK_DOWN) & 0x8000)
 	{
-		D3DXVec3Normalize(&m_vDir, &m_vDir);
-		m_pTransformCom->Move_Pos(&(m_vDir * -m_fSpeed * fTimeDelta));
+		D3DXVec3Normalize(&m_sStat.m_vDir, &m_sStat.m_vDir);
+		m_pTransformCom->Move_Pos(&(m_sStat.m_vDir * -m_sStat.m_fSpeed * fTimeDelta));
 	}
 
 	if (GetAsyncKeyState('Q') & 0x8000)

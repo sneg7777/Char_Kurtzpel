@@ -44,7 +44,7 @@ Client::_int Client::CMonster::Update_Object(const _float& fTimeDelta)
 
 void Client::CMonster::Render_Object(void)
 {
-	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
+	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
 	Engine::Safe_AddRef(pEffect);
 
@@ -54,7 +54,7 @@ void Client::CMonster::Render_Object(void)
 
 	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-	m_pMeshCom->Render_Meshes(pEffect);
+	m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
 
 	pEffect->End();
 
@@ -73,12 +73,12 @@ _bool CMonster::Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTa
 											m_pColliderCom->Get_Max(),
 											m_pColliderCom->Get_CollMatrix());*/
 
-	return m_pCalculatorCom->Collision_OBB(pPlayerColliderCom->Get_Min(),
+	return m_sComponent.m_pCalculatorCom->Collision_OBB(pPlayerColliderCom->Get_Min(),
 		pPlayerColliderCom->Get_Max(),
 		pPlayerColliderCom->Get_CollMatrix(),
-		m_pColliderCom->Get_Min(),
-		m_pColliderCom->Get_Max(),
-		m_pColliderCom->Get_CollMatrix());
+		m_sComponent.m_pColliderCom->Get_Min(),
+		m_sComponent.m_pColliderCom->Get_Max(),
+		m_sComponent.m_pColliderCom->Get_CollMatrix());
 }
 
 float CMonster::PlayerSearchDistance()
@@ -86,13 +86,13 @@ float CMonster::PlayerSearchDistance()
 	CPlayer* player = CPlayer::GetInstance();
 	if (nullptr == player) return 0.f;
 
-	Engine::CTransform* playerTrans = dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC));
+	Engine::CTransform* playerTrans = player->Get_sComponent()->m_pTransformCom;// dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC));
 
 	if (m_pPlayerTrans != playerTrans)
 		m_pPlayerTrans = playerTrans;
 
-	float distX = m_pPlayerTrans->m_vInfo[Engine::INFO_POS].x - m_pTransformCom->m_vInfo[Engine::INFO_POS].x;
-	float distZ = m_pPlayerTrans->m_vInfo[Engine::INFO_POS].z - m_pTransformCom->m_vInfo[Engine::INFO_POS].z;
+	float distX = m_pPlayerTrans->m_vInfo[Engine::INFO_POS].x - m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS].x;
+	float distZ = m_pPlayerTrans->m_vInfo[Engine::INFO_POS].z - m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS].z;
 
 	float disPlayer;
 	disPlayer = sqrt(distX * distX + distZ * distZ);
@@ -103,16 +103,16 @@ float CMonster::PlayerSearchDistance()
 
 void CMonster::Set_PlayerTowardAngle()
 {
-	_vec3 monsterPos = m_pTransformCom->m_vInfo[Engine::INFO_POS];
+	_vec3 monsterPos = m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS];
 	_vec3 playerPos = m_pPlayerTrans->m_vInfo[Engine::INFO_POS];
 	_vec3 monsterDir = playerPos - monsterPos;
 	D3DXVec3Normalize(&monsterDir, &monsterDir);
 
-	_vec3 monsterLook = m_pTransformCom->m_vInfo[Engine::INFO_LOOK];
+	_vec3 monsterLook = m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_LOOK];
 	D3DXVec3Normalize(&monsterLook, &monsterLook);
 	float radian = D3DXVec3Dot(&monsterDir, &monsterLook);
 	m_TowardAngle1 = D3DXToDegree(radian);
-	_vec3 monsterRight = m_pTransformCom->m_vInfo[Engine::INFO_RIGHT];
+	_vec3 monsterRight = m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_RIGHT];
 	D3DXVec3Normalize(&monsterLook, &monsterRight);
 	float radian2 = D3DXVec3Dot(&monsterDir, &monsterRight);
 	m_TowardAngle2 = D3DXToDegree(radian2);
@@ -152,22 +152,22 @@ void CMonster::Rocate_PlayerToWardAngle(float fTimeDelta, float _speed)
 	if (m_TowardAngle1 < 0.f) {
 		// 오른쪽
 		if (m_TowardAngle2 >= 0.1f) {
-			m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-_speed) * fTimeDelta);
+			m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-_speed) * fTimeDelta);
 		}
 		// 왼쪽
 		else if (m_TowardAngle2 < -0.1f) {
-			m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(_speed) * fTimeDelta);
+			m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(_speed) * fTimeDelta);
 		}
 	}
 	// 앞쪽
 	else {
 		// 오른쪽
 		if (m_TowardAngle2 >= 0.1f) {
-			m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-_speed) * fTimeDelta);
+			m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-_speed) * fTimeDelta);
 		}
 		// 왼쪽
 		else if (m_TowardAngle2 < -0.1f) {
-			m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(_speed) * fTimeDelta);
+			m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(_speed) * fTimeDelta);
 		}
 	}
 }

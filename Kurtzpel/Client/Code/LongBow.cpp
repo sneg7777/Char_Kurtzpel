@@ -23,12 +23,12 @@ HRESULT Client::CLongBow::Add_Component(void)
 	CUnit::Add_Component();
 
 	// Mesh
-	pComponent = m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_LongBow"));
+	pComponent = m_sComponent.m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_LongBow"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
 
-	m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 5.f, -15.f, 10.f };
-	m_pTransformCom->m_vScale = { 1.f, 1.f, 1.f };
+	m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 5.f, -15.f, 10.f };
+	m_sComponent.m_pTransformCom->m_vScale = { 1.f, 1.f, 1.f };
 
 	CPlayer::GetInstance()->m_LongBow = this;
 	CPlayer::GetInstance()->m_WeaponEquip = CPlayer::Weapon_LongBow;
@@ -57,9 +57,9 @@ HRESULT Client::CLongBow::Ready_Object(void)
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
 	//m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(82.f));
-	m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(204.f));
-	m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(211.f));
-	m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(128.f));
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(204.f));
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(211.f));
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(128.f));
 	m_RocationX = 204.f;
 	m_RocationY = 211.f;
 	m_RocationZ = 128.f;
@@ -67,7 +67,7 @@ HRESULT Client::CLongBow::Ready_Object(void)
 }
 Client::_int Client::CLongBow::Update_Object(const _float& fTimeDelta)
 {
-	if (m_IsDead) {
+	if (m_sStat.m_IsDead) {
 		return 1;
 	}
 
@@ -78,12 +78,12 @@ Client::_int Client::CLongBow::Update_Object(const _float& fTimeDelta)
 
 	CUnit::Update_Object(fTimeDelta);
 		
-	m_pTransformCom->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
+	m_sComponent.m_pTransformCom->Set_ParentMatrix(&(*m_pParentBoneMatrix * *m_pParentWorldMatrix));
 	
 
 	//m_bColl = Collision_ToObject(L"GameLogic", L"Player");
 
-	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
+	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	
 	//if (Engine::Get_DIKeyState(DIK_X) & 0x80) {
 	//	/*m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(-m_RocationX));
@@ -113,7 +113,7 @@ Client::_int Client::CLongBow::Update_Object(const _float& fTimeDelta)
 }
 void Client::CLongBow::Render_Object(void)
 {
-	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
+	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
 	Engine::Safe_AddRef(pEffect);
 
@@ -124,7 +124,7 @@ void Client::CLongBow::Render_Object(void)
 
 	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-	m_pStaticMeshCom->Render_Meshes(pEffect);
+	m_sComponent.m_pStaticMeshCom->Render_Meshes(pEffect);
 
 	pEffect->EndPass();
 	pEffect->End();
@@ -140,13 +140,13 @@ void Client::CLongBow::Render_Object(void)
 void CLongBow::Set_Pos() {
 	CPlayer* pPlayer = CPlayer::GetInstance();
 	if (pPlayer->m_State == CPlayer::State::State_Attack || pPlayer->m_State == CPlayer::State::State_Skill) {
-		m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 0.f, 0.f, 0.f };
+		m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 0.f, 0.f, 0.f };
 		BoneAttach("Weapon_Hand_L");
 		if (m_RocationX != 0.f) {
-			m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 0.f, 0.f, 0.f };
-			m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(-m_RocationX + 0.f));
-			m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-m_RocationY + 0.f));
-			m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-m_RocationZ + 0.f));
+			m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 0.f, 0.f, 0.f };
+			m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(-m_RocationX + 0.f));
+			m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-m_RocationY + 0.f));
+			m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-m_RocationZ + 0.f));
 			m_RocationX = 0.f;
 			m_RocationY = 0.f;
 			m_RocationZ = 0.f;
@@ -155,10 +155,10 @@ void CLongBow::Set_Pos() {
 	else {
 		BoneAttach("Weapon_R");
 		if (m_RocationX != 204.f) {
-			m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 5.f, -15.f, 10.f };
-			m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(-m_RocationX + 204.f));
-			m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-m_RocationY + 211.f));
-			m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-m_RocationZ + 128.f));
+			m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 5.f, -15.f, 10.f };
+			m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(-m_RocationX + 204.f));
+			m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-m_RocationY + 211.f));
+			m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-m_RocationZ + 128.f));
 			m_RocationX = 204.f;
 			m_RocationY = 211.f;
 			m_RocationZ = 128.f;
@@ -168,7 +168,7 @@ void CLongBow::Set_Pos() {
 
 void CLongBow::BoneAttach(string _frame)
 {
-	Engine::CDynamicMesh* pPlayerMeshCom = CPlayer::GetInstance()->m_pMeshCom;
+	Engine::CDynamicMesh* pPlayerMeshCom = CPlayer::GetInstance()->Get_sComponent()->m_pMeshCom;
 	//dynamic_cast<Engine::CDynamicMesh*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Mesh", Engine::ID_STATIC));
 	NULL_CHECK_RETURN(pPlayerMeshCom, );
 
@@ -177,7 +177,7 @@ void CLongBow::BoneAttach(string _frame)
 
 	m_pParentBoneMatrix = &pFrame->CombinedTransformationMatrix;
 
-	Engine::CTransform* pPlayerTransCom = CPlayer::GetInstance()->m_pTransformCom;
+	Engine::CTransform* pPlayerTransCom = CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom;
 	//dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
 	NULL_CHECK_RETURN(pPlayerTransCom, );
 	m_pParentWorldMatrix = pPlayerTransCom->Get_WorldMatrix();
@@ -195,19 +195,19 @@ _bool CLongBow::Collision_ToObject(const _tchar * pLayerTag, const _tchar * pObj
 											m_pColliderCom->Get_Max(),
 											m_pColliderCom->Get_CollMatrix());*/
 
-	return m_pCalculatorCom->Collision_OBB(pPlayerColliderCom->Get_Min(),
+	return m_sComponent.m_pCalculatorCom->Collision_OBB(pPlayerColliderCom->Get_Min(),
 		pPlayerColliderCom->Get_Max(),
 		pPlayerColliderCom->Get_CollMatrix(),
-		m_pColliderCom->Get_Min(),
-		m_pColliderCom->Get_Max(),
-		m_pColliderCom->Get_CollMatrix());
+		m_sComponent.m_pColliderCom->Get_Min(),
+		m_sComponent.m_pColliderCom->Get_Max(),
+		m_sComponent.m_pColliderCom->Get_CollMatrix());
 }
 
 HRESULT Client::CLongBow::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
 	_matrix		matWorld, matView, matProj;
 
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 

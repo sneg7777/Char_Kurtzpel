@@ -55,7 +55,7 @@ HRESULT Client::CSkillCollider::Ready_Object(void)
 }
 Client::_int Client::CSkillCollider::Update_Object(const _float& fTimeDelta)
 {
-	if (m_IsDead || m_LifeTime < 0.f) {
+	if (m_sStat.m_IsDead || m_LifeTime < 0.f) {
 		return 1;
 	}
 	m_LifeTime -= fTimeDelta;
@@ -91,7 +91,7 @@ Client::_int Client::CSkillCollider::Update_Object(const _float& fTimeDelta)
 }
 void Client::CSkillCollider::Render_Object(void)
 {
-	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
+	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
 	Engine::Safe_AddRef(pEffect);
 
@@ -119,7 +119,7 @@ HRESULT Client::CSkillCollider::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
 	_matrix		matWorld, matView, matProj;
 
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 
@@ -136,11 +136,11 @@ void Client::CSkillCollider::Collision(CSphereCollider* _mySphere, CUnit* _col, 
 	//	return;
 
 	//if(_colSphere->m_BonePart == CSphereCollider::BonePart::BonePart_CollBody)
-	//	m_IsDead = true;
+	//	m_sStat.m_IsDead = true;
 }
 
 void Client::CSkillCollider::Set_Collider(_vec3 _pos, float _scale, CSphereCollider::BoneTeam _team, float _attack, float _lifeTime, float _interval, float _interval_AttackTime, float _startTime) {
-	m_pTransformCom->m_vInfo[Engine::INFO_POS] = _pos;
+	m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] = _pos;
 	CUnit::Update_Object(0.f);
 	CSphereCollider* sphereCol = CSphereCollider::Create(m_pGraphicDev);
 	sphereCol->Set_Transform(_scale);
@@ -148,7 +148,7 @@ void Client::CSkillCollider::Set_Collider(_vec3 _pos, float _scale, CSphereColli
 	sphereCol->m_WeaponAttack = false;
 	sphereCol->m_BoneTeam = _team;
 	sphereCol->m_BonePart = CSphereCollider::BonePart::BonePart_Static;
-	m_fAttack = _attack;
+	m_sStat.m_fAttack = _attack;
 	m_Interval = _interval;
 	m_LifeTime = _lifeTime;
 	m_Interval_Attack = _interval_AttackTime;

@@ -7,7 +7,7 @@
 CArrow::CArrow(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit(pGraphicDev)
 {
-	m_fSpeed = 30.f;
+	m_sStat.m_fSpeed = 30.f;
 	m_LifeTime = 4.5f;
 }
 
@@ -22,13 +22,13 @@ HRESULT Client::CArrow::Add_Component(void)
 	
 	CUnit::Add_Component();
 	// Mesh
-	pComponent = m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Arrow"));
+	pComponent = m_sComponent.m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Arrow"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
 
 
 	//m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 5.f, -15.f, 10.f };
-	m_pTransformCom->m_vScale = { 0.015f, 0.015f, 0.015f };
+	m_sComponent.m_pTransformCom->m_vScale = { 0.015f, 0.015f, 0.015f };
 
 	return S_OK;
 }
@@ -58,7 +58,7 @@ HRESULT Client::CArrow::Ready_Object(void)
 }
 Client::_int Client::CArrow::Update_Object(const _float& fTimeDelta)
 {
-	if (m_IsDead || m_LifeTime < 0.f) {
+	if (m_sStat.m_IsDead || m_LifeTime < 0.f) {
 		return 1;
 	}
 	m_LifeTime -= fTimeDelta;
@@ -89,15 +89,15 @@ Client::_int Client::CArrow::Update_Object(const _float& fTimeDelta)
 	CUnit::Update_Object(fTimeDelta);
 
 	_vec3	vPos, vPosAfter;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-	vPosAfter = vPos + m_vDir * m_fSpeed * 5.f;// * fTimeDelta;
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	vPosAfter = vPos + m_sStat.m_vDir * m_sStat.m_fSpeed * 5.f;// * fTimeDelta;
 	//m_pTransformCom->Set_Pos(&vPosAfter, true);
-	m_pTransformCom->Chase_Target(&vPosAfter, m_fSpeed, fTimeDelta);
+	m_sComponent.m_pTransformCom->Chase_Target(&vPosAfter, m_sStat.m_fSpeed, fTimeDelta);
 
-	m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(90.f), true);
-	m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(180.f), true);
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(90.f), true);
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(180.f), true);
 
-	m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
+	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
 
 	return 0;
 }
@@ -105,7 +105,7 @@ void Client::CArrow::Render_Object(void)
 {
 	
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
+	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
 	Engine::Safe_AddRef(pEffect);
 	_uint	iMaxPass = 0;
@@ -115,7 +115,7 @@ void Client::CArrow::Render_Object(void)
 
 	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 	
-	m_pStaticMeshCom->Render_Meshes(pEffect);
+	m_sComponent.m_pStaticMeshCom->Render_Meshes(pEffect);
 
 	pEffect->EndPass();
 	pEffect->End();
@@ -132,7 +132,7 @@ HRESULT Client::CArrow::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
 	_matrix		matWorld, matView, matProj;
 
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 
@@ -148,7 +148,7 @@ void Client::CArrow::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereC
 	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
 		return;
 	if(_colSphere->m_BonePart == CSphereCollider::BonePart::BonePart_CollBody)
-		m_IsDead = true;
+		m_sStat.m_IsDead = true;
 	
 }
 
@@ -166,7 +166,7 @@ void Client::CArrow::Create_Coll()
 
 void Client::CArrow::Set_SpeedToLife(float _speed, float _life)
 {
-	m_fSpeed = _speed;
+	m_sStat.m_fSpeed = _speed;
 	if (_life > 0)
 		m_LifeTime = _life;
 }

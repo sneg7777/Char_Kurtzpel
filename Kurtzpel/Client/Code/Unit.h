@@ -20,6 +20,19 @@ END
 //class CSphereCollider;
 //class CSphereCollider::BonePart;
 BEGIN(Client)
+struct sComponent {
+	Engine::CDynamicMesh* m_pMeshCom = nullptr;
+	Engine::CStaticMesh* m_pStaticMeshCom = nullptr;
+	Engine::CTransform* m_pTransformCom = nullptr;
+	Engine::CRenderer* m_pRendererCom = nullptr;
+	Engine::CCalculator* m_pCalculatorCom = nullptr;
+	Engine::CCollider* m_pColliderCom = nullptr;
+	Engine::CShader* m_pShaderCom = nullptr;
+};
+struct sDelayHpDec {
+	_float		m_fDelayTime;
+	_float		m_fHpDec;
+};
 class CUnit : public Engine::CGameObject
 {
 public:
@@ -32,29 +45,21 @@ public:
 	virtual void Render_Object(void) override;
 	virtual void Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
 	CSphereCollider*	Get_BonePartCollider(CSphereCollider::BonePart _bonePart);
-	void Set_BonePartColliderAttack(CSphereCollider::BonePart _bonePart, bool _attack, float _power = 1.f);
+	void Set_BonePartColliderAttack(CSphereCollider::BonePart _bonePart, float _fattack, bool _battack, float _power = 1.f);
 
 	void Set_StaticSphere();
+	sComponent* Get_sComponent() { return &m_sComponent; }
 protected:
 	HRESULT		Add_Component(void);
 	void		SetUp_OnTerrain(void);
 	_bool		Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
+protected:
+	sComponent					m_sComponent;
+
 public:
-
-	Engine::CStaticMesh*		m_pStaticMeshCom = nullptr;
-	Engine::CTransform*			m_pTransformCom = nullptr;
-	Engine::CRenderer*			m_pRendererCom = nullptr;
-	Engine::CCalculator*		m_pCalculatorCom = nullptr;
-	Engine::CCollider*			m_pColliderCom = nullptr;
-	Engine::CShader*			m_pShaderCom = nullptr;
-
 	//_bool						m_bColl = false;
 	//_bool						m_bDraw = false;
-	_float						m_fMaxKnockBackHp = 0.f;
-	_float						m_fKnockBackHp = 0.f;
-	_float						m_fKnockBackPower = 1.f;
-	_vec3						m_fKnockBackDir;
 
 	//////////////
 	
@@ -62,6 +67,7 @@ public:
 
 public:
 	vector<CSphereCollider*>		m_VecSphereCollider;
+	vector<sDelayHpDec*>			m_VecDelayHpDec;
 	
 protected:
 	virtual void Free(void) override;

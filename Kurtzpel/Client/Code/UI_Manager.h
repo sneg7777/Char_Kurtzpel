@@ -39,13 +39,18 @@ public:
 	void Ready_SkillIcon();
 	void Init_SkillIcon(CUI* pUI, int number);
 	CUI* Get_UI(CUI::UIKind _uiKind);
-
+	CUnit* Get_DamagedEnemy() { return m_pDamagedEnemy; }
+	void Set_DamagedEnemy(CUnit* _unit) { m_pDamagedEnemy = _unit; }
+	float Get_DamagedTime() { return m_DamagedInitTime; }
+	void Set_DamagedTime(float _time) { m_DamagedInitTime = _time; }
 	vector<CUI*>							m_ListUI;
 
 private:
 	static CUI_Manager*						m_pInstance;
 	LPDIRECT3DDEVICE9						m_pGraphicDev;
+	CUnit*									m_pDamagedEnemy = nullptr;
 
+	_float									m_DamagedInitTime = 0.f;
 };
 
 END

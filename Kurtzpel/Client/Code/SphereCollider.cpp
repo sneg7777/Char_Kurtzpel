@@ -90,11 +90,11 @@ _int CSphereCollider::Update_Object(const _float& fTimeDelta)
 			//if(nullptr == dynamic_cast<CMonster*>(m_pDynamicMesh));
 			//	return 0;
 
-			const Engine::D3DXFRAME_DERIVED* pFrame = ((Client::CUnit_D*)m_pDynamicThis)->m_pMeshCom->Get_FrameByName(m_FrameName.c_str());
+			const Engine::D3DXFRAME_DERIVED* pFrame = ((Client::CUnit_D*)m_pDynamicThis)->Get_sComponent()->m_pMeshCom->Get_FrameByName(m_FrameName.c_str());
 
 			m_pParentBoneMatrix = &pFrame->CombinedTransformationMatrix;
 
-			Engine::CTransform* pPlayerTransCom = ((Client::CUnit_D*)m_pDynamicThis)->m_pTransformCom;
+			Engine::CTransform* pPlayerTransCom = ((Client::CUnit_D*)m_pDynamicThis)->Get_sComponent()->m_pTransformCom;
 
 			NULL_CHECK_RETURN(pPlayerTransCom, 0);
 			m_pParentWorldMatrix = pPlayerTransCom->Get_WorldMatrix();
@@ -112,7 +112,7 @@ _int CSphereCollider::Update_Object(const _float& fTimeDelta)
 	else {
 		Engine::CGameObject::Update_Object(fTimeDelta);
 		_vec3 vPos;
-		dynamic_cast<CUnit*>(m_pStaticThis)->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+		dynamic_cast<CUnit*>(m_pStaticThis)->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 		m_pTransformCom->m_vInfo[Engine::INFO_POS] = vPos;
 		
 		m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);

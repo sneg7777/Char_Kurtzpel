@@ -9,15 +9,15 @@
 CArrow_SkillQ::CArrow_SkillQ(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit(pGraphicDev)
 {
-	m_fSpeed = 30.f;
+	m_sStat.m_fSpeed = 30.f;
 	m_LifeTime = 7.5f;
 }
 
 CArrow_SkillQ::CArrow_SkillQ(CArrow_SkillQ* _copy)
 	: CUnit(_copy->m_pGraphicDev)
 {
-	m_fSpeed = _copy->m_fSpeed;
-	m_fAttack = _copy->m_fAttack;
+	m_sStat.m_fSpeed = _copy->m_sStat.m_fSpeed;
+	m_sStat.m_fAttack = _copy->m_sStat.m_fAttack;
 	m_LifeTime = 7.5f;
 	m_SplitCount = _copy->m_SplitCount - 1;
 	Create_Coll();
@@ -36,13 +36,13 @@ HRESULT Client::CArrow_SkillQ::Add_Component(void)
 	
 	CUnit::Add_Component();
 	// Mesh
-	pComponent = m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Arrow"));
+	pComponent = m_sComponent.m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Arrow"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
 
 
 	//m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 5.f, -15.f, 10.f };
-	m_pTransformCom->m_vScale = { 0.015f, 0.015f, 0.015f };
+	m_sComponent.m_pTransformCom->m_vScale = { 0.015f, 0.015f, 0.015f };
 
 	return S_OK;
 }
@@ -82,7 +82,7 @@ HRESULT Client::CArrow_SkillQ::Ready_Object(void)
 }
 Client::_int Client::CArrow_SkillQ::Update_Object(const _float& fTimeDelta)
 {
-	if (m_IsDead || m_LifeTime < 0.f) {
+	if (m_sStat.m_IsDead || m_LifeTime < 0.f) {
 		return 1;
 	}
 	m_LifeTime -= fTimeDelta;
@@ -90,29 +90,29 @@ Client::_int Client::CArrow_SkillQ::Update_Object(const _float& fTimeDelta)
 
 	_vec3	vPos, vPosAfter, vPosMove;
 	bool	NaviCheck = false;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-	vPosAfter = vPos + m_vDir * m_fSpeed * 5.f;// * fTimeDelta;
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	vPosAfter = vPos + m_sStat.m_vDir * m_sStat.m_fSpeed * 5.f;// * fTimeDelta;
 	
-	vPosMove = (pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_vDir * m_fSpeed * fTimeDelta), &m_dwNaviIndex, &NaviCheck));
+	vPosMove = (pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_sStat.m_vDir * m_sStat.m_fSpeed * fTimeDelta), &m_sStat.m_dwNaviIndex, &NaviCheck));
 	
 	if (!NaviCheck) {
-		m_pTransformCom->Set_Pos(&vPosMove, true);
+		m_sComponent.m_pTransformCom->Set_Pos(&vPosMove, true);
 		CUnit::Update_Object(fTimeDelta);
 
 		//m_pTransformCom->Set_Pos(&vPosAfter, true);
-		m_pTransformCom->Chase_Target(&vPosAfter, m_fSpeed, fTimeDelta);
+		m_sComponent.m_pTransformCom->Chase_Target(&vPosAfter, m_sStat.m_fSpeed, fTimeDelta);
 
-		m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(90.f), true);
-		m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(180.f), true);
+		m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(90.f), true);
+		m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(180.f), true);
 
-		m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
+		m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
 	}
 	else {
-		m_IsDead = true;
+		m_sStat.m_IsDead = true;
 		if (m_SplitCount == 0)
 			return 0;
-		_vec3 vReverseDir = { m_vDir.x, m_vDir.y, -m_vDir.z };
-		pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vReverseDir * m_fSpeed * fTimeDelta), &m_dwNaviIndex, &NaviCheck);
+		_vec3 vReverseDir = { m_sStat.m_vDir.x, m_sStat.m_vDir.y, -m_sStat.m_vDir.z };
+		pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vReverseDir * m_sStat.m_fSpeed * fTimeDelta), &m_sStat.m_dwNaviIndex, &NaviCheck);
 		for (int i = 0; i < 3; i++)
 		{
 			CArrow_SkillQ* copyArrow = CArrow_SkillQ::Create(this);
@@ -122,12 +122,12 @@ Client::_int Client::CArrow_SkillQ::Update_Object(const _float& fTimeDelta)
 			}
 			vReverseDir.x += vReverseDir.x * 0.2f * (float(CRandom_Manager::Random() % 8) - 3.5f);
 			vReverseDir.z += vReverseDir.z * 0.2f * (float(CRandom_Manager::Random() % 8) - 3.5f);
-			copyArrow->m_vDir = vReverseDir;
+			copyArrow->m_sStat.m_vDir = vReverseDir;
 			if (vPos.y < 0.f)
-				copyArrow->m_vDir.y *= -1.f;
+				copyArrow->m_sStat.m_vDir.y *= -1.f;
 			else if (vPos.y > 10.f)
-				copyArrow->m_vDir.y *= -1.f;
-			copyArrow->m_pTransformCom->m_vInfo[Engine::INFO_POS] = vPos + vReverseDir * 2.f;
+				copyArrow->m_sStat.m_vDir.y *= -1.f;
+			copyArrow->m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] = vPos + vReverseDir * 2.f;
 			copyArrow->Engine::CGameObject::Update_Object(0.f);
 		}
 	}
@@ -138,7 +138,7 @@ void Client::CArrow_SkillQ::Render_Object(void)
 {
 	
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
+	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
 	Engine::Safe_AddRef(pEffect);
 	_uint	iMaxPass = 0;
@@ -148,7 +148,7 @@ void Client::CArrow_SkillQ::Render_Object(void)
 
 	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 	
-	m_pStaticMeshCom->Render_Meshes(pEffect);
+	m_sComponent.m_pStaticMeshCom->Render_Meshes(pEffect);
 
 	pEffect->EndPass();
 	pEffect->End();
@@ -165,7 +165,7 @@ HRESULT Client::CArrow_SkillQ::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
 	_matrix		matWorld, matView, matProj;
 
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 
@@ -181,7 +181,7 @@ void Client::CArrow_SkillQ::Collision(CSphereCollider* _mySphere, CUnit* _col, C
 	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
 		return;
 	if(_colSphere->m_BonePart == CSphereCollider::BonePart::BonePart_CollBody)
-		m_IsDead = true;
+		m_sStat.m_IsDead = true;
 	
 }
 
@@ -199,7 +199,7 @@ void Client::CArrow_SkillQ::Create_Coll()
 
 void Client::CArrow_SkillQ::Set_SpeedToLife(float _speed, float _life)
 {
-	m_fSpeed = _speed;
+	m_sStat.m_fSpeed = _speed;
 	if (_life > 0)
 		m_LifeTime = _life;
 }
