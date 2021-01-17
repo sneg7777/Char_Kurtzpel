@@ -26,7 +26,8 @@
 #define MP_LB_E 50.f
 #define MP_LB_F 50.f
 #define CancelTime 1.5f
-#define DashGauge 25.f
+#define DashGauge 20.f
+#define RollGauge 35.f
 #define COLLDOWNPOWER 2.5f
 #define ATTACK_JUMPACCEL 1.2f
 CPlayer* CPlayer::m_pInstance = nullptr;
@@ -150,6 +151,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			m_sComponent.m_pMeshCom->Set_AnimationSet(246);
 			m_sStat.m_fSpeed = 1.5f * m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.6f;
+			m_DashGauge -= RollGauge;
 			break;
 		}
 		case Client::CPlayer::State_Attack: {
@@ -310,6 +312,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			m_sComponent.m_pMeshCom->Set_AnimationSet(246);
 			m_sStat.m_fSpeed = 1.5f * m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.6f;
+			m_DashGauge -= RollGauge;
 			break;
 		}
 		case Client::CPlayer::State_Attack: {
@@ -443,7 +446,7 @@ void Client::CPlayer::Hammer_Key_Input(const _float& fTimeDelta)
 	
 	// 피격 당할때
 	if (m_State == State::State_Damaged) { ////////////////////////////////////////////////////////////////////////////// 피격
-		if (m_sStat.m_fKnockBackPower > COLLDOWNPOWER) {		//강한 공격을 맞고 다운
+		if (m_bCheck[bCheck_JumpToDamagedUp] || m_sStat.m_fKnockBackPower > COLLDOWNPOWER) {		//강한 공격을 맞고 다운
 			if (!m_bCheck[bCheck::bCheck_DamagedUp]) {
 				if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.4f)) {
 					m_bCheck[bCheck::bCheck_DamagedUp] = true;
@@ -461,6 +464,7 @@ void Client::CPlayer::Hammer_Key_Input(const _float& fTimeDelta)
 				if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.9f)) {
 					m_AniSpeed;
 					Set_StateToAnimation(State::State_Idle);
+					m_bCheck[bCheck_JumpToDamagedUp] = false;
 				}
 				return;
 			}
@@ -606,7 +610,7 @@ void Client::CPlayer::Hammer_Key_Input(const _float& fTimeDelta)
 		m_Attack_State = Attack_State::StateA_SkillZ;
 		Set_StateToAnimation(State::State_Skill);
 	}
-	else if ((Engine::Get_DIKeyState(DIK_LSHIFT) & 0x80)) {
+	else if ((Engine::Get_DIKeyState(DIK_LSHIFT) & 0x80) && m_DashGauge > RollGauge) {
 		Set_StateToAnimation(State::State_Rolling);
 	}
 	//////////////////////////////////////////////////////////////////// 좌클릭공격
@@ -842,7 +846,7 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 
 	// 피격 당할때
 	if (m_State == State::State_Damaged) { ////////////////////////////////////////////////////////////////////////////// 피격
-		if (m_sStat.m_fKnockBackPower > COLLDOWNPOWER) {		//강한 공격을 맞고 다운
+		if (m_bCheck[bCheck_JumpToDamagedUp] || m_sStat.m_fKnockBackPower > COLLDOWNPOWER) {		//강한 공격을 맞고 다운
 			if (!m_bCheck[bCheck::bCheck_DamagedUp]) {
 				if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.4f)) {
 					m_bCheck[bCheck::bCheck_DamagedUp] = true;
@@ -858,7 +862,9 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 			}
 			else {
 				if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.9f)) {
+					m_AniSpeed;
 					Set_StateToAnimation(State::State_Idle);
+					m_bCheck[bCheck_JumpToDamagedUp] = false;
 				}
 				return;
 			}
@@ -873,11 +879,6 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 				return;
 			}
 		}
-	}
-	else if (m_State == State::State_Skill) { /////////////////////////////////////////////////////////////////////////// Skill
-
-		Event_Skill(fTimeDelta, pNaviMeshCom, vPos, vDir);
-
 	}
 	else if (m_State == State::State_Attack) { ////////////////////////////////////////////////////////////////////////// Attack
 		if (m_bCheck[bCheck::bCheck_MouseL_Already]) {
@@ -1019,7 +1020,7 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 		m_Attack_State = Attack_State::StateA_SkillZ;
 		Set_StateToAnimation(State::State_Skill);
 	}
-	else if ((Engine::Get_DIKeyState(DIK_LSHIFT) & 0x80)) {
+	else if ((Engine::Get_DIKeyState(DIK_LSHIFT) & 0x80) && m_DashGauge > RollGauge) {
 		Set_StateToAnimation(State::State_Rolling);
 	}
 	//////////////////////////////////////////////////////////////////// 좌클릭공격
@@ -1315,6 +1316,8 @@ void Client::CPlayer::Set_StateToAnimation_Jump(State _state, _vec3 _vPos, _vec3
 			if (m_fJumpAccel < 1.42f) {
 				m_fJumpAccel = 1.42f;
 			}
+			m_bCheck[bCheck::bCheck_DamagedUp] = false;
+			m_bCheck[bCheck_JumpToDamagedUp] = true;
 			break;
 		}
 		case Client::CPlayer::State_End: {
@@ -1402,6 +1405,8 @@ void Client::CPlayer::Set_StateToAnimation_Jump(State _state, _vec3 _vPos, _vec3
 			if (m_fJumpAccel < 1.42f) {
 				m_fJumpAccel = 1.42f;
 			}
+			m_bCheck[bCheck::bCheck_DamagedUp] = false;
+			m_bCheck[bCheck_JumpToDamagedUp] = true;
 			break;
 		}
 		case Client::CPlayer::State_End: {
@@ -1428,15 +1433,23 @@ void Client::CPlayer::Hammer_Key_InputOfJump(const _float& fTimeDelta)
 
 	// 피격 당할때
 	if (m_State == State::State_Damaged) { ////////////////////////////////////////////////////////////////////////////// 피격
-		if (m_sStat.m_fKnockBackPower > COLLDOWNPOWER) {		//강한 공격을 맞고 다운
+		if (true) {		//강한 공격을 맞고 다운 //점프피격이라 반드시
 			if (!m_bCheck[bCheck::bCheck_DamagedUp]) {
 				if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.4f)) {
 					m_bCheck[bCheck::bCheck_DamagedUp] = true;
 					m_sComponent.m_pMeshCom->Set_AnimationSet(245);
 				}
 				else {
-					if (m_sComponent.m_pMeshCom->Get_AnimationTrackPos() < 0.68f) {
-						m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_sStat.m_fKnockBackDir * fTimeDelta * m_sStat.m_fSpeed * 1.5f * m_sStat.m_fKnockBackPower), &m_sStat.m_dwNaviIndex));
+					if (m_sStat.m_fKnockBackPower > COLLDOWNPOWER) {
+						if (m_sComponent.m_pMeshCom->Get_AnimationTrackPos() < 0.68f) {
+							m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_sStat.m_fKnockBackDir * fTimeDelta * m_sStat.m_fSpeed * 1.5f * m_sStat.m_fKnockBackPower), &m_sStat.m_dwNaviIndex));
+						}
+					}
+					else {
+						float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
+						if (0.2f > trackPos) {
+							m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_sStat.m_fKnockBackDir * fTimeDelta * m_sStat.m_fSpeed * 1.5f * m_sStat.m_fKnockBackPower), &m_sStat.m_dwNaviIndex));
+						}
 					}
 					m_sStat.m_fSpeed -= m_sStat.m_fInitSpeed * fTimeDelta * 2.5f;
 					return;
@@ -1446,16 +1459,6 @@ void Client::CPlayer::Hammer_Key_InputOfJump(const _float& fTimeDelta)
 				if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.9f)) {
 					Set_StateToAnimation(State::State_Idle);
 				}
-				return;
-			}
-		}
-		else {											//약한 공격을 맞고 약간 넉백
-			if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd()) {
-				Set_StateToAnimation(State::State_Idle);
-			}
-			else {
-				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_sStat.m_fKnockBackDir * fTimeDelta * m_sStat.m_fSpeed * 1.5f * m_sStat.m_fKnockBackPower), &m_sStat.m_dwNaviIndex));
-				m_sStat.m_fSpeed -= m_sStat.m_fInitSpeed * fTimeDelta * 2.5f;
 				return;
 			}
 		}
@@ -1608,15 +1611,23 @@ void Client::CPlayer::LongBow_Key_InputOfJump(const _float& fTimeDelta)
 
 	// 피격 당할때
 	if (m_State == State::State_Damaged) { ////////////////////////////////////////////////////////////////////////////// 피격
-		if (m_sStat.m_fKnockBackPower > COLLDOWNPOWER) {		//강한 공격을 맞고 다운
+		if (true) {		//강한 공격을 맞고 다운 //점프피격이라 반드시
 			if (!m_bCheck[bCheck::bCheck_DamagedUp]) {
 				if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.4f)) {
 					m_bCheck[bCheck::bCheck_DamagedUp] = true;
 					m_sComponent.m_pMeshCom->Set_AnimationSet(245);
 				}
 				else {
-					if (m_sComponent.m_pMeshCom->Get_AnimationTrackPos() < 0.68f) {
-						m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_sStat.m_fKnockBackDir * fTimeDelta * m_sStat.m_fSpeed * 1.5f * m_sStat.m_fKnockBackPower), &m_sStat.m_dwNaviIndex));
+					if (m_sStat.m_fKnockBackPower > COLLDOWNPOWER) {
+						if (m_sComponent.m_pMeshCom->Get_AnimationTrackPos() < 0.68f) {
+							m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_sStat.m_fKnockBackDir * fTimeDelta * m_sStat.m_fSpeed * 1.5f * m_sStat.m_fKnockBackPower), &m_sStat.m_dwNaviIndex));
+						}
+					}
+					else {
+						float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
+						if (0.2f > trackPos) {
+							m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_sStat.m_fKnockBackDir * fTimeDelta * m_sStat.m_fSpeed * 1.5f * m_sStat.m_fKnockBackPower), &m_sStat.m_dwNaviIndex));
+						}
 					}
 					m_sStat.m_fSpeed -= m_sStat.m_fInitSpeed * fTimeDelta * 2.5f;
 					return;
@@ -1626,16 +1637,6 @@ void Client::CPlayer::LongBow_Key_InputOfJump(const _float& fTimeDelta)
 				if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.9f)) {
 					Set_StateToAnimation(State::State_Idle);
 				}
-				return;
-			}
-		}
-		else {											//약한 공격을 맞고 약간 넉백
-			if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd()) {
-				Set_StateToAnimation(State::State_Idle);
-			}
-			else {
-				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_sStat.m_fKnockBackDir * fTimeDelta * m_sStat.m_fSpeed * 1.5f * m_sStat.m_fKnockBackPower), &m_sStat.m_dwNaviIndex));
-				m_sStat.m_fSpeed -= m_sStat.m_fInitSpeed * fTimeDelta * 2.5f;
 				return;
 			}
 		}
