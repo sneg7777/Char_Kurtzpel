@@ -37,6 +37,7 @@ public:
 	virtual HRESULT Ready_Object(void) override;
 	virtual _int Update_Object(const _float& fTimeDelta) override;
 	virtual void Render_Object(void) override;
+	HRESULT SetUp_ConstantTable(LPD3DXEFFECT & pEffect);
 	void Set_PosToSize(float fX, float fY, float fSizeX, float fSizeY) {
 		m_fX = fX, m_fY = fY, m_fSizeX = fSizeX, m_fSizeY = fSizeY;
 	}
