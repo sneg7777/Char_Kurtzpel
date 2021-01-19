@@ -104,7 +104,6 @@ private:
 	void		Create_ArrowShot_SkillQ(_vec3 _vPos, _vec3 _vDir);
 	void		Create_Phoenix_SkillZ(_vec3 _vPos, _vec3 _vDir);
 	void		Move_AccelSpeed(_vec3 vPos, _vec3 vDir, float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom);
-	_vec3		PickUp_OnTerrain(void);
 
 private:
 	//มกวม

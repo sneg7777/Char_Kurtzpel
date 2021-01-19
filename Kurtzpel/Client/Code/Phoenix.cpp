@@ -160,19 +160,6 @@ void Client::CPhoenix::Render_Object(void)
 	m_pColliderCom->Render_Collider(Engine::COL_TRUE, &matWorld);*/
 }
 
-void Client::CPhoenix::SetUp_OnTerrain(void)
-{
-	_vec3	vPosition;
-	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
-
-	Engine::CTerrainTex*		pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
-	NULL_CHECK(pTerrainBufferCom);
-
-	_float fHeight = m_sComponent.m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
-
-	m_sComponent.m_pTransformCom->Move_Pos(vPosition.x, fHeight, vPosition.z);
-}
-
 
 void Client::CPhoenix::Calc_Time(_float fTimeDelta)
 {

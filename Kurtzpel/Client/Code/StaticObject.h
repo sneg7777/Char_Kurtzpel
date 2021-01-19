@@ -30,7 +30,6 @@ public:
 
 private:
 	HRESULT		Add_Component(bool check = false, wstring _wstring = L"");
-	void		SetUp_OnTerrain(void);
 	_bool		Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
 private:

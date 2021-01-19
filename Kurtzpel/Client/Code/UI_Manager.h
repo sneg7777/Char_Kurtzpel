@@ -17,6 +17,9 @@ END
 
 BEGIN(Client)
 class CUI;
+class CUI_MonsterHp;
+class CUI_PlayerHp;
+class CUI_Skill;
 class CUI_Manager
 {
 public:
@@ -37,20 +40,27 @@ public:
 	void Render_Object(void);
 
 	void Ready_SkillIcon();
+	void Init_MonsterHpBar(CUI_MonsterHp * pUI, int number);
+	void Init_Skill_ICon(CUI_Skill * pUI, int number);
+	void Init_PlayerHpBar(CUI_PlayerHp * pUI, int number);
 	void Init_SkillIcon(CUI* pUI, int number);
 	CUI* Get_UI(CUI::UIKind _uiKind);
 	CUnit* Get_DamagedEnemy() { return m_pDamagedEnemy; }
 	void Set_DamagedEnemy(CUnit* _unit) { m_pDamagedEnemy = _unit; }
 	float Get_DamagedTime() { return m_DamagedInitTime; }
 	void Set_DamagedTime(float _time) { m_DamagedInitTime = _time; }
-	vector<CUI*>							m_ListUI;
 
+	vector<CUI*>							m_ListUI;
+	vector<CUI*>							m_ListUI_PlayerHp;
+	vector<CUI*>							m_ListUI_MonsterHp;
+	vector<CUI*>							m_ListUI_Skill_ICon;
+	_float									m_DamagedInitTime = 0.f;
+	
 private:
 	static CUI_Manager*						m_pInstance;
 	LPDIRECT3DDEVICE9						m_pGraphicDev;
 	CUnit*									m_pDamagedEnemy = nullptr;
 
-	_float									m_DamagedInitTime = 0.f;
 };
 
 END

@@ -64,17 +64,6 @@ CPlayer::~CPlayer(void)
 
 }
 
-Client::_vec3 Client::CPlayer::PickUp_OnTerrain(void)
-{
-	Engine::CTerrainTex*		pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
-	NULL_CHECK_RETURN(pTerrainBufferCom, _vec3(0.f, 0.f, 0.f));
-
-	Engine::CTransform*		pTerrainTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Transform", Engine::ID_DYNAMIC));
-	NULL_CHECK_RETURN(pTerrainTransformCom, _vec3(0.f, 0.f, 0.f));
-
-	return m_sComponent.m_pCalculatorCom->Picking_OnTerrain(g_hWnd, pTerrainBufferCom, pTerrainTransformCom);
-}
-
 HRESULT Client::CPlayer::Add_Component(void)
 {
 	Engine::CComponent*		pComponent = nullptr;
@@ -879,6 +868,11 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 				return;
 			}
 		}
+	}
+	else if (m_State == State::State_Skill) { /////////////////////////////////////////////////////////////////////////// Skill
+
+		Event_Skill(fTimeDelta, pNaviMeshCom, vPos, vDir);
+
 	}
 	else if (m_State == State::State_Attack) { ////////////////////////////////////////////////////////////////////////// Attack
 		if (m_bCheck[bCheck::bCheck_MouseL_Already]) {
@@ -1952,7 +1946,8 @@ void Client::CPlayer::Jump_Control(const _float& fTimeDelta)
 	_vec3	vPosition;
 	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
 
-	Engine::CTerrainTex* pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
+	Engine::CTerrainTex* pTerrainBufferCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_Terrain->Get_sComponent_Terrain()->m_pBufferCom;
+	//Engine::CTerrainTex* pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
 	NULL_CHECK(pTerrainBufferCom);
 
 	_float fHeight = m_sComponent.m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
@@ -1971,7 +1966,7 @@ void Client::CPlayer::Jump_Control(const _float& fTimeDelta)
 		float gravity = m_fJumpPower * m_fJumpAccel - (GRAVITY * m_fJumpAccel * m_fJumpAccel * 0.5f);
 
 		float* beforePosY = &m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS].y;
-		float afterPosY = gravity + *beforePosY;
+		float afterPosY = *beforePosY + gravity * fTimeDelta * 180.f;
 
 		if (fHeight > afterPosY) {
 			m_JumpIdleState = JumpIdleAni::JumpIdle_None;

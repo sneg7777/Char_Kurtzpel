@@ -47,8 +47,9 @@ private:
 	HRESULT		Ready_LightInfo(void);
 	CDynamicCamera* m_Camera = nullptr;
 public:
-	CNaviTerrain* m_NaviTerrain = nullptr;
-	CArrowNaviTerrain* m_ArrowNaviTerrain = nullptr;
+	CNaviTerrain*			m_NaviTerrain = nullptr;
+	CArrowNaviTerrain*		m_ArrowNaviTerrain = nullptr;
+	CTerrain*				m_Terrain = nullptr;
 	static CStage*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 private:
 	virtual void Free(void) override;

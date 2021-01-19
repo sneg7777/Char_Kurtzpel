@@ -53,7 +53,7 @@ PS_OUT PS_DIRECTIONAL(PS_IN In)
 	vNormal = vector(vNormal.xyz * 2.f - 1.f, 0.f);
 
 	// 램버트의 확산 조명공식을 위한 빛의 세기를 구함
-	Out.vShade = saturate(dot(normalize(g_vLightDir) * -1.f, vNormal)) * (g_vLightDiffuse * g_vMtrlDiffuse) + (g_vLightAmbient * g_vMtrlAmbient);
+	Out.vShade = saturate(dot(normalize(g_vLightDir) * -1.f, vNormal)) * (ceil((g_vLightDiffuse * g_vMtrlDiffuse) * 5.f)) / 5.f + (g_vLightAmbient * g_vMtrlAmbient);
 	
 	// 반사 벡터를 구함
 	vector		vReflect = normalize(reflect(normalize(vector(g_vLightDir.xyz, 0.f)), vNormal));
@@ -110,14 +110,15 @@ PS_OUT PS_POINT(PS_IN In)
 
 	float	fAtt = saturate((g_fRange - fDistance) / g_fRange);
 
-	Out.vShade = (saturate(dot(normalize(vLightDir) * -1.f, vNormal)) * (g_vLightDiffuse * g_vMtrlDiffuse) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
+	//Out.vShade = (saturate(dot(normalize(vLightDir) * -1.f, vNormal)) * (g_vLightDiffuse * g_vMtrlDiffuse) + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
+	Out.vShade = (saturate(dot(normalize(vLightDir) * -1.f, vNormal)) * (ceil((g_vLightDiffuse * g_vMtrlDiffuse) * 5.f)) / 5.f + (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
 	Out.vShade.a = 1.f;
 
 	vector		vReflect = normalize(reflect(normalize(vector(g_vLightDir.xyz, 0.f)), vNormal));
 
 	vector		vLook = normalize(g_vCamPos - vPosition);
 
-	//Out.vSpecular = pow(saturate(dot(vLook, vReflect)), g_fPower) * fAtt;
+	Out.vSpecular = pow(saturate(dot(vLook, vReflect)), g_fPower) * fAtt;
 
 	return Out;
 }

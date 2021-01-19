@@ -19,33 +19,33 @@ HRESULT Client::CTerrain::Add_Component(void)
 	Engine::CComponent* pComponent = nullptr;
 
 	// buffer
-	pComponent = m_pBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Clone(Engine::RESOURCE_STATIC, L"Buffer_TerrainTex"));
+	pComponent = m_sComponent.m_pBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Clone(Engine::RESOURCE_STATIC, L"Buffer_TerrainTex"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Buffer", pComponent);
 
 	// texture
-	pComponent = m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_Terrain"));
+	pComponent = m_sComponent.m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_Terrain"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Texture", pComponent);
 
 	// filtertexture
-	pComponent = m_pFilterCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_Filter"));
+	pComponent = m_sComponent.m_pFilterCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_Filter"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Filter", pComponent);
 
 	// Auratexture
-	pComponent = m_pAuraCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_SkillE_Terrain"));
+	pComponent = m_sComponent.m_pAuraCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_SkillE_Terrain"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Aura", pComponent);
 
 	// Renderer
-	pComponent = m_pRendererCom = Engine::Get_Renderer();
+	pComponent = m_sComponent.m_pRendererCom = Engine::Get_Renderer();
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	Safe_AddRef(pComponent);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Renderer", pComponent);
 
 	// Transform
-	pComponent = m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
+	pComponent = m_sComponent.m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_DYNAMIC].emplace(L"Com_Transform", pComponent);
 
@@ -55,7 +55,7 @@ HRESULT Client::CTerrain::Add_Component(void)
 	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Optimization", pComponent);
 
 	// Shader
-	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Terrain"));
+	pComponent = m_sComponent.m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Terrain"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
@@ -85,7 +85,7 @@ HRESULT CTerrain::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pIndex = new Engine::INDEX32[m_pBufferCom->Get_TriCnt()];
+	m_pIndex = new Engine::INDEX32[m_sComponent.m_pBufferCom->Get_TriCnt()];
 
 	return S_OK;
 }
@@ -99,7 +99,7 @@ _int Client::CTerrain::Update_Object(const _float& fTimeDelta)
 	//	m_pIndex,
 	//	&m_dwTriCnt);
 
-	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
+	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
 	return 0;
 }
@@ -107,7 +107,7 @@ void CTerrain::Render_Object(void)
 {
 	// m_pBufferCom->Copy_Indices(m_pIndex, m_dwTriCnt);
 
-	LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
+	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
 	Engine::Safe_AddRef(pEffect);
 
@@ -118,7 +118,7 @@ void CTerrain::Render_Object(void)
 
 	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-	m_pBufferCom->Render_Buffer();
+	m_sComponent.m_pBufferCom->Render_Buffer();
 
 	pEffect->EndPass();
 	pEffect->End();
@@ -131,7 +131,7 @@ HRESULT CTerrain::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
 	_matrix		matWorld, matView, matProj;
 
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 
@@ -139,11 +139,11 @@ HRESULT CTerrain::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	pEffect->SetMatrix("g_matView", &matView);
 	pEffect->SetMatrix("g_matProj", &matProj);
 
-	m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture");
-	m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture1", 1);
-	m_pFilterCom->Set_Texture(pEffect, "g_FilterTexture");
+	m_sComponent.m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture");
+	m_sComponent.m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture1", 1);
+	m_sComponent.m_pFilterCom->Set_Texture(pEffect, "g_FilterTexture");
 
-	m_pAuraCom->Set_Texture(pEffect, "g_AuraTexture");
+	m_sComponent.m_pAuraCom->Set_Texture(pEffect, "g_AuraTexture");
 
 	const D3DLIGHT9* pLightInfo = Engine::Get_Light(0);
 

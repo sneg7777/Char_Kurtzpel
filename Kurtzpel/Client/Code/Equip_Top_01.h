@@ -28,7 +28,6 @@ public:
 
 private:
 	HRESULT		Add_Component(void);
-	_bool		Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 
 private:
 

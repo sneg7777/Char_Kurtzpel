@@ -23,13 +23,14 @@ public:
 		UIK_SkillZ_GH, UIK_SkillQ_GH, UIK_SkillE_GH, UIK_SkillF_GH, UIK_SkillLShift, UIK_SkillTab,
 		UIK_SkillZ_LB, UIK_SkillQ_LB, UIK_SkillE_LB, UIK_SkillF_LB,
 		UIK_SkillFrameZ, UIK_SkillFrameQ, UIK_SkillFrameE, UIK_SkillFrameF, UIK_FrameLShift, UIK_FrameTab,
+		UIK_SkillFrameZCool, UIK_SkillFrameQCool, UIK_SkillFrameECool, UIK_SkillFrameFCool, UIK_FrameLShiftCool, UIK_FrameTabCool,
 		UIK_KeyQ, UIK_KeyE, UIK_KeyF, UIK_KeyZ, UIK_KeyLShift, UIK_KeyTab,
 		UIK_Player_Hp0, UIK_Player_Hp1, UIK_Player_Hp2, UIK_Player_Hp3,
 		UIK_Monster_Hp0, UIK_Monster_Hp1, UIK_Monster_Hp2, UIK_Monster_Hp3,
 		UIK_End
 	};
-private:
-	explicit CUI(LPDIRECT3DDEVICE9 pGraphicDev);
+public:
+	CUI(LPDIRECT3DDEVICE9 pGraphicDev);
 	virtual ~CUI(void);
 
 public:
@@ -39,7 +40,7 @@ public:
 	void Set_PosToSize(float fX, float fY, float fSizeX, float fSizeY) {
 		m_fX = fX, m_fY = fY, m_fSizeX = fSizeX, m_fSizeY = fSizeY;
 	}
-private:
+protected:
 	HRESULT		Add_Component(void);
 
 public:
@@ -48,9 +49,10 @@ public:
 	Engine::CRenderer*			m_pRendererCom = nullptr;
 	Engine::CTransform*			m_pTransformCom = nullptr;
 	Engine::CShader*			m_pShaderCom = nullptr;
+public:
 	UIKind						m_UIKind = UIKind::UIK_End;
 	CPlayer::Weapon_Equip		m_Weapon = CPlayer::Weapon_Equip::Weapon_None;
-private:
+protected:
 	_matrix						m_matProj;
 	_float						m_fX, m_fY;
 	_float						m_fSizeX, m_fSizeY;

@@ -45,17 +45,6 @@ CApostleOfGreed::~CApostleOfGreed(void)
 
 }
 
-Client::_vec3 Client::CApostleOfGreed::PickUp_OnTerrain(void)
-{
-	Engine::CTerrainTex*		pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
-	NULL_CHECK_RETURN(pTerrainBufferCom, _vec3(0.f, 0.f, 0.f));
-
-	Engine::CTransform*		pTerrainTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Transform", Engine::ID_DYNAMIC));
-	NULL_CHECK_RETURN(pTerrainTransformCom, _vec3(0.f, 0.f, 0.f));
-
-	return m_sComponent.m_pCalculatorCom->Picking_OnTerrain(g_hWnd, pTerrainBufferCom, pTerrainTransformCom);
-}
-
 HRESULT Client::CApostleOfGreed::Add_Component(void)
 {
 	Engine::CComponent*		pComponent = nullptr;
@@ -197,7 +186,7 @@ void Client::CApostleOfGreed::SetUp_OnTerrain(void)
 	_vec3	vPosition;
 	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
 
-	Engine::CTerrainTex*		pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
+	Engine::CTerrainTex* pTerrainBufferCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_Terrain->Get_sComponent_Terrain()->m_pBufferCom;
 	NULL_CHECK(pTerrainBufferCom);
 
 	_float fHeight = m_sComponent.m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
@@ -524,6 +513,7 @@ void CApostleOfGreed::Update_DelayHpDec(float fTimeDelta) {
 		if ((*iter)->m_fDelayTime < 0.f)
 		{
 			m_sStat.m_fMaxDelayHp -= (*iter)->m_fHpDec;
+			m_sStat.m_fDelayHpSpeed = m_sStat.m_fDelayHp - m_sStat.m_fMaxDelayHp;
 			Safe_Delete(*iter);
 			iter = m_VecDelayHpDec.erase(iter);
 		}
@@ -535,7 +525,7 @@ void CApostleOfGreed::Update_DelayHpDec(float fTimeDelta) {
 
 	if (m_sStat.m_fMaxDelayHp < m_sStat.m_fDelayHp)
 	{
-		m_sStat.m_fDelayHp -= fTimeDelta * 2200.f;
+		m_sStat.m_fDelayHp -= fTimeDelta * m_sStat.m_fDelayHpSpeed;
 		if (m_sStat.m_fMaxDelayHp > m_sStat.m_fDelayHp)
 			m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp;
 	}

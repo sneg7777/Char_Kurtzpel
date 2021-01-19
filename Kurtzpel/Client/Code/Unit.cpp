@@ -3,6 +3,7 @@
 #include "Export_Function.h"
 #include "SphereCollider.h"
 #include "Player.h"
+#include "Stage.h"
 
 CUnit::CUnit(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
@@ -144,7 +145,7 @@ void Client::CUnit::SetUp_OnTerrain(void)
 	_vec3	vPosition;
 	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
 
-	Engine::CTerrainTex* pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
+	Engine::CTerrainTex* pTerrainBufferCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_Terrain->Get_sComponent_Terrain()->m_pBufferCom;
 	NULL_CHECK(pTerrainBufferCom);
 
 	_float fHeight = m_sComponent.m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);

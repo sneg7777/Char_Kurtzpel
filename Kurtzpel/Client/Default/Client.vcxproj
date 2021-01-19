@@ -204,6 +204,9 @@
     <ClInclude Include="..\Code\Tree.h" />
     <ClInclude Include="..\Code\UI.h" />
     <ClInclude Include="..\Code\UI_Manager.h" />
+    <ClInclude Include="..\Code\UI_MonsterHp.h" />
+    <ClInclude Include="..\Code\UI_PlayerHp.h" />
+    <ClInclude Include="..\Code\UI_Skill.h" />
     <ClInclude Include="..\Code\Unit.h" />
     <ClInclude Include="..\Code\Unit_D.h" />
     <ClInclude Include="..\Header\Define.h" />
@@ -249,6 +252,9 @@
     <ClCompile Include="..\Code\Tree.cpp" />
     <ClCompile Include="..\Code\UI.cpp" />
     <ClCompile Include="..\Code\UI_Manager.cpp" />
+    <ClCompile Include="..\Code\UI_MonsterHp.cpp" />
+    <ClCompile Include="..\Code\UI_PlayerHp.cpp" />
+    <ClCompile Include="..\Code\UI_Skill.cpp" />
     <ClCompile Include="..\Code\Unit.cpp" />
     <ClCompile Include="..\Code\Unit_D.cpp" />
     <ClCompile Include="Client.cpp" />

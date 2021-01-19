@@ -143,7 +143,6 @@ void Client::CDynamicCamera::Mouse_Move(void)
 
 	if (dwMouseMove = Engine::Get_DIMouseMove(Engine::DIMS_X))
 	{
-		//Engine::CTransform* playerTrans = dynamic_cast<Engine::CTransform*>(Engine::CManagement::GetInstance()->Get_Component(L"GameLogic", L"Player", L"Com_Transform", Engine::ID_DYNAMIC));
 		m_Player->Get_sComponent()->m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(dwMouseMove * 0.1f));
 		m_Player->m_RocateY += dwMouseMove * 0.1f;
 		if (m_Player->m_RocateY > 360.f)
@@ -189,8 +188,6 @@ Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 	_vec3	vPos, vDir;
 	player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 	player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
-	//dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_POS, &vPos);
-	//dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC))->Get_Info(Engine::INFO_LOOK, &vDir);
 	m_vEye = vPos - (vDir * player->m_CameraDist);
 	m_vEye.y += 3.5f - player->m_LookAtY * 0.7f;
 	m_vAt = vPos + (vDir * 200.f);

@@ -86,7 +86,7 @@ float CMonster::PlayerSearchDistance()
 	CPlayer* player = CPlayer::GetInstance();
 	if (nullptr == player) return 0.f;
 
-	Engine::CTransform* playerTrans = player->Get_sComponent()->m_pTransformCom;// dynamic_cast<Engine::CTransform*>(player->Get_Component(L"Com_Transform", Engine::ID_DYNAMIC));
+	Engine::CTransform* playerTrans = player->Get_sComponent()->m_pTransformCom;
 
 	if (m_pPlayerTrans != playerTrans)
 		m_pPlayerTrans = playerTrans;

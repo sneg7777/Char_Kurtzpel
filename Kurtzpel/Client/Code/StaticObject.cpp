@@ -103,12 +103,7 @@ HRESULT Client::CStaticObject::Ready_Object(bool check, wstring _wstring)
 }
 Client::_int Client::CStaticObject::Update_Object(const _float& fTimeDelta)
 {
-	Engine::CGameObject::Update_Object(fTimeDelta);
-
-	//SetUp_OnTerrain();
-
-	//m_bColl = Collision_ToObject(L"GameLogic", L"Player");
-
+	Engine::CGameObject::Update_Object(0.f);
 	_vec3	vPos;
 	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 
@@ -136,19 +131,6 @@ void Client::CStaticObject::Render_Object(void)
 	pEffect->End();
 
 	Engine::Safe_Release(pEffect);
-}
-
-void Client::CStaticObject::SetUp_OnTerrain(void)
-{
-	_vec3	vPosition;
-	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
-
-	Engine::CTerrainTex* pTerrainBufferCom = dynamic_cast<Engine::CTerrainTex*>(Engine::Get_Component(L"Environment", L"Terrain", L"Com_Buffer", Engine::ID_STATIC));
-	NULL_CHECK(pTerrainBufferCom);
-
-	_float fHeight = m_pCalculatorCom->Compute_HeightOnTerrain(&vPosition, pTerrainBufferCom->Get_VtxPos(), VTXCNTX, VTXCNTZ, VTXITV);
-
-	m_pTransformCom->Move_Pos(vPosition.x, fHeight, vPosition.z);
 }
 
 HRESULT Client::CStaticObject::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)

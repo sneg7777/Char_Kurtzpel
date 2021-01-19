@@ -24,6 +24,7 @@ struct sStat {
 	_float						m_fHp = 0.f;
 	_float						m_fMaxDelayHp = 0.f;
 	_float						m_fDelayHp = 0.f;
+	_float						m_fDelayHpSpeed = 0.f;
 	_float						m_fAttack = 0.f;
 	_ulong						m_dwNaviIndex = 0.f;
 	_float						m_fMaxMp = 0;

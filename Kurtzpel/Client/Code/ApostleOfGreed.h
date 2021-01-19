@@ -51,7 +51,6 @@ private:
 	bool		Random_Skill(float playerTodisTance);
 	void		Emplace_DelayHpDec(float _attack);
 	void		Update_DelayHpDec(float fTimeDelta);
-	_vec3		PickUp_OnTerrain(void);
 
 
 	float						m_TimeCheck[TimeCheck::TimeCheck_End];

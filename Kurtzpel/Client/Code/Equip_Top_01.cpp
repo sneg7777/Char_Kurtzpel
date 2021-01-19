@@ -113,24 +113,3 @@ void Client::CEquip_Top_01::Render_Object(void)
 
 
 }
-
-
-_bool CEquip_Top_01::Collision_ToObject(const _tchar * pLayerTag, const _tchar * pObjTag)
-{
-	Engine::CCollider*	pPlayerColliderCom = dynamic_cast<Engine::CCollider*>(Engine::Get_Component(pLayerTag, pObjTag, L"Com_Collider", Engine::ID_STATIC));
-	NULL_CHECK_RETURN(pPlayerColliderCom, false);
-	
-	/*return m_pCalculatorCom->Collision_AABB(pPlayerColliderCom->Get_Min(),
-											pPlayerColliderCom->Get_Max(),
-											pPlayerColliderCom->Get_CollMatrix(),
-											m_pColliderCom->Get_Min(), 
-											m_pColliderCom->Get_Max(),
-											m_pColliderCom->Get_CollMatrix());*/
-
-	return m_pCalculatorCom->Collision_OBB(pPlayerColliderCom->Get_Min(),
-		pPlayerColliderCom->Get_Max(),
-		pPlayerColliderCom->Get_CollMatrix(),
-		m_pColliderCom->Get_Min(),
-		m_pColliderCom->Get_Max(),
-		m_pColliderCom->Get_CollMatrix());
-}

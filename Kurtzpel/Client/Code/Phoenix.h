@@ -22,7 +22,6 @@ public:
 private:
 	HRESULT		Add_Component(void);
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
-	void		SetUp_OnTerrain(void);
 	void		Calc_Time(_float fTimeDelta);
 	void		Pattern(_float fTimeDelta, _vec3 vPos);
 	virtual void	 Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);

@@ -100,7 +100,7 @@ HRESULT CStage::Ready_Environment_Layer(const _tchar * pLayerTag)
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"SkyBox", pGameObject), E_FAIL);
 
-	pGameObject = CTerrain::Create(m_pGraphicDev);
+	pGameObject = m_Terrain = CTerrain::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Terrain", pGameObject), E_FAIL);
 
@@ -263,27 +263,27 @@ HRESULT CStage::Ready_LightInfo(void)
 	
 	tLightInfo.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.f);
 	tLightInfo.Specular = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
-	tLightInfo.Ambient = D3DXCOLOR( 0.12f, 0.12f, 0.12f, 1.f);
+	tLightInfo.Ambient = D3DXCOLOR( 0.7f, 0.7f, 0.7f, 1.f);
 	
-	tLightInfo.Direction = _vec3(0.f, -1.f, 0.f);
+	tLightInfo.Direction = _vec3(0.2f, -1.f, 0.2f);
 	
 	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 0)))
 		return E_FAIL;
 
 	//TODO : 스포트라이트 이용도 해볼것
 	// 1번 조명
-	tLightInfo.Type = D3DLIGHT_POINT;
-	
-	tLightInfo.Diffuse = D3DXCOLOR(0.9f, 0.9f, 0.9f, 1.f);
-	tLightInfo.Specular = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
-	tLightInfo.Ambient = D3DXCOLOR(250.f/255.f, 242.f/255.f, 230.f/255.f, 0.4f);
-	tLightInfo.Position = _vec3(72.f, 42.f, 61.f);
-	//tLightInfo.Position = _vec3(69.f, 62.f, 61.f);
-	tLightInfo.Range = 240.f;
-	
-	
-	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 0)))
-		return E_FAIL;
+	//tLightInfo.Type = D3DLIGHT_POINT;
+	//
+	//tLightInfo.Diffuse = D3DXCOLOR(0.9f, 0.9f, 0.9f, 1.f);
+	//tLightInfo.Specular = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
+	//tLightInfo.Ambient = D3DXCOLOR(250.f/255.f, 242.f/255.f, 230.f/255.f, 0.4f);
+	//tLightInfo.Position = _vec3(72.f, 42.f, 61.f);
+	////tLightInfo.Position = _vec3(69.f, 62.f, 61.f);
+	//tLightInfo.Range = 240.f;
+	//
+	//
+	//if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 0)))
+	//	return E_FAIL;
 
 	//// 1번 조명
 	//tLightInfo.Type = D3DLIGHT_POINT;
