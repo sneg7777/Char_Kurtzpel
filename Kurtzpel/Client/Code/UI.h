@@ -23,6 +23,7 @@ public:
 		UIK_SkillZ_GH, UIK_SkillQ_GH, UIK_SkillE_GH, UIK_SkillF_GH, UIK_SkillLShift, UIK_SkillTab,
 		UIK_SkillZ_LB, UIK_SkillQ_LB, UIK_SkillE_LB, UIK_SkillF_LB,
 		UIK_SkillFrameZ, UIK_SkillFrameQ, UIK_SkillFrameE, UIK_SkillFrameF, UIK_FrameLShift, UIK_FrameTab,
+		UIK_SkillFrameZCool, UIK_SkillFrameQCool, UIK_SkillFrameECool, UIK_SkillFrameFCool, UIK_FrameLShiftCool, UIK_FrameTabCool,
 		UIK_KeyQ, UIK_KeyE, UIK_KeyF, UIK_KeyZ, UIK_KeyLShift, UIK_KeyTab,
 		UIK_Player_Hp0, UIK_Player_Hp1, UIK_Player_Hp2, UIK_Player_Hp3,
 		UIK_Monster_Hp0, UIK_Monster_Hp1, UIK_Monster_Hp2, UIK_Monster_Hp3,

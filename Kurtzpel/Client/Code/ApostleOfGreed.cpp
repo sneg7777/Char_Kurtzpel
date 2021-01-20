@@ -535,7 +535,7 @@ void CApostleOfGreed::Update_DelayHpDec(float fTimeDelta) {
 
 	if (m_sStat.m_fMaxDelayHp < m_sStat.m_fDelayHp)
 	{
-		m_sStat.m_fDelayHp -= fTimeDelta * 2200.f;
+		m_sStat.m_fDelayHp -= fTimeDelta * 2000.f;
 		if (m_sStat.m_fMaxDelayHp > m_sStat.m_fDelayHp)
 			m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp;
 	}

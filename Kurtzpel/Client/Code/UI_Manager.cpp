@@ -58,7 +58,7 @@ void Client::CUI_Manager::Render_Object(void)
 }
 
 void Client::CUI_Manager::Ready_SkillIcon() {
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < 35; i++)
 	{
 		CUI* pUI = CUI::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pUI, );
@@ -112,152 +112,183 @@ void Client::CUI_Manager::Init_SkillIcon(CUI* pUI, int number) {
 		break;
 	}
 	case 6: {
+		//pUI->Set_PosToSize(180.f, 490.f, 45.3f, 54.f);
+		pUI->Set_PosToSize(184.f, 484.f, 54.4f, 64.8f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_SkillFrameBlue"));
+		pUI->m_UIKind = CUI::UIKind::UIK_SkillFrameQCool;
+		break;
+	}
+	case 7: {
+		pUI->Set_PosToSize(242.f, 484.f, 54.4f, 64.8f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_SkillFrameBlue"));
+		pUI->m_UIKind = CUI::UIKind::UIK_SkillFrameECool;
+		break;
+	}
+	case 8: {
+		pUI->Set_PosToSize(300.f, 484.f, 54.4f, 64.8f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_SkillFrameBlue"));
+		pUI->m_UIKind = CUI::UIKind::UIK_SkillFrameFCool;
+		break;
+	}
+	case 9: {
+		pUI->Set_PosToSize(213.f, 534.f, 54.4f, 64.8f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_SkillFrameOrange"));
+		pUI->m_UIKind = CUI::UIKind::UIK_FrameLShiftCool;
+		break;
+	}
+	case 10: {
+		pUI->Set_PosToSize(271.f, 534.f, 54.4f, 64.8f);
+		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_SkillFrameGreen"));
+		pUI->m_UIKind = CUI::UIKind::UIK_FrameTabCool;
+		break;
+	}
+	case 11: {
 		pUI->Set_PosToSize(90.f, 506.f, 102.4f, 102.4f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillZ"));
 		pUI->m_UIKind = CUI::UIKind::UIK_SkillZ_GH;
 		pUI->m_Weapon = CPlayer::Weapon_Hammer;
 		break;
 	}
-	case 7: {
+	case 12: {
 		pUI->Set_PosToSize(184.f, 484.f, 65.6f, 65.6f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillQ"));
 		pUI->m_UIKind = CUI::UIKind::UIK_SkillQ_GH;
 		pUI->m_Weapon = CPlayer::Weapon_Hammer;
 		break;
 	}
-	case 8: {
+	case 13: {
 		pUI->Set_PosToSize(242.f, 484.f, 65.6f, 65.6f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillE"));
 		pUI->m_UIKind = CUI::UIKind::UIK_SkillE_GH;
 		pUI->m_Weapon = CPlayer::Weapon_Hammer;
 		break;
 	}
-	case 9: {
+	case 14: {
 		pUI->Set_PosToSize(300.f, 484.f, 65.6f, 65.6f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillF"));
 		pUI->m_UIKind = CUI::UIKind::UIK_SkillF_GH;
 		pUI->m_Weapon = CPlayer::Weapon_Hammer;
 		break;
 	}
-	case 10: {
+	case 15: {
 		pUI->Set_PosToSize(213.f, 534.f, 65.6f, 65.6f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_SkillAvoid"));
 		pUI->m_UIKind = CUI::UIKind::UIK_SkillLShift;
 		break;
 	}
-	case 11: {
+	case 16: {
 		pUI->Set_PosToSize(271.f, 534.f, 65.6f, 65.6f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_SkillWeaponChange"));
 		pUI->m_UIKind = CUI::UIKind::UIK_SkillTab;
 		break;
 	}
-	case 12: {
+	case 17: {
 		pUI->Set_PosToSize(165.f, 446.f, 19.2f, 19.2f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_KeyQ"));
 		pUI->m_UIKind = CUI::UIKind::UIK_KeyQ;
 		break;
 	}
-	case 13: {
+	case 18: {
 		pUI->Set_PosToSize(223.f, 446.f, 19.2f, 19.2f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_KeyE"));
 		pUI->m_UIKind = CUI::UIKind::UIK_KeyE;
 		break;
 	}
-	case 14: {
+	case 19: {
 		pUI->Set_PosToSize(281.f, 446.f, 19.2f, 19.2f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_KeyF"));
 		pUI->m_UIKind = CUI::UIKind::UIK_KeyF;
 		break;
 	}
-	case 15: {
+	case 20: {
 		pUI->Set_PosToSize(35.f, 446.f, 19.2f, 19.2f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_KeyZ"));
 		pUI->m_UIKind = CUI::UIKind::UIK_KeyZ;
 		break;
 	}
-	case 16: {
+	case 21: {
 		pUI->Set_PosToSize(212.f, 580.f, 34.3f, 19.2f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_KeyLShift"));
 		pUI->m_UIKind = CUI::UIKind::UIK_KeyLShift;
 		break;
 	}
-	case 17: {
+	case 22: {
 		pUI->Set_PosToSize(271.f, 580.f, 22.4f, 19.2f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_KeyTab"));
 		pUI->m_UIKind = CUI::UIKind::UIK_KeyTab;
 		break;
 	}
-	case 18: {
+	case 23: {
 		pUI->Set_PosToSize(90.f, 506.f, 102.4f, 102.4f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillZ"));
 		pUI->m_UIKind = CUI::UIKind::UIK_SkillZ_LB;
 		pUI->m_Weapon = CPlayer::Weapon_LongBow;
 		break;
 	}
-	case 19: {
+	case 24: {
 		pUI->Set_PosToSize(184.f, 484.f, 65.6f, 65.6f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillQ"));
 		pUI->m_UIKind = CUI::UIKind::UIK_SkillQ_LB;
 		pUI->m_Weapon = CPlayer::Weapon_LongBow;
 		break;
 	}
-	case 20: {
+	case 25: {
 		pUI->Set_PosToSize(242.f, 484.f, 65.6f, 65.6f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillE"));
 		pUI->m_UIKind = CUI::UIKind::UIK_SkillE_LB;
 		pUI->m_Weapon = CPlayer::Weapon_LongBow;
 		break;
 	}
-	case 21: {
+	case 26: {
 		pUI->Set_PosToSize(300.f, 484.f, 65.6f, 65.6f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_LBSkillF"));
 		pUI->m_UIKind = CUI::UIKind::UIK_SkillF_LB;
 		pUI->m_Weapon = CPlayer::Weapon_LongBow;
 		break;
 	}
-	case 22: {
+	case 27: {
 		pUI->Set_PosToSize(512.f, 565.f, 248.8f, 33.6f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp0"));
 		pUI->m_UIKind = CUI::UIKind::UIK_Player_Hp0;
 		break;
 	}
-	case 23: {
+	case 28: {
 		pUI->Set_PosToSize(512.f, 555.6f, 242.4f, 8.f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp1"));
 		pUI->m_UIKind = CUI::UIKind::UIK_Player_Hp1;
 		break;
 	}
-	case 24: {
+	case 29: {
 		pUI->Set_PosToSize(512.f, 569.f, 242.4f, 4.8f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp2"));
 		pUI->m_UIKind = CUI::UIKind::UIK_Player_Hp2;
 		break;
 	}
-	case 25: {
+	case 30: {
 		pUI->Set_PosToSize(512.f, 577.f, 242.4f, 4.8f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp3"));
 		pUI->m_UIKind = CUI::UIKind::UIK_Player_Hp3;
 		break;
 	}
-	case 26: {
+	case 31: {
 		pUI->Set_PosToSize(512.f, 95.f, 350.f, 24.5f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp0"));
 		pUI->m_UIKind = CUI::UIKind::UIK_Monster_Hp0;
 		break;
 	}
-	case 27: {
+	case 32: {
 		pUI->Set_PosToSize(512.f, 90.f, 343.f, 9.1f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp2"));
 		pUI->m_UIKind = CUI::UIKind::UIK_Monster_Hp2;
 		break;
 	}
-	case 28: {
+	case 33: {
 		pUI->Set_PosToSize(512.f, 90.f, 343.f, 9.1f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp1"));
 		pUI->m_UIKind = CUI::UIKind::UIK_Monster_Hp1;
 		break;
 	}
-	case 29: {
+	case 34: {
 		pUI->Set_PosToSize(512.f, 102.f, 343.f, 4.9f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp3"));
 		pUI->m_UIKind = CUI::UIKind::UIK_Monster_Hp3;

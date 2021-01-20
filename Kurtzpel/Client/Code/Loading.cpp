@@ -141,6 +141,9 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Explosion/Explosion%d.png", 90), E_FAIL);
 
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillFrame", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/SkillFrame.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillFrameBlue", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/SkillFrameBlue.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillFrameOrange", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/SkillFrameOrange.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_SkillFrameGreen", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/SkillFrameGreen.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_RageSkillFrame", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/RageSkillFrame.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillZ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/GH_RageSkill.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_GHSkillE", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/GH_SkillE.tga"), E_FAIL);

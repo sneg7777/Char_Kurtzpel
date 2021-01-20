@@ -880,6 +880,11 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 			}
 		}
 	}
+	else if (m_State == State::State_Skill) { /////////////////////////////////////////////////////////////////////////// Skill
+
+		Event_Skill(fTimeDelta, pNaviMeshCom, vPos, vDir);
+
+	}
 	else if (m_State == State::State_Attack) { ////////////////////////////////////////////////////////////////////////// Attack
 		if (m_bCheck[bCheck::bCheck_MouseL_Already]) {
 			if (m_Attack_State == Attack_State::StateA_Basic1) {
