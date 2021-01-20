@@ -23,7 +23,7 @@ class CArrowNaviTerrain;
 
 class CStage : public Engine::CScene
 {
-private:
+protected:
 	explicit CStage(LPDIRECT3DDEVICE9 pGraphicDev);
 	virtual ~CStage(void);
 
@@ -34,28 +34,30 @@ public:
 	virtual void Render_Scene(void) override;
 
 	CDynamicCamera* Get_DynamicCamera() { return m_Camera; }
-	void CameraControl(_float fTimeDelta);
 		
-private:
-	HRESULT		Ready_Environment_Layer(const _tchar* pLayerTag);
-	HRESULT		Ready_GameLogic_Dynamic_Layer(const _tchar* pLayerTag);
-	HRESULT		Ready_GameLogic_Static_Layer(const _tchar* pLayerTag);
-	HRESULT		Ready_GameLogic_StaticNoColl_Layer(const _tchar* pLayerTag);
-	HRESULT		Ready_GameLogic_Decoration_Layer(const _tchar* pLayerTag);
-	HRESULT		Ready_UI_Layer(const _tchar* pLayerTag);
+protected:
+	virtual HRESULT		Ready_Environment_Layer(const _tchar* pLayerTag);
+	virtual HRESULT		Ready_GameLogic_Dynamic_Layer(const _tchar* pLayerTag);
+	virtual HRESULT		Ready_GameLogic_Static_Layer(const _tchar* pLayerTag);
+	virtual HRESULT		Ready_GameLogic_StaticNoColl_Layer(const _tchar* pLayerTag);
+	virtual HRESULT		Ready_GameLogic_Decoration_Layer(const _tchar* pLayerTag);
+	virtual HRESULT		Ready_UI_Layer(const _tchar* pLayerTag);
 
-	HRESULT		Ready_LightInfo(void);
-	CDynamicCamera* m_Camera = nullptr;
+	virtual HRESULT		Ready_LightInfo(void);
 public:
 	CNaviTerrain*			m_NaviTerrain = nullptr;
 	CArrowNaviTerrain*		m_ArrowNaviTerrain = nullptr;
 	CTerrain*				m_Terrain = nullptr;
 	static CStage*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
-private:
+protected:
+	CDynamicCamera*			m_Camera = nullptr;
 	virtual void Free(void) override;
 	void Collision_OnlyDynamic_Object(const _float& fTimeDelta);
 	void Collision_StaticToDynamic_Object(const _float& fTimeDelta);
 	HRESULT Load_StaticObject(Engine::CLayer* _layer, const _tchar* pLayerTag);
+	void CameraControl(_float fTimeDelta);
+
+	static bool m_LightCheck;
 };
 
 END

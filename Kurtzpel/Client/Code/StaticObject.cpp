@@ -107,7 +107,7 @@ Client::_int Client::CStaticObject::Update_Object(const _float& fTimeDelta)
 	_vec3	vPos;
 	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 
-	m_bDraw = m_pOptimizationCom->Is_InFrustumForObject(&vPos, 0.f);
+	m_bDraw = m_pOptimizationCom->Is_InFrustumForObject(&vPos, 0.f, m_pGraphicDev);
 
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);

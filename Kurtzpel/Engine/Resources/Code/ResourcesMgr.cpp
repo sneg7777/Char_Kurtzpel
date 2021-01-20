@@ -93,7 +93,7 @@ HRESULT CResourcesMgr::Ready_Texture(LPDIRECT3DDEVICE9 pGraphicDev,
 }
 
 HRESULT Engine::CResourcesMgr::Ready_Meshes(LPDIRECT3DDEVICE9 pGraphicDev, 
-	const _ushort& wContainerIdx, const _tchar* pMeshTag, MESHTYPE eType, const _tchar* pFilePath, const _tchar* pFileName)
+	const _ushort& wContainerIdx, const _tchar* pMeshTag, MESHTYPE eType, const _tchar* pFilePath, const _tchar* pFileName, int number)
 {
 	if (nullptr == m_pmapResource)
 	{
@@ -116,11 +116,11 @@ HRESULT Engine::CResourcesMgr::Ready_Meshes(LPDIRECT3DDEVICE9 pGraphicDev,
 		break;
 
 	case TYPE_NAVI:
-		pResources = CNaviMesh::Create(pGraphicDev);
+		pResources = CNaviMesh::Create(pGraphicDev, number);
 		break;
 
 	case TYPE_ARROWNAVI:
-		pResources = CArrowNaviMesh::Create(pGraphicDev);
+		pResources = CArrowNaviMesh::Create(pGraphicDev, number);
 		break;
 	}
 

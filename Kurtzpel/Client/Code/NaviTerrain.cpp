@@ -15,12 +15,15 @@ CNaviTerrain::~CNaviTerrain(void)
 
 }
 
-HRESULT Client::CNaviTerrain::Add_Component(void)
+HRESULT Client::CNaviTerrain::Add_Component(int number)
 {
 	Engine::CComponent*		pComponent = nullptr;
 
 	// NaviMesh
-	pComponent = m_pNaviMeshCom = dynamic_cast<Engine::CNaviMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Navi"));
+	if(number == 2)
+		pComponent = m_pNaviMeshCom = dynamic_cast<Engine::CNaviMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Navi2"));
+	else
+		pComponent = m_pNaviMeshCom = dynamic_cast<Engine::CNaviMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Navi"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Navi", pComponent);
 
@@ -33,11 +36,11 @@ HRESULT Client::CNaviTerrain::Add_Component(void)
 	return S_OK;
 }
 
-CNaviTerrain* CNaviTerrain::Create(LPDIRECT3DDEVICE9 pGraphicDev)
+CNaviTerrain* CNaviTerrain::Create(LPDIRECT3DDEVICE9 pGraphicDev, int number)
 {
 	CNaviTerrain*	pInstance = new CNaviTerrain(pGraphicDev);
 
-	if (FAILED(pInstance->Ready_Object()))
+	if (FAILED(pInstance->Ready_Object(number)))
 		Client::Safe_Release(pInstance);
 	return pInstance;
 }
@@ -48,7 +51,7 @@ void CNaviTerrain::Free(void)
 }
 
 
-HRESULT Client::CNaviTerrain::Ready_Object(void)
+HRESULT Client::CNaviTerrain::Ready_Object()
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
@@ -56,9 +59,19 @@ HRESULT Client::CNaviTerrain::Ready_Object(void)
 
 	return S_OK;
 }
+
+HRESULT Client::CNaviTerrain::Ready_Object(int number)
+{
+	FAILED_CHECK_RETURN(Add_Component(number), E_FAIL);
+
+	m_pNaviMeshCom->Set_NaviIndex(0);
+
+	return S_OK;
+}
+
 Client::_int Client::CNaviTerrain::Update_Object(const _float& fTimeDelta)
 {
-	CGameObject::Update_Object(fTimeDelta);
+	//CGameObject::Update_Object(fTimeDelta);
 
 	if(CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck::bCheck_RenderSphere])
 		m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);

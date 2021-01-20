@@ -22,11 +22,18 @@ Engine::CArrowNaviMesh::~CArrowNaviMesh(void)
 
 }
 
-HRESULT Engine::CArrowNaviMesh::Ready_NaviMeshes(void)
+HRESULT Engine::CArrowNaviMesh::Ready_NaviMeshes(int number)
 {
-	TCHAR szDataPath[MAX_PATH] = L"../Bin/saveArrowNavi.dat";
+	HANDLE hFile;
+	if (number == 2) {
+		TCHAR szDataPath[MAX_PATH] = L"../Bin/saveStage2Navi.dat";
+		hFile = CreateFile(szDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	}
+	else {
+		TCHAR szDataPath[MAX_PATH] = L"../Bin/saveArrowNavi.dat";
+		hFile = CreateFile(szDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	}
 
-	HANDLE hFile = CreateFile(szDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 	if (INVALID_HANDLE_VALUE == hFile)
 		return E_FAIL;
@@ -137,11 +144,11 @@ HRESULT Engine::CArrowNaviMesh::Link_Cell(void)
 	return S_OK;
 }
 
-Engine::CArrowNaviMesh* Engine::CArrowNaviMesh::Create(LPDIRECT3DDEVICE9 pGraphicDev)
+Engine::CArrowNaviMesh* Engine::CArrowNaviMesh::Create(LPDIRECT3DDEVICE9 pGraphicDev, int number)
 {
 	CArrowNaviMesh*		pInstance = new CArrowNaviMesh(pGraphicDev);
 
-	if (FAILED(pInstance->Ready_NaviMeshes()))
+	if (FAILED(pInstance->Ready_NaviMeshes(number)))
 		Safe_Release(pInstance);
 
 	return pInstance;

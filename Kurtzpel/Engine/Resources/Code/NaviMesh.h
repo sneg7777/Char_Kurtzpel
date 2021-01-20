@@ -18,7 +18,7 @@ public:
 	void		Set_NaviIndex(const _ulong& dwIndex) { m_dwIndex = dwIndex; }
 
 public:
-	HRESULT		Ready_NaviMeshes(void);
+	HRESULT		Ready_NaviMeshes(int number);
 	void		Render_NaviMeshes(void);
 
 	_vec3			Move_OnNaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir, _ulong* _index, bool* _check = nullptr);
@@ -31,7 +31,7 @@ private:
 	_ulong					m_dwIndex;
 
 public:
-	static CNaviMesh*		Create(LPDIRECT3DDEVICE9 pGraphicDev);
+	static CNaviMesh*		Create(LPDIRECT3DDEVICE9 pGraphicDev, int number);
 	virtual CComponent*		Clone(void);
 	virtual void			Free(void);
 

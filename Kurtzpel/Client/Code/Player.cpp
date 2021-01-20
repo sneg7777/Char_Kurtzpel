@@ -35,7 +35,7 @@ CPlayer* CPlayer::m_pInstance = nullptr;
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit_D(pGraphicDev)
 {
-	if (m_pInstance == nullptr)
+	//if (m_pInstance == nullptr)
 		m_pInstance = this;
 	for (int i = 0; i < bCheck::bCheck_End; i++)
 	{

@@ -2,6 +2,7 @@
 #include "MainApp.h"
 #include "Logo.h"
 #include "UI_Manager.h"
+#include "Random_Manager.h"
 
 CMainApp::CMainApp(void)
 {

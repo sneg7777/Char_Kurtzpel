@@ -16,7 +16,7 @@ private:
 
 public:
 	HRESULT				Ready_Optimization(_bool bChoice, const _ulong& dwCntX, const _ulong& dwCntZ);
-	_bool				Is_InFrustumForObject(const _vec3* pWorldPos, const _float& fRadius);
+	_bool				Is_InFrustumForObject(const _vec3* pWorldPos, const _float& fRadius, LPDIRECT3DDEVICE9 pGraphicDev = nullptr);
 	void				Is_InFrustumForTerrain(const _vec3* pVtxPos, 
 												const _ulong& dwCntX, 
 												const _ulong& dwCntZ, 

@@ -37,9 +37,9 @@ HRESULT Engine::COptimization::Ready_Optimization(_bool bChoice, const _ulong& d
 	return S_OK;
 }
 
-Engine::_bool Engine::COptimization::Is_InFrustumForObject(const _vec3* pWorldPos, const _float& fRadius)
+Engine::_bool Engine::COptimization::Is_InFrustumForObject(const _vec3* pWorldPos, const _float& fRadius, LPDIRECT3DDEVICE9 pGraphicDev)
 {
-	return m_pFrustum->Is_InFrustumForObject(pWorldPos, fRadius);
+	return m_pFrustum->Is_InFrustumForObject(pWorldPos, fRadius, pGraphicDev);
 }
 
 void Engine::COptimization::Is_InFrustumForTerrain(const _vec3* pVtxPos, const _ulong& dwCntX, const _ulong& dwCntZ, Engine::INDEX32* pIndex, _ulong* pTriCnt)

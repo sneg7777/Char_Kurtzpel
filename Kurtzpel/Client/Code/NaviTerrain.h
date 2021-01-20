@@ -24,18 +24,19 @@ private:
 
 public:
 	virtual HRESULT Ready_Object(void) override;
+	HRESULT Ready_Object(int number);
 	virtual _int Update_Object(const _float& fTimeDelta) override;
 	virtual void Render_Object(void) override;
 
 private:
-	HRESULT		Add_Component(void);
+	HRESULT		Add_Component(int number = 0);
 
 public:
 	Engine::CNaviMesh* m_pNaviMeshCom = nullptr;
 	Engine::CRenderer* m_pRendererCom = nullptr;
 
 public:
-	static CNaviTerrain*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
+	static CNaviTerrain*	Create(LPDIRECT3DDEVICE9 pGraphicDev, int number = 0);
 
 private:
 	virtual void Free(void) override;

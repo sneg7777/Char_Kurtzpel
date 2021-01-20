@@ -12,6 +12,8 @@
 #include "UI_Manager.h"
 #include "LongBow.h"
 
+bool CStage::m_LightCheck = false;
+
 CStage::CStage(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CScene(pGraphicDev)
 {
@@ -26,17 +28,6 @@ CStage::~CStage(void)
 HRESULT CStage::Ready_Scene(void)
 {
 	
-	FAILED_CHECK_RETURN(Ready_Environment_Layer(L"Environment"), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_GameLogic_Dynamic_Layer(L"GameLogic"), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_GameLogic_Static_Layer(L"GameLogic_Static"), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_GameLogic_StaticNoColl_Layer(L"GameLogic_StaticNoColl"), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_GameLogic_Decoration_Layer(L"GameLogic_Decoration"), E_FAIL);
-	FAILED_CHECK_RETURN(Ready_UI_Layer(L"UI"), E_FAIL);
-	
-	FAILED_CHECK_RETURN(Ready_LightInfo(), E_FAIL);
-	
-	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
-	CUI_Manager::Get_Instance()->Ready_SkillIcon();
 	return S_OK;
 }
 
@@ -91,147 +82,39 @@ void CStage::CameraControl(_float fTimeDelta)
 
 HRESULT CStage::Ready_Environment_Layer(const _tchar * pLayerTag)
 {
-	Engine::CLayer*			pLayer = Engine::CLayer::Create();
-	NULL_CHECK_RETURN(pLayer, E_FAIL);
-	
-	Engine::CGameObject*		pGameObject = nullptr;
 
-	pGameObject = CSkyBox::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"SkyBox", pGameObject), E_FAIL);
-
-	pGameObject = m_Terrain = CTerrain::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Terrain", pGameObject), E_FAIL);
-
-	pGameObject = m_NaviTerrain = CNaviTerrain::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Navi", pGameObject), E_FAIL);
-
-	pGameObject = m_ArrowNaviTerrain = CArrowNaviTerrain::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"ArrowNavi", pGameObject), E_FAIL);
-
-	//pGameObject = CStone::Create(m_pGraphicDev);
-	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Stone", pGameObject), E_FAIL);
-
-	//pGameObject = CDynamicCamera::Create(m_pGraphicDev, &_vec3(0.f, 10.f, -10.f),
-	//													&_vec3(0.f, 0.f, 10.f),
-	//													&_vec3(0.f, 1.f, 0.f));
-	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
-
-	pLayer->m_LayerName = Engine::CLayer::LayerName::Layer_Environment;
-	m_mapLayer.emplace(pLayerTag, pLayer);
 	
 	return S_OK;
 }
 
 HRESULT CStage::Ready_GameLogic_Dynamic_Layer(const _tchar * pLayerTag)
 {
-	Engine::CLayer*			pLayer = Engine::CLayer::Create();
-	NULL_CHECK_RETURN(pLayer, E_FAIL);
 
-	Engine::CGameObject*		pGameObject = nullptr;
-
-	pGameObject = CPlayer::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Player", pGameObject), E_FAIL);
-	
-	pGameObject = CApostleOfGreed::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"B_ApostleOfGreed", pGameObject), E_FAIL);
-
-	/*pGameObject = CEquip_Top_01::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Equip_Top_01", pGameObject), E_FAIL);*/
-
-	/*for (_uint i = 0; i < 50; ++i)
-	{
-		pGameObject = CMonster::Create(m_pGraphicDev);
-		NULL_CHECK_RETURN(pGameObject, E_FAIL);
-		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Monster", pGameObject), E_FAIL);
-	}*/
-
-	//pGameObject = CTree::Create(m_pGraphicDev);
-	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Tree", pGameObject), E_FAIL);
-
-	//for (_uint i = 0; i < 100; ++i)
-	//{
-	//	pGameObject = CEffect::Create(m_pGraphicDev);
-	//	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	//	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Effect", pGameObject), E_FAIL);
-	//}
-
-	pLayer->m_LayerName = Engine::CLayer::LayerName::Layer_Dynamic;
-	m_mapLayer.emplace(pLayerTag, pLayer);
 
 	return S_OK;
 }
 
 HRESULT CStage::Ready_GameLogic_Static_Layer(const _tchar* pLayerTag)
 {
-	Engine::CLayer* pLayer = Engine::CLayer::Create();
-	NULL_CHECK_RETURN(pLayer, E_FAIL);
-
-	Engine::CGameObject* pGameObject = nullptr;
-
-	pGameObject = CHammer::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CHammer", pGameObject), E_FAIL);
-	/*pGameObject = CLongBow::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CLongBow", pGameObject), E_FAIL);*/
-
-	pLayer->m_LayerName = Engine::CLayer::LayerName::Layer_Static;
-	m_mapLayer.emplace(pLayerTag, pLayer);
 
 	return S_OK;
 }
 
 HRESULT CStage::Ready_GameLogic_StaticNoColl_Layer(const _tchar* pLayerTag)
 {
-	Engine::CLayer* pLayer = Engine::CLayer::Create();
-	NULL_CHECK_RETURN(pLayer, E_FAIL);
-
-
-	pLayer->m_LayerName = Engine::CLayer::LayerName::Layer_StaticNoColl;
-	m_mapLayer.emplace(pLayerTag, pLayer);
 
 	return S_OK;
 }
 
 HRESULT CStage::Ready_GameLogic_Decoration_Layer(const _tchar* pLayerTag)
 {
-	Engine::CLayer* pLayer = Engine::CLayer::Create();
-	NULL_CHECK_RETURN(pLayer, E_FAIL);
-
-	Load_StaticObject(pLayer, pLayerTag);
-
-	pLayer->m_LayerName = Engine::CLayer::LayerName::Layer_Decoration;
-	m_mapLayer.emplace(pLayerTag, pLayer);
 
 	return S_OK;
 }
 
 HRESULT CStage::Ready_UI_Layer(const _tchar * pLayerTag)
 {
-	Engine::CLayer* pLayer = Engine::CLayer::Create();
-	NULL_CHECK_RETURN(pLayer, E_FAIL);
 
-	Engine::CGameObject* pGameObject = nullptr;
-
-	pGameObject = m_Camera = CDynamicCamera::Create(m_pGraphicDev, &_vec3(0.f, 10.f, -10.f),
-		&_vec3(0.f, 0.f, 10.f),
-		&_vec3(0.f, 1.f, 0.f));
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
-	m_Camera->Set_pPlayer(CPlayer::GetInstance());
-
-	pLayer->m_LayerName = Engine::CLayer::LayerName::Layer_UI;
-	m_mapLayer.emplace(pLayerTag, pLayer);
 	return S_OK;
 }
 
@@ -239,73 +122,7 @@ HRESULT CStage::Ready_UI_Layer(const _tchar * pLayerTag)
 
 HRESULT CStage::Ready_LightInfo(void)
 {
-	/*D3DLIGHT9		tLightInfo;
-	ZeroMemory(&tLightInfo, sizeof(D3DLIGHT9));
 
-	tLightInfo.Type = D3DLIGHT_DIRECTIONAL;
-
-	tLightInfo.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	tLightInfo.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
-
-	tLightInfo.Direction = _vec3(1.f, -1.f, 1.f);
-
-	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 0)))
-		return E_FAIL;
-
-	return S_OK;*/
-	////////////////////////////////////////////////////
-	D3DLIGHT9		tLightInfo;
-	ZeroMemory(&tLightInfo, sizeof(D3DLIGHT9));
-
-	// 0번 조명
-	tLightInfo.Type = D3DLIGHT_DIRECTIONAL;
-	
-	tLightInfo.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.f);
-	tLightInfo.Specular = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
-	tLightInfo.Ambient = D3DXCOLOR( 0.7f, 0.7f, 0.7f, 1.f);
-	
-	tLightInfo.Direction = _vec3(0.2f, -1.f, 0.2f);
-	
-	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 0)))
-		return E_FAIL;
-
-	//TODO : 스포트라이트 이용도 해볼것
-	// 1번 조명
-	//tLightInfo.Type = D3DLIGHT_POINT;
-	//
-	//tLightInfo.Diffuse = D3DXCOLOR(0.9f, 0.9f, 0.9f, 1.f);
-	//tLightInfo.Specular = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
-	//tLightInfo.Ambient = D3DXCOLOR(250.f/255.f, 242.f/255.f, 230.f/255.f, 0.4f);
-	//tLightInfo.Position = _vec3(72.f, 42.f, 61.f);
-	////tLightInfo.Position = _vec3(69.f, 62.f, 61.f);
-	//tLightInfo.Range = 240.f;
-	//
-	//
-	//if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 0)))
-	//	return E_FAIL;
-
-	//// 1번 조명
-	//tLightInfo.Type = D3DLIGHT_POINT;
-	//tLightInfo.Diffuse = D3DXCOLOR(1.f, 0.f, 0.f, 1.f);
-	//tLightInfo.Specular = D3DXCOLOR(1.f, 0.f, 0.f, 1.f);
-	//tLightInfo.Ambient = D3DXCOLOR(0.2f, 0.f, 0.f, 1.f);
-	//tLightInfo.Position = _vec3(5.f, 5.f, 5.f);
-	//tLightInfo.Range = 10.f;
-
-	//if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 1)))
-	//	return E_FAIL;
-
-	//// 2번 조명
-	//tLightInfo.Type = D3DLIGHT_POINT;
-	//tLightInfo.Diffuse = D3DXCOLOR(0.f, 0.f, 1.f, 1.f);
-	//tLightInfo.Specular = D3DXCOLOR(0.f, 0.f, 1.f, 1.f);
-	//tLightInfo.Ambient = D3DXCOLOR(0.f, 0.f, 0.2f, 1.f);
-	//tLightInfo.Position = _vec3(10.f, 5.f, 10.f);
-	//tLightInfo.Range = 10.f;
-
-	//if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 2)))
-	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -452,7 +269,7 @@ void CStage::Collision_StaticToDynamic_Object(const _float& fTimeDelta)
 
 HRESULT CStage::Load_StaticObject(Engine::CLayer* _layer, const _tchar* pLayerTag)
 {
-	TCHAR szDataPath[MAX_PATH] = L"../Bin/SaveObject3.dat";
+	TCHAR szDataPath[MAX_PATH] = L"../Bin/SaveObjectStage_1.dat";
 
 	HANDLE hFile = CreateFile(szDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 

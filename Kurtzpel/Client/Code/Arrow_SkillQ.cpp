@@ -109,7 +109,7 @@ Client::_int Client::CArrow_SkillQ::Update_Object(const _float& fTimeDelta)
 	}
 	else {
 		m_sStat.m_IsDead = true;
-		if (m_SplitCount == 0)
+		if (m_SplitCount <= 0)
 			return 0;
 		_vec3 vReverseDir = { m_sStat.m_vDir.x, m_sStat.m_vDir.y, -m_sStat.m_vDir.z };
 		pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vReverseDir * m_sStat.m_fSpeed * fTimeDelta), &m_sStat.m_dwNaviIndex, &NaviCheck);

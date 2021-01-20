@@ -242,6 +242,41 @@ _uint CLoading::Loading_ForStage(void)
 												L"../Bin/Resource/Mesh/StaticMesh/Arrow/",
 												L"Arrow.X"),
 												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_Stage2_Wall01", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/Stage2_Wall01/",
+												L"Stage2_Wall01.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_Stage2_Wall02", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/Stage2_Wall02/",
+												L"Stage2_Wall02.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_Stage2_Wall03", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/Stage2_Wall03/",
+												L"Stage2_Wall03.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_Stage2_WoodFence", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/Stage2_WoodFence/",
+												L"Stage2_WoodFence.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_Stage2_WoodFence2", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/Stage2_WoodFence2/",
+												L"Stage2_WoodFence2.X"),
+												E_FAIL);
 
 	/////////////////////////////////////////////////
 
@@ -254,10 +289,24 @@ _uint CLoading::Loading_ForStage(void)
 												E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 												Engine::RESOURCE_STAGE,
+												L"Mesh_Navi2",
+												Engine::TYPE_NAVI,
+												NULL,
+												NULL, 2),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
 												L"Mesh_ArrowNavi",
 												Engine::TYPE_ARROWNAVI,
 												NULL,
 												NULL),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_ArrowNavi2",
+												Engine::TYPE_ARROWNAVI,
+												NULL,
+												NULL, 2),
 												E_FAIL);
 
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,

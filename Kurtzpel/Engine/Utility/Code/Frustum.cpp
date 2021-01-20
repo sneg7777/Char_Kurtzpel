@@ -40,10 +40,11 @@ HRESULT Engine::CFrustum::Ready_Frustum(void)
 	return S_OK;
 }
 
-Engine::_bool Engine::CFrustum::Is_InFrustumForObject(const _vec3* pWorldPos, const _float& fRadius)
+Engine::_bool Engine::CFrustum::Is_InFrustumForObject(const _vec3* pWorldPos, const _float& fRadius, LPDIRECT3DDEVICE9 pGraphicDev)
 {
 	FAILED_CHECK_RETURN(Ready_Frustum(), false);
-
+	if (pGraphicDev != nullptr)
+		m_pGraphicDev = pGraphicDev;
 	_matrix		matProj, matView;
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);

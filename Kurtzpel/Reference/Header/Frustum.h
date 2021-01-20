@@ -19,7 +19,7 @@ public:
 
 public:
 	HRESULT				Ready_Frustum(void);
-	_bool				Is_InFrustumForObject(const _vec3* pWorldPos, const _float& fRadius);
+	_bool				Is_InFrustumForObject(const _vec3* pWorldPos, const _float& fRadius, LPDIRECT3DDEVICE9 pGraphicDev);
 	_bool				Is_InFrustum(const _vec3* pPos);
 	_bool				Is_InFrustum(const _vec3* pPos, const _float& fRadius);
 	void				Is_InFrustumForTerrain(const _vec3* pVtxPos,

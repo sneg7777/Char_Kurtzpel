@@ -48,7 +48,8 @@ public:
 							const _tchar* pMeshTag,
 							MESHTYPE eType,
 							const _tchar* pFilePath,
-							const _tchar* pFileName);
+							const _tchar* pFileName,
+							int number = 0);
 
 
 	void		Render_Buffer(const _ushort& wContainerIdx, const _tchar* pBufferTag);

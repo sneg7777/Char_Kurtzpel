@@ -112,6 +112,10 @@ CApostleOfGreed* CApostleOfGreed::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 
 void CApostleOfGreed::Free(void)
 {
+	for (auto& hpdec : m_VecDelayHpDec) 
+		Engine::Safe_Delete(hpdec);
+	m_VecDelayHpDec.clear();
+
 	CMonster::Free();
 }
 

@@ -22,11 +22,17 @@ Engine::CNaviMesh::~CNaviMesh(void)
 
 }
 
-HRESULT Engine::CNaviMesh::Ready_NaviMeshes(void)
+HRESULT Engine::CNaviMesh::Ready_NaviMeshes(int number)
 {
-	TCHAR szDataPath[MAX_PATH] = L"../Bin/save2.dat";
-
-	HANDLE hFile = CreateFile(szDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	HANDLE hFile;
+	if (number == 2) {
+		TCHAR szDataPath[MAX_PATH] = L"../Bin/saveStage2Navi.dat";
+		hFile = CreateFile(szDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	}
+	else {
+		TCHAR szDataPath[MAX_PATH] = L"../Bin/saveNavi.dat";
+		hFile = CreateFile(szDataPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	}
 
 	if (INVALID_HANDLE_VALUE == hFile)
 		return E_FAIL;
@@ -137,11 +143,11 @@ HRESULT Engine::CNaviMesh::Link_Cell(void)
 	return S_OK;
 }
 
-Engine::CNaviMesh* Engine::CNaviMesh::Create(LPDIRECT3DDEVICE9 pGraphicDev)
+Engine::CNaviMesh* Engine::CNaviMesh::Create(LPDIRECT3DDEVICE9 pGraphicDev, int number)
 {
 	CNaviMesh*		pInstance = new CNaviMesh(pGraphicDev);
 
-	if (FAILED(pInstance->Ready_NaviMeshes()))
+	if (FAILED(pInstance->Ready_NaviMeshes(number)))
 		Safe_Release(pInstance);
 
 	return pInstance;

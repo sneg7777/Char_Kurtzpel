@@ -14,12 +14,15 @@ CArrowNaviTerrain::~CArrowNaviTerrain(void)
 
 }
 
-HRESULT Client::CArrowNaviTerrain::Add_Component(void)
+HRESULT Client::CArrowNaviTerrain::Add_Component(int number)
 {
 	Engine::CComponent*		pComponent = nullptr;
 
 	// NaviMesh
-	pComponent = m_pArrowNaviMeshCom = dynamic_cast<Engine::CArrowNaviMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_ArrowNavi"));
+	if(number == 2)
+		pComponent = m_pArrowNaviMeshCom = dynamic_cast<Engine::CArrowNaviMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_ArrowNavi2"));
+	else
+		pComponent = m_pArrowNaviMeshCom = dynamic_cast<Engine::CArrowNaviMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_ArrowNavi"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Navi", pComponent);
 
@@ -32,11 +35,11 @@ HRESULT Client::CArrowNaviTerrain::Add_Component(void)
 	return S_OK;
 }
 
-CArrowNaviTerrain* CArrowNaviTerrain::Create(LPDIRECT3DDEVICE9 pGraphicDev)
+CArrowNaviTerrain* CArrowNaviTerrain::Create(LPDIRECT3DDEVICE9 pGraphicDev, int number)
 {
 	CArrowNaviTerrain*	pInstance = new CArrowNaviTerrain(pGraphicDev);
 
-	if (FAILED(pInstance->Ready_Object()))
+	if (FAILED(pInstance->Ready_Object(number)))
 		Client::Safe_Release(pInstance);
 	return pInstance;
 }
@@ -55,8 +58,19 @@ HRESULT Client::CArrowNaviTerrain::Ready_Object(void)
 
 	return S_OK;
 }
+
+HRESULT Client::CArrowNaviTerrain::Ready_Object(int number)
+{
+	FAILED_CHECK_RETURN(Add_Component(number), E_FAIL);
+
+	m_pArrowNaviMeshCom->Set_NaviIndex(0);
+
+	return S_OK;
+}
+
 Client::_int Client::CArrowNaviTerrain::Update_Object(const _float& fTimeDelta)
 {
+	return 0;
 	CGameObject::Update_Object(fTimeDelta);
 
 	if(CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck::bCheck_RenderSphere])
