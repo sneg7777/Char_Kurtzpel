@@ -42,7 +42,7 @@ Engine::_int Engine::CScene::LateUpdate_Scene(const _float& fTimeDelta)
 
 	for (auto& iter : m_mapLayer)
 	{
-		iExit = iter.second->Update_Layer(fTimeDelta);
+		//iExit = iter.second->Update_Layer(fTimeDelta);
 
 		if (iExit & 0x80000000)
 		{

@@ -59,7 +59,7 @@ HRESULT Client::CApostleOfGreed::Add_Component(void)
 	//
 	m_sComponent.m_pTransformCom->Set_Pos(&_vec3(72.f, 0.f, 72.f));
 	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
-	Engine::CGameObject::Update_Object(1.f);
+	Engine::CGameObject::Update_Object(0.f);
 	
 	//m_pMeshCom->Play_Animation(1.f);
 

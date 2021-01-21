@@ -22,11 +22,12 @@ public:
 		BonePart_CollBody,
 		BonePart_Weapon, BonePart_BodyWeapon, BonePart_RHand,
 		BonePart_PlayerHammer,
+		BonePart_NpcTalk,
 		BonePart_Static,
 		BonePart_End
 	};
 	enum BoneTeam {
-		BoneTeam_Player, BoneTeam_Enemy, BoneTeam_Etc, BoneTeam_End
+		BoneTeam_Player, BoneTeam_Npc, BoneTeam_Enemy, BoneTeam_Etc, BoneTeam_End
 	};
 private:
 	explicit CSphereCollider(LPDIRECT3DDEVICE9 pGraphicDev);

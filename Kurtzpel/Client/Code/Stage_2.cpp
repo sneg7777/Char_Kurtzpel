@@ -356,7 +356,7 @@ HRESULT CStage_2::Load_StaticObject(Engine::CLayer* _layer, const _tchar* pLayer
 		objTrans->Rotation(Engine::ROTATION::ROT_X, vecAng.x);
 		objTrans->Rotation(Engine::ROTATION::ROT_Y, vecAng.y);// vecAng.y);
 		objTrans->Rotation(Engine::ROTATION::ROT_Z, vecAng.z);
-		pGameObject->Update_Object(0.f);
+		//pGameObject->Update_Object(0.f);
 		//m_mapLayer.emplace(pLayerTag, _layer);
 
 		if (0 == dwByte)

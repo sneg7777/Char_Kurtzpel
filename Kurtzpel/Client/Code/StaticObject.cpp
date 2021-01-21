@@ -60,6 +60,8 @@ HRESULT Client::CStaticObject::Add_Component(bool check, wstring _wstring)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
+	Engine::CGameObject::Update_Object(0.f);
+
 	return S_OK;
 }
 

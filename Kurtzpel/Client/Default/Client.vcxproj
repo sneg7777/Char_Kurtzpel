@@ -188,6 +188,8 @@
     <ClInclude Include="..\Code\Monster.h" />
     <ClInclude Include="..\Code\MonsterTemp.h" />
     <ClInclude Include="..\Code\NaviTerrain.h" />
+    <ClInclude Include="..\Code\NpcQuest_Manager.h" />
+    <ClInclude Include="..\Code\Npc_01.h" />
     <ClInclude Include="..\Code\Phoenix.h" />
     <ClInclude Include="..\Code\Player.h" />
     <ClInclude Include="..\Code\Random_Manager.h" />
@@ -238,6 +240,8 @@
     <ClCompile Include="..\Code\Monster.cpp" />
     <ClCompile Include="..\Code\MonsterTemp.cpp" />
     <ClCompile Include="..\Code\NaviTerrain.cpp" />
+    <ClCompile Include="..\Code\NpcQuest_Manager.cpp" />
+    <ClCompile Include="..\Code\Npc_01.cpp" />
     <ClCompile Include="..\Code\Phoenix.cpp" />
     <ClCompile Include="..\Code\Player.cpp" />
     <ClCompile Include="..\Code\Random_Manager.cpp" />

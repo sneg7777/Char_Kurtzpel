@@ -11,7 +11,8 @@ Engine::COptimization::COptimization(LPDIRECT3DDEVICE9 pGraphicDev)
 }
 
 Engine::COptimization::COptimization(const COptimization& rhs)
-	: m_pGraphicDev(rhs.m_pGraphicDev)
+	:CComponent(rhs),
+	m_pGraphicDev(rhs.m_pGraphicDev)
 	, m_pFrustum(rhs.m_pFrustum)
 	, m_pQuadTree(rhs.m_pQuadTree)
 {

@@ -48,3 +48,4 @@
 using namespace std;
 
 #include "Random_Manager.h"
+#include "NpcQuest_Manager.h"

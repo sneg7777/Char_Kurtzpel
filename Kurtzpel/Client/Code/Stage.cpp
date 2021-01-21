@@ -44,6 +44,7 @@ Engine::_int CStage::Update_Scene(const _float& fTimeDelta)
 
 Engine::_int CStage::LateUpdate_Scene(const _float& fTimeDelta)
 {
+	CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerColl = false;
 	Collision_OnlyDynamic_Object(fTimeDelta);
 	Collision_StaticToDynamic_Object(fTimeDelta);
 	//int temp;
@@ -226,6 +227,10 @@ void CStage::Collision_StaticToDynamic_Object(const _float& fTimeDelta)
 			CUnit* obj_2Unit = dynamic_cast<CUnit*>(obj_2.second);
 
 			bool collCheck = false;
+			if (obj_1Unit->m_VecSphereCollider.size() > 100)
+				continue;
+			if (obj_1Unit->m_VecSphereCollider.begin() == obj_1Unit->m_VecSphereCollider.end())
+				continue;
 			CSphereCollider* obj_1_Sphere = *obj_1Unit->m_VecSphereCollider.begin();
 			
 			for (auto& obj_2_Sphere : obj_2Unit->m_VecSphereCollider)
