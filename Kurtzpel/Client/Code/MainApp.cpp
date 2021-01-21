@@ -31,7 +31,7 @@ HRESULT CMainApp::Ready_MainApp(void)
 	//m_pGraphicDev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE); // Z버퍼에 기록을 할지 말지 결정하는 옵션
 	CRandom_Manager::Get_Instance()->Ready_Random();
 	CUI_Manager::Get_Instance()->Ready_Object(m_pGraphicDev);
-	CNpcQuest_Manager::Get_Instance();
+	CNpcQuest_Manager::Get_Instance()->Ready_Object(m_pGraphicDev);
 
 	return S_OK;
 }

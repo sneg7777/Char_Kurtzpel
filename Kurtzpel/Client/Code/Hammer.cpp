@@ -67,6 +67,8 @@ Client::_int Client::CHammer::Update_Object(const _float& fTimeDelta)
 	if (m_sStat.m_IsDead) {
 		return 1;
 	}
+	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk)
+		return 0;
 
 	if (nullptr == m_pParentBoneMatrix)
 	{

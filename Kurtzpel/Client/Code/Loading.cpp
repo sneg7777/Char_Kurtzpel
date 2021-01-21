@@ -319,6 +319,14 @@ _uint CLoading::Loading_ForStage(void)
 
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 												Engine::RESOURCE_STAGE,
+												L"Mesh_Lire",
+												Engine::TYPE_DYNAMIC,
+												L"../Bin/Resource/Mesh/DynamicMesh/Lire/",
+												L"Lire.X"),
+												E_FAIL);
+
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
 												L"Mesh_Phoenix",
 												Engine::TYPE_DYNAMIC,
 												L"../Bin/Resource/Mesh/DynamicMesh/Phoenix/",
@@ -363,13 +371,13 @@ _uint CLoading::Loading_ForStage(void)
 		L"Sword.X"),
 		E_FAIL);*/
 
-	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+	/*FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 											Engine::RESOURCE_STAGE,
 											L"Mesh_Tree",
 											Engine::TYPE_STATIC,
 											L"../Bin/Resource/Mesh/StaticMesh/Tree/",
 											L"Tree01.X"),
-											E_FAIL);
+											E_FAIL);*/
 	
 	
 	lstrcpy(m_szLoading, L"Loading Complete!!!");

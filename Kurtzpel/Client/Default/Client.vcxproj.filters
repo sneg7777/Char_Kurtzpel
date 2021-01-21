@@ -109,7 +109,7 @@
     <Filter Include="02. GameObject\02. Public\00. DynamicCamera">
       <UniqueIdentifier>{b393d07e-efcc-4ed5-8b5b-06d5a4ad893d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\21.Npc">
+    <Filter Include="02. GameObject\01. Stage\21.Npc">
       <UniqueIdentifier>{82a13dde-5e35-4d4b-b684-4347d4788cf7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -259,7 +259,7 @@
       <Filter>01. Scene\01. Stage</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\Npc_01.h">
-      <Filter>02. GameObject\21.Npc</Filter>
+      <Filter>02. GameObject\01. Stage\21.Npc</Filter>
     </ClInclude>
     <ClInclude Include="..\Code\NpcQuest_Manager.h">
       <Filter>97. Manager</Filter>
@@ -393,7 +393,7 @@
       <Filter>01. Scene\01. Stage</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\Npc_01.cpp">
-      <Filter>02. GameObject\21.Npc</Filter>
+      <Filter>02. GameObject\01. Stage\21.Npc</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\NpcQuest_Manager.cpp">
       <Filter>97. Manager</Filter>

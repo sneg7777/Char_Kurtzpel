@@ -27,26 +27,26 @@ HRESULT Client::CNpc_01::Add_Component(void)
 
 	CUnit_D::Add_Component();
 	// Mesh
-	pComponent = m_sComponent.m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Player"));
+	pComponent = m_sComponent.m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Lire"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
 	m_sComponent.m_pMeshCom->Set_AniAngle(95.f);
 	//m_pMeshCom->Set_AniAngle(275.f);
 	//
-	m_sComponent.m_pTransformCom->Set_Pos(&_vec3(64.f, 0.f, 72.f));
+	m_sComponent.m_pTransformCom->Set_Pos(&_vec3(87.5f, 0.f, 58.8f));
 	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	Engine::CGameObject::Update_Object(0.f);
 	
 	//m_pMeshCom->Play_Animation(1.f);
 
-	Load_ColliderFile(L"../Bin/Resource/Mesh/DynamicMesh/Save/Player.dat");
+	Load_ColliderFile(L"../Bin/Resource/Mesh/DynamicMesh/Save/Lire.dat");
 	for (auto& sphere : m_VecSphereCollider)
 	{
 		sphere->m_pDynamicThis = this;
 		if (!sphere->m_FrameName.compare("Core")) {
 			sphere->m_BonePart = CSphereCollider::BonePart_CollBody;
 		}
-		else if (!sphere->m_FrameName.compare("Weapon_Hand_R")) {
+		else if (!sphere->m_FrameName.compare("Pelvis")) {
 			sphere->m_BonePart = CSphereCollider::BonePart_NpcTalk;
 		}
 		sphere->m_BoneTeam = CSphereCollider::BoneTeam_Npc;
@@ -94,8 +94,8 @@ HRESULT Client::CNpc_01::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_sComponent.m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
-	m_sComponent.m_pMeshCom->Set_AnimationSet(243);
+	m_sComponent.m_pTransformCom->Set_Scale(0.015f, 0.015f, 0.015f);
+	m_sComponent.m_pMeshCom->Set_AnimationSet(0);
 	m_AniSpeed = 1.f;
 	m_UnitName = UnitName::Npc;
 
