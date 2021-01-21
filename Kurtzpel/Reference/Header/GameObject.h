@@ -11,7 +11,7 @@ public:
 		Up, UpLeft, UpRight, Down, DownLeft, DownRight, Left, Right, Dir_End
 	};
 	enum UnitName {
-		Player, PlayerBullet, Monster, Boss, MonsterBullet, NameEnd
+		Player, PlayerBullet, Monster, Boss, MonsterBullet, Npc, NameEnd
 	};
 struct sStat {
 	EnumDir		m_EnumDir = EnumDir::Dir_End;
@@ -54,6 +54,7 @@ public:
 	virtual void			Render_Object(void) {};
 	virtual void			Collision(CGameObject* _col);
 	sStat*					Get_sStat() { return &m_sStat; }
+	UnitName								m_UnitName = UnitName::NameEnd;
 private:
 	CComponent*		Find_Component(const _tchar* pComponentTag, COMPONENTID eID);
 
@@ -61,7 +62,6 @@ protected:
 	LPDIRECT3DDEVICE9						m_pGraphicDev;
 	map<const _tchar*, CComponent*>			m_mapComponent[ID_END];
 	_float									m_fViewZ = 0.f;
-	UnitName								m_UnitName = UnitName::NameEnd;
 	sStat									m_sStat;
 public:
 	virtual void Free(void);

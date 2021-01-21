@@ -11,6 +11,7 @@
 #include "SkillCollider.h"
 #include "Arrow_SkillQ.h"
 #include "Arrow_SkillF.h"
+#include "NpcQuest_Manager.h"
 #include "Phoenix.h"
 
 #define COOLTIME_GH_Q 5.f
@@ -139,7 +140,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 		case Client::CPlayer::State_Rolling: {
 			m_sComponent.m_pMeshCom->Set_AnimationSet(246);
 			m_sStat.m_fSpeed = 1.5f * m_sStat.m_fInitSpeed;
-			m_AniSpeed = 1.6f;
+			m_AniSpeed = 1.8f;
 			m_DashGauge -= RollGauge;
 			break;
 		}
@@ -300,7 +301,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 		case Client::CPlayer::State_Rolling: {
 			m_sComponent.m_pMeshCom->Set_AnimationSet(246);
 			m_sStat.m_fSpeed = 1.5f * m_sStat.m_fInitSpeed;
-			m_AniSpeed = 1.6f;
+			m_AniSpeed = 1.8f;
 			m_DashGauge -= RollGauge;
 			break;
 		}
@@ -515,7 +516,8 @@ void Client::CPlayer::Hammer_Key_Input(const _float& fTimeDelta)
 		return;
 	}
 	else if (m_State == State::State_Dash || m_State == State::State_Rolling) { ///////////////////////////////////////////////////////////////////////////// Dash
-		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.7f))//m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
+		if ((m_State == State::State_Dash && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.7f))
+			|| (m_State == State::State_Dash && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.9f)))//m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
 		{
 			Set_StateToAnimation(State::State_Idle);
 			m_bCheck[bCheck::bCheck_KeyW] = false;
@@ -923,7 +925,8 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 		return;
 	}
 	else if (m_State == State::State_Dash || m_State == State::State_Rolling) { ///////////////////////////////////////////////////////////////////////////// Dash
-		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.7f))//m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
+		if ((m_State == State::State_Dash && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.7f))
+			|| (m_State == State::State_Dash && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.9f)))//m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
 		{
 			Set_StateToAnimation(State::State_Idle);
 			m_bCheck[bCheck::bCheck_KeyW] = false;
@@ -1774,6 +1777,9 @@ HRESULT Client::CPlayer::Ready_Object(void)
 }
 Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 {
+	Talk_Npc();
+	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk)
+		return 0;
 
 	Calc_Time(fTimeDelta);
 	if (m_JumpIdleState != JumpIdleAni::JumpIdle_None) {
@@ -2237,7 +2243,6 @@ void CPlayer::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider
 			}
 		}
 	}
-	//TODO: 점프해서 맞는거 아직 구현이 안되있음.
 }
 
 void CPlayer::Set_RenderCollSphere() {
@@ -2449,5 +2454,21 @@ void CPlayer::Move_AccelSpeed(_vec3 vPos, _vec3 vDir, float fTimeDelta, Engine::
 		m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_AccelSpeed), &m_sStat.m_dwNaviIndex));
 	}
 
+	return;
+}
+
+void CPlayer::Talk_Npc()
+{
+	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerColl) {
+		if ((Engine::Get_DIKeyState(DIK_T) & 0x80)) {
+			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = true;
+		}
+	}
+
+	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk) {
+		if ((Engine::Get_DIKeyState(DIK_ESCAPE) & 0x80)) {
+			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+		}
+	}
 	return;
 }

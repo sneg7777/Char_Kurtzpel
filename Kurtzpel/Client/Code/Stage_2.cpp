@@ -12,6 +12,7 @@
 #include "StaticObject.h"
 #include "UI_Manager.h"
 #include "LongBow.h"
+#include "Npc_01.h"
 
 CStage_2::CStage_2(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CStage(pGraphicDev)
@@ -125,9 +126,9 @@ HRESULT CStage_2::Ready_GameLogic_Dynamic_Layer(const _tchar * pLayerTag)
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Player", pGameObject), E_FAIL);
 	
 
-	/*pGameObject = CEquip_Top_01::Create(m_pGraphicDev);
+	pGameObject = CNpc_01::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Equip_Top_01", pGameObject), E_FAIL);*/
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Npc", pGameObject), E_FAIL);
 
 	/*for (_uint i = 0; i < 50; ++i)
 	{

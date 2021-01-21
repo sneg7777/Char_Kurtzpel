@@ -59,6 +59,7 @@ void CStage::Render_Scene(void)
 
 void CStage::CameraControl(_float fTimeDelta)
 {
+	
 	CPlayer* player = CPlayer::GetInstance();
 
 	if (player->m_State == player->State::State_Dash && player->m_CameraDist > 240.f) {

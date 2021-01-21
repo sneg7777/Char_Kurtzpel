@@ -15,7 +15,9 @@ public:
 
 	Engine::CGameObject* Get_GameObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 
-	CLayer* Get_Layer(CLayer::LayerName _layerName);
+	CLayer*			Get_Layer(CLayer::LayerName _layerName);
+	CGameObject *	Get_LayerObject(CLayer::LayerName _layerName, CGameObject::UnitName _unitName);
+
 
 public:
 	virtual HRESULT		Ready_Scene(void);

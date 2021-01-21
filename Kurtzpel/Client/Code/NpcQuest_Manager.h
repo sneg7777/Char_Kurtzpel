@@ -24,6 +24,7 @@ public:
 		int		m_QuestNumber = 0;
 		int		m_TalkNumber = 0;
 		bool	m_PlayerColl = false;
+		bool	m_PlayerTalk = false;
 	};
 public:
 	static CNpcQuest_Manager* Get_Instance() {

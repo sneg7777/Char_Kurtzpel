@@ -97,6 +97,7 @@ HRESULT Client::CNpc_01::Ready_Object(void)
 	m_sComponent.m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
 	m_sComponent.m_pMeshCom->Set_AnimationSet(243);
 	m_AniSpeed = 1.f;
+	m_UnitName = UnitName::Npc;
 
 	return S_OK;
 }

@@ -102,3 +102,23 @@ CLayer* Engine::CScene::Get_Layer(CLayer::LayerName _layerName)
 	}
 	return nullptr;
 }
+
+CGameObject* Engine::CScene::Get_LayerObject(CLayer::LayerName _layerName, CGameObject::UnitName _unitName)
+{
+	CLayer* pLayer = nullptr;
+	for (auto& _layer : m_mapLayer) {
+		if (_layer.second->m_LayerName == _layerName) {
+			pLayer = _layer.second;
+		}
+	}
+	if(pLayer == nullptr)
+		return nullptr;
+
+	for (auto& _unit : *pLayer->Get_mapObject()) {
+		if (_unit.second->m_UnitName == _unitName) {
+			return _unit.second;
+		}
+	}
+
+	return nullptr;
+}

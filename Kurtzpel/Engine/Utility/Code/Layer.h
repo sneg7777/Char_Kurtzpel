@@ -22,7 +22,6 @@ public:
 	HRESULT		Add_GameObject(const _tchar* pObjTag, CGameObject* pGameObject);
 	HRESULT		Ready_Layer(void);
 	_int		Update_Layer(const _float& fTimeDelta);
-
 	LayerName		m_LayerName = LayerName::Layer_End;
 private:
 	multimap<const _tchar*, CGameObject*>			m_mapObject;
