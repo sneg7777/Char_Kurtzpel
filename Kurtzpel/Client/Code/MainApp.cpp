@@ -25,7 +25,7 @@ HRESULT CMainApp::Ready_MainApp(void)
 	Client::Safe_Release(m_pDeviceClass);
 
 	FAILED_CHECK_RETURN(Engine::Ready_Font(m_pGraphicDev, L"Font_Default", L"바탕", 15, 20, FW_HEAVY), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Font(m_pGraphicDev, L"Font_Jinji", L"궁서", 30, 30, FW_HEAVY), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Font(m_pGraphicDev, L"Font_Jinji", L"궁서", 20, 30, FW_HEAVY), E_FAIL);
 
 	//m_pGraphicDev->SetRenderState(D3DRS_ZENABLE, TRUE);	// Z버퍼에 기록은 한다. 단, 정렬을 수행할지 말지 결정
 	//m_pGraphicDev->SetRenderState(D3DRS_ZWRITEENABLE, TRUE); // Z버퍼에 기록을 할지 말지 결정하는 옵션
@@ -81,7 +81,7 @@ void CMainApp::Render_MainApp(void)
 	Engine::Render_Begin(D3DXCOLOR(0.7f, 0.7f, 0.7f, 1.f));
 	
 	m_pManagementClass->Render_Scene(m_pGraphicDev);
-	Engine::Render_Font(L"Font_Jinji", m_szFPS, &_vec2(500.f, 10.f), D3DXCOLOR(0.f, 0.f,0.f, 1.f));
+	Engine::Render_Font(L"Font_Jinji", m_szFPS, &_vec2(700.f, 10.f), D3DXCOLOR(0.f, 0.f,0.f, 1.f));
 
 	Engine::Render_End();
 }

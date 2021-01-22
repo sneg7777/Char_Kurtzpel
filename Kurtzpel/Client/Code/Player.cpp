@@ -13,6 +13,7 @@
 #include "Arrow_SkillF.h"
 #include "NpcQuest_Manager.h"
 #include "Phoenix.h"
+#include "Npc_01.h"
 
 #define COOLTIME_GH_Q 5.f
 #define COOLTIME_GH_E 5.f
@@ -2463,6 +2464,7 @@ void CPlayer::Talk_Npc()
 		if ((Engine::Get_DIKeyState(DIK_T) & 0x80)) {
 			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = true;
 		}
+		//dynamic_cast<CNpc_01*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc))->Talk_Rocate();
 	}
 
 	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk) {

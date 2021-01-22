@@ -56,8 +56,7 @@ Client::_int Client::CUI_Skill::Update_Object(const _float& fTimeDelta)
 		return 0;
 	}
 
-	Engine::CGameObject::Update_Object(fTimeDelta);
-	m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+	CUI::Update_Object(fTimeDelta);
+	
 	return 0;
 }

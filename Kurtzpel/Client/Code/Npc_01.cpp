@@ -30,9 +30,10 @@ HRESULT Client::CNpc_01::Add_Component(void)
 	pComponent = m_sComponent.m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Lire"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
-	m_sComponent.m_pMeshCom->Set_AniAngle(95.f);
+	m_sComponent.m_pMeshCom->Set_AniAngle(230.f);
 	//m_pMeshCom->Set_AniAngle(275.f);
 	//
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-80.f), true);
 	m_sComponent.m_pTransformCom->Set_Pos(&_vec3(87.5f, 0.f, 58.8f));
 	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	Engine::CGameObject::Update_Object(0.f);
@@ -52,6 +53,7 @@ HRESULT Client::CNpc_01::Add_Component(void)
 		sphere->m_BoneTeam = CSphereCollider::BoneTeam_Npc;
 	}
 	//m_pTransformCom->Set_Pos(&_vec3(52.f, 0.f, 52.f));
+	//TODO 그냥 레디에서 Y회전하기
 	return S_OK;
 }
 
@@ -94,7 +96,7 @@ HRESULT Client::CNpc_01::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_sComponent.m_pTransformCom->Set_Scale(0.015f, 0.015f, 0.015f);
+	m_sComponent.m_pTransformCom->Set_Scale(0.013f, 0.013f, 0.013f);
 	m_sComponent.m_pMeshCom->Set_AnimationSet(0);
 	m_AniSpeed = 1.f;
 	m_UnitName = UnitName::Npc;
@@ -171,10 +173,15 @@ void Client::CNpc_01::SetUp_OnTerrain(void)
 
 void Client::CNpc_01::Calc_Time(_float fTimeDelta)
 {
-
+	
 }
 
-
+void Client::CNpc_01::Talk_Rocate()
+{
+	_vec3 vDir;
+	CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vDir);
+	m_sComponent.m_pTransformCom->Chase_Target(&vDir, 1.f, 0.f);
+}
 
 void CNpc_01::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)
 {

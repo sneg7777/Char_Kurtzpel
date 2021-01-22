@@ -2,6 +2,8 @@
 #include "DynamicCamera.h"
 #include "Export_Function.h"
 #include "Player.h"
+#include "NpcQuest_Manager.h"
+#include "Stage.h"
 
 CDynamicCamera::CDynamicCamera(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CCamera(pGraphicDev)	
@@ -179,26 +181,49 @@ void CDynamicCamera::Free(void)
 
 Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 {
-	Key_Input(fTimeDelta);
+	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk) {
+		CUnit_D* pNpc = dynamic_cast<CUnit_D*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc));
+		if (pNpc == nullptr)
+			return 0;
+		_vec3 vPos, vDir, vMoveDir;
+		Engine::CTransform* pNpcTrans = pNpc->Get_sComponent()->m_pTransformCom;
+		pNpcTrans->Get_Info(Engine::INFO_POS, &vPos);
+		vPos.y += 2.f;
+		pNpcTrans->Get_Info(Engine::INFO_LOOK, &vDir);
+		//
+		vMoveDir = (vPos + (vDir * 150.f)) - m_vEye;
+		float dist = sqrtf(vMoveDir.x * vMoveDir.x + vMoveDir.y * vMoveDir.y + vMoveDir.z * vMoveDir.z);
+		if (dist < 0.5f) {
+			m_vEye = vPos + (vDir * 150.f);
+		}
+		else {
+			D3DXVec3Normalize(&vMoveDir, &vMoveDir);
+			m_vEye += vMoveDir * fTimeDelta * 10.f;
+		}
+		//
+		m_vAt = vPos;
+	}
+	else {
+		Key_Input(fTimeDelta);
 
-	
-	CPlayer* player = CPlayer::GetInstance();
-	if (player == nullptr)
-		return 0;
-	_vec3	vPos, vDir;
-	player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-	player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
-	m_vEye = vPos - (vDir * player->m_CameraDist);
-	m_vEye.y += 3.5f - player->m_LookAtY * 0.7f;
-	m_vAt = vPos + (vDir * 200.f);
-	m_vAt.y += player->m_LookAtY;
-	
-	if (true == m_bFix)
-	{
-		Mouse_Fix();
-		Mouse_Move();
+
+		CPlayer* player = CPlayer::GetInstance();
+		if (player == nullptr)
+			return 0;
+		_vec3	vPos, vDir;
+		player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+		player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+		m_vEye = vPos - (vDir * player->m_CameraDist);
+		m_vEye.y += 3.5f - player->m_LookAtY * 0.7f;
+		m_vAt = vPos + (vDir * 200.f);
+		m_vAt.y += player->m_LookAtY;
+
+		if (true == m_bFix)
+		{
+			Mouse_Fix();
+			Mouse_Move();
+		}
 	}
 	_int iExit = Engine::CCamera::Update_Object(fTimeDelta);
-	
 	return iExit;
 }

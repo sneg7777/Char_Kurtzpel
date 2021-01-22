@@ -23,6 +23,7 @@ public:
 	virtual _int Update_Object(const _float& fTimeDelta) override;
 	virtual _int LateUpdate_Object(const _float& fTimeDelta);
 	virtual void Render_Object(void) override;
+	void		Talk_Rocate();
 
 public:
 

@@ -69,8 +69,7 @@ Client::_int Client::CUI_PlayerHp::Update_Object(const _float& fTimeDelta)
 		m_fSizeX = (pPlayer->Get_sStat()->m_fMp / pPlayer->Get_sStat()->m_fMaxMp) * 242.4f;
 	}
 
-	Engine::CGameObject::Update_Object(fTimeDelta);
-	m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+	CUI::Update_Object(fTimeDelta);
+
 	return 0;
 }

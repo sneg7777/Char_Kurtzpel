@@ -2,6 +2,7 @@
 #include "UI.h"
 #include "Export_Function.h"
 #include "UI_Manager.h"
+#include "NpcQuest_Manager.h"
 
 CUI::CUI(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
@@ -76,6 +77,8 @@ HRESULT Client::CUI::Ready_Object(void)
 }
 Client::_int Client::CUI::Update_Object(const _float& fTimeDelta)
 {
+	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk)
+		return 0;
 	Engine::CGameObject::Update_Object(fTimeDelta);
 		
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);

@@ -76,9 +76,7 @@ _int CUI_MonsterHp::Update_Object(const _float & fTimeDelta)
 		m_fSizeX = (pEnemy->Get_sStat()->m_fKnockBackHp / pEnemy->Get_sStat()->m_fMaxKnockBackHp) * 343.f;
 	}
 
-	Engine::CGameObject::Update_Object(fTimeDelta);
-	m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+	CUI::Update_Object(fTimeDelta);
 
 	return 0;
 }
