@@ -36,10 +36,9 @@ HRESULT CStage_2::Ready_Scene(void)
 	
 	if (!m_LightCheck) {
 		FAILED_CHECK_RETURN(Ready_LightInfo(), E_FAIL);
-		CUI_Manager::Get_Instance()->Ready_SkillIcon();
+		CUI_Manager::Get_Instance()->Ready_CreateUI();
 		m_LightCheck = true;
 	}
-	
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 	return S_OK;
 }

@@ -11,6 +11,7 @@
 #include "StaticObject.h"
 #include "UI_Manager.h"
 #include "LongBow.h"
+#include "NpcQuest_Manager.h"
 
 bool CStage::m_LightCheck = false;
 
@@ -36,6 +37,7 @@ Engine::_int CStage::Update_Scene(const _float& fTimeDelta)
 	int temp;
 	temp = Engine::CScene::Update_Scene(fTimeDelta);
 	CUI_Manager::Get_Instance()->Update_Object(fTimeDelta);
+	CNpcQuest_Manager::Get_Instance()->Update_Object(fTimeDelta);
 	//
 	//CameraControl(fTimeDelta);
 	//

@@ -43,6 +43,7 @@ CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
 	{
 		m_bCheck[i] = false;
 	}
+	m_bCheck[bCheck::bCheck_WeaponChange] = CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_WeaponChange;
 	for (int i = 0; i < TimeCheck::TimeCheck_End; i++)
 	{
 		m_TimeCheck[i] = 0.f;
@@ -101,6 +102,7 @@ HRESULT Client::CPlayer::Add_Component(void)
 }
 
 void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDir, float fTimeDelta) {
+	CNpcQuest_Manager::NpcQuestInfo* questInfo = CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo();
 	if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
 	{
 		switch (_state)
@@ -143,9 +145,11 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			m_sStat.m_fSpeed = 1.5f * m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.8f;
 			m_DashGauge -= RollGauge;
+			questInfo->m_RollingCount++;
 			break;
 		}
 		case Client::CPlayer::State_Attack: {
+			questInfo->m_AttackCount++;
 			m_Attack_State = (Attack_State)((int)m_Attack_State + 1);
 			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 			m_sComponent.m_pMeshCom->Set_AniAngle(265.f);
@@ -188,11 +192,13 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_AniClip = AnimationClip::Ani_1;
 				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 				m_sStat.m_fMp -= MP_GH_Q;
+				questInfo->m_SkillQCount++;
 				break;
 			case Client::CPlayer::StateA_SkillE: {
 				m_sComponent.m_pMeshCom->Set_AnimationSet(134);
 				m_AniSpeed = 1.2f;
 				m_sStat.m_fMp -= MP_GH_E;
+				questInfo->m_SkillECount++;
 				break;
 			}
 			case Client::CPlayer::StateA_SkillF: {
@@ -202,6 +208,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_bCheck[bCheck::bCheck_Skill_F2] = false;
 				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
 				m_sStat.m_fMp -= MP_GH_F;
+				questInfo->m_SkillFCount++;
 				break;
 			}
 			case Client::CPlayer::StateA_SkillZ: {
@@ -304,9 +311,11 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			m_sStat.m_fSpeed = 1.5f * m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.8f;
 			m_DashGauge -= RollGauge;
+			questInfo->m_RollingCount++;
 			break;
 		}
 		case Client::CPlayer::State_Attack: {
+			questInfo->m_AttackCount++;
 			Create_ArrowShot(_vPos, _vDir, fTimeDelta);
 			m_Attack_State = (Attack_State)((int)m_Attack_State + 1);
 			//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
@@ -349,12 +358,14 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_AniSpeed = 3.f;
 				m_AniClip = AnimationClip::Ani_1;
 				m_sStat.m_fMp -= MP_LB_Q;
+				questInfo->m_SkillQCount++;
 				break;
 			case Client::CPlayer::StateA_SkillE: {
 				m_AniClip = AnimationClip::Ani_1;
 				m_sComponent.m_pMeshCom->Set_AnimationSet(31);
 				m_AniSpeed = 3.f;
 				m_sStat.m_fMp -= MP_LB_E;
+				questInfo->m_SkillECount++;
 				break;
 			}
 			case Client::CPlayer::StateA_SkillF: {
@@ -362,6 +373,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_AniSpeed = 2.5f;
 				m_AniClip = AnimationClip::Ani_1;
 				m_sStat.m_fMp -= MP_LB_F;
+				questInfo->m_SkillFCount++;
 				break;
 			}
 			case Client::CPlayer::StateA_SkillZ: {
@@ -518,7 +530,7 @@ void Client::CPlayer::Hammer_Key_Input(const _float& fTimeDelta)
 	}
 	else if (m_State == State::State_Dash || m_State == State::State_Rolling) { ///////////////////////////////////////////////////////////////////////////// Dash
 		if ((m_State == State::State_Dash && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.7f))
-			|| (m_State == State::State_Dash && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.9f)))//m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
+			|| (m_State == State::State_Rolling && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(1.1f)))//m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
 		{
 			Set_StateToAnimation(State::State_Idle);
 			m_bCheck[bCheck::bCheck_KeyW] = false;
@@ -614,7 +626,7 @@ void Client::CPlayer::Hammer_Key_Input(const _float& fTimeDelta)
 
 	}
 	//////////////////////////////////////////////////////////////////// 무기 체인지
-	else if ((Engine::Get_DIKeyState(DIK_TAB) & 0x80) && m_TimeCheck[TimeCheck_Cool_Tab] <= 0.f) {
+	else if (m_bCheck[bCheck::bCheck_WeaponChange] && (Engine::Get_DIKeyState(DIK_TAB) & 0x80) && m_TimeCheck[TimeCheck_Cool_Tab] <= 0.f) {
 		Change_Weapon();
 	}
 	//////////////////////////////////////////////////////////////////// 이동
@@ -927,7 +939,7 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 	}
 	else if (m_State == State::State_Dash || m_State == State::State_Rolling) { ///////////////////////////////////////////////////////////////////////////// Dash
 		if ((m_State == State::State_Dash && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.7f))
-			|| (m_State == State::State_Dash && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.9f)))//m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
+			|| (m_State == State::State_Rolling && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(1.1f)))//m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
 		{
 			Set_StateToAnimation(State::State_Idle);
 			m_bCheck[bCheck::bCheck_KeyW] = false;
@@ -2460,9 +2472,13 @@ void CPlayer::Move_AccelSpeed(_vec3 vPos, _vec3 vDir, float fTimeDelta, Engine::
 
 void CPlayer::Talk_Npc()
 {
-	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerColl) {
+	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerColl && !CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk) {
 		if ((Engine::Get_DIKeyState(DIK_T) & 0x80)) {
 			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = true;
+			CNpc_01* pNpc = dynamic_cast<CNpc_01*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc));
+			if (pNpc == nullptr)
+				return;
+			pNpc->NpcQuest();
 		}
 		//dynamic_cast<CNpc_01*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc))->Talk_Rocate();
 	}

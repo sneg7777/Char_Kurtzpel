@@ -89,7 +89,7 @@ _int CSphereCollider::Update_Object(const _float& fTimeDelta)
 			//다이나믹을 안쓰고 C스타일의 강제 형변환을 써서 m_pMeshCom 를 참조해도 된다함.
 			//if(nullptr == dynamic_cast<CMonster*>(m_pDynamicMesh));
 			//	return 0;
-
+			//((Client::CUnit_D*)m_pDynamicThis)->Get_sComponent()->m_pMeshCom->Play_Animation(0.f);
 			const Engine::D3DXFRAME_DERIVED* pFrame = ((Client::CUnit_D*)m_pDynamicThis)->Get_sComponent()->m_pMeshCom->Get_FrameByName(m_FrameName.c_str());
 
 			m_pParentBoneMatrix = &pFrame->CombinedTransformationMatrix;

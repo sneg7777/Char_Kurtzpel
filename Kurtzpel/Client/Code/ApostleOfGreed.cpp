@@ -8,6 +8,7 @@
 #include "NaviTerrain.h"
 #include "Random_Manager.h"
 #include "UI_Manager.h"
+#include "NpcQuest_Manager.h"
 
 #define PLAYER_SEARCH_DISTANCE 20.f
 #define PLAYER_ATTACK_DISTANCE 10.f
@@ -132,8 +133,10 @@ HRESULT Client::CApostleOfGreed::Ready_Object(void)
 
 Client::_int Client::CApostleOfGreed::Update_Object(const _float& fTimeDelta)
 {
-	if (m_sStat.m_IsDead || m_sStat.m_fHp < 0.f)
+	if (m_sStat.m_IsDead || m_sStat.m_fHp < 0.f) {
+		CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_DeadApostle++;
 		return 1;
+	}
 
 	Calc_Time(fTimeDelta);
 

@@ -161,6 +161,7 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyZ", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_Z.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyTab", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_Tab.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyLShift", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_LShift.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_KeyEnter", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Key_Enter.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp0", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Player_Hp_0.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp1", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Player_Hp_1.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp2", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Player_Hp_2.tga"), E_FAIL);
@@ -169,6 +170,27 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp1", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Monster_Hp_1.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp2", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Monster_Hp_2.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp3", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/Monster_Hp_3.tga"), E_FAIL);
+
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI_LireArt", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/UI/LireArt.png"), E_FAIL);
+
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_dncmrdp", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/dncmrdp.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_znptmxm", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/znptmxm.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_npcdhk", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/npcdhk.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_0dkssud", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/0dkssud.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_1dntjs", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/1dntjs.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_2tmvpdltm", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/2tmvpdltm.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_3ekdmadms", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/3ekdmadms.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_4dlehddmf", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/4dlehddmf.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_5dksekrh", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/5dksekrh.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_6rnfmrl", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/6rnfmrl.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_7dlwpdkv", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/7dlwpdkv.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_8duftlagl", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/8duftlagl.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_9ghkfdmf", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/9ghkfdmf.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_10sorkrkw", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/10sorkrkw.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_11shffkdns", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/11shffkdns.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_12ektlans", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/12ektlans.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_13dlwpak", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/13dlwpak.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_99wkfgotdj", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/99wkfgotdj.png"), E_FAIL);
 	
 	lstrcpy(m_szLoading, L"Mesh Loading.............................");
 	///////////////////////////////////////////////// Static Mesh
@@ -339,6 +361,14 @@ _uint CLoading::Loading_ForStage(void)
 												Engine::TYPE_DYNAMIC,
 												L"../Bin/Resource/Mesh/DynamicMesh/Monster/ApostleOfGreed/",
 												L"ApostleOfGreed.X"),
+												E_FAIL);
+
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_M_Monster1_TwoHand",
+												Engine::TYPE_DYNAMIC,
+												L"../Bin/Resource/Mesh/DynamicMesh/Monster/Monster1_TwoHand/",
+												L"Monster1_TwoHand.X"),
 												E_FAIL);
 
 	/*FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,

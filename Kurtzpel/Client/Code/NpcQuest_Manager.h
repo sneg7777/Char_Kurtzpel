@@ -25,6 +25,15 @@ public:
 		int		m_TalkNumber = 0;
 		bool	m_PlayerColl = false;
 		bool	m_PlayerTalk = false;
+		int		m_AttackCount = 0;
+		int		m_SkillQCount = 0;
+		int		m_SkillECount = 0;
+		int		m_SkillFCount = 0;
+		int		m_RollingCount = 0;
+		//bool	m_ClearEffect = false;
+		int		m_DeadApostle = 0;
+		int		m_DeadTwoHand = 0;
+		bool	m_WeaponChange = false;
 	};
 public:
 	static CNpcQuest_Manager* Get_Instance() {
@@ -42,6 +51,7 @@ public:
 	HRESULT Ready_Object(LPDIRECT3DDEVICE9 pGraphicDev);
 	_int Update_Object(const _float& fTimeDelta);
 	void Render_Object(void);
+	void QusetProgress(const _float& fTimeDelta);
 	NpcQuestInfo* Get_NpcQuestInfo() { return &m_NpcQuestInfo; }
 	
 private:

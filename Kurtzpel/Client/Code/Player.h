@@ -55,6 +55,7 @@ public:
 		bCheck_MouseL, bCheck_MouseR, bCheck_MouseL_Already, bCheck_MouseR_Already,
 		bCheck_Skill_F1, bCheck_Skill_F2, bCheck_LB_SkillE, bCheck_LB_Phoenix_SkillZ,
 		bCheck_DamagedUp, bCheck_JumpToDamagedUp/*약한충격에도 점프상태에서 다운이 되고 그대로 착지후에도 호완성을 위해*/,
+		bCheck_WeaponChange,
 		bCheck_End
 	};
 	enum TimeCheck {

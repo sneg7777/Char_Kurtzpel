@@ -4,6 +4,7 @@
 #include "UI_MonsterHp.h"
 #include "UI_PlayerHp.h"
 #include "UI_Skill.h"
+#include "UI_Text.h"
 //#include "UI.h"
 
 CUI_Manager* CUI_Manager::m_pInstance = nullptr;
@@ -11,22 +12,26 @@ CUI_Manager* CUI_Manager::m_pInstance = nullptr;
 void CUI_Manager::Destroy_Instance()
 {
 	if (m_pInstance) {
-		for (auto& _ui : m_pInstance->m_ListUI) {
+		for (auto& _ui : m_pInstance->m_sListUI.m_ListUI) {
 			Engine::Safe_Release(_ui);
 		}
-		m_pInstance->m_ListUI.clear();
-		for (auto& _ui : m_pInstance->m_ListUI_MonsterHp) {
+		m_pInstance->m_sListUI.m_ListUI.clear();
+		for (auto& _ui : m_pInstance->m_sListUI.m_ListUI_MonsterHp) {
 			Engine::Safe_Release(_ui);
 		}
-		m_pInstance->m_ListUI_MonsterHp.clear();
-		for (auto& _ui : m_pInstance->m_ListUI_PlayerHp) {
+		m_pInstance->m_sListUI.m_ListUI_MonsterHp.clear();
+		for (auto& _ui : m_pInstance->m_sListUI.m_ListUI_PlayerHp) {
 			Engine::Safe_Release(_ui);
 		}
-		m_pInstance->m_ListUI_PlayerHp.clear();
-		for (auto& _ui : m_pInstance->m_ListUI_Skill_ICon) {
+		m_pInstance->m_sListUI.m_ListUI_PlayerHp.clear();
+		for (auto& _ui : m_pInstance->m_sListUI.m_ListUI_Skill_ICon) {
 			Engine::Safe_Release(_ui);
 		}
-		m_pInstance->m_ListUI_Skill_ICon.clear();
+		m_pInstance->m_sListUI.m_ListUI_Skill_ICon.clear();
+		for (auto& _ui : m_pInstance->m_sListUI.m_ListUI_Text) {
+			Engine::Safe_Release(_ui);
+		}
+		m_pInstance->m_sListUI.m_ListUI_Text.clear();
 
 		Engine::Safe_Release(m_pInstance->m_pGraphicDev);
 		delete m_pInstance;
@@ -55,28 +60,38 @@ HRESULT Client::CUI_Manager::Ready_Object(LPDIRECT3DDEVICE9 pGraphicDev)
 Client::_int Client::CUI_Manager::Update_Object(const _float& fTimeDelta)
 {
 	//일반적인Ui
-	for (auto& _ui : m_ListUI)
+	for (auto& _ui : m_sListUI.m_ListUI)
 	{
 		_ui->Update_Object(fTimeDelta);
 	}
 	//플레이어체력Ui
-	for (auto& _ui : m_ListUI_PlayerHp)
+	for (auto& _ui : m_sListUI.m_ListUI_PlayerHp)
 	{
 		_ui->Update_Object(fTimeDelta);
 	}
 	//몬스터체력Ui
 	if (m_DamagedInitTime > 0.f) {
-		for (auto& _ui : m_ListUI_MonsterHp)
+		for (auto& _ui : m_sListUI.m_ListUI_MonsterHp)
 		{
 			_ui->Update_Object(fTimeDelta);
 		}
 	}
 	//스킬_Icon Ui
-	for (auto& _ui : m_ListUI_Skill_ICon)
+	for (auto& _ui : m_sListUI.m_ListUI_Skill_ICon)
 	{
 		_ui->Update_Object(fTimeDelta);
 	}
+	//Text
+	for (auto& iter = m_sListUI.m_ListUI_Text.begin(); iter != m_sListUI.m_ListUI_Text.end();) {
+		if (1 == (*iter)->Update_Object(fTimeDelta)) {
+			Engine::Safe_Release(*iter);
+			iter = m_sListUI.m_ListUI_Text.erase(iter);
+		}
+		else {
+			iter++;
+		}
 
+	}
 
 	if (m_DamagedInitTime > 0.f) {
 		m_DamagedInitTime -= fTimeDelta;
@@ -92,35 +107,93 @@ void Client::CUI_Manager::Render_Object(void)
 
 }
 
-void Client::CUI_Manager::Ready_SkillIcon() {
-	for (int i = 0; i < 19; i++)
+void Client::CUI_Manager::Ready_CreateUI() {
+	for (int i = 0; i < 18; i++)
 	{
 		CUI* pUI = CUI::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pUI, );
-		Init_SkillIcon(pUI, m_ListUI.size());
-		m_ListUI.emplace_back(pUI);
+		Init_SkillIFrame(pUI, m_sListUI.m_ListUI.size());
+		m_sListUI.m_ListUI.emplace_back(pUI);
 	}
 	for (int i = 0; i < 4; i++)
 	{
 		CUI_MonsterHp* pUI = CUI_MonsterHp::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pUI, );
-		Init_MonsterHpBar(pUI, m_ListUI_MonsterHp.size());
-		m_ListUI_MonsterHp.emplace_back(pUI);
+		Init_MonsterHpBar(pUI, m_sListUI.m_ListUI_MonsterHp.size());
+		m_sListUI.m_ListUI_MonsterHp.emplace_back(pUI);
 	}
 	for (int i = 0; i < 4; i++)
 	{
 		CUI_PlayerHp* pUI = CUI_PlayerHp::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pUI, );
-		Init_PlayerHpBar(pUI, m_ListUI_PlayerHp.size());
-		m_ListUI_PlayerHp.emplace_back(pUI);
+		Init_PlayerHpBar(pUI, m_sListUI.m_ListUI_PlayerHp.size());
+		m_sListUI.m_ListUI_PlayerHp.emplace_back(pUI);
 	}
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 9; i++)
 	{
 		CUI_Skill* pUI = CUI_Skill::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pUI, );
-		Init_Skill_ICon(pUI, m_ListUI_Skill_ICon.size());
-		m_ListUI_Skill_ICon.emplace_back(pUI);
+		Init_Skill_ICon(pUI, m_sListUI.m_ListUI_Skill_ICon.size());
+		m_sListUI.m_ListUI_Skill_ICon.emplace_back(pUI);
 	}
+	CUI_Manager::Get_Instance()->Create_Text(CUI::UIKind::UIK_TipText, L"Texture_Text_dncmrdp");
+
+}
+
+void Client::CUI_Manager::Create_Text(CUI::UIKind _uiName, _tchar* _texTag) {
+	CUI_Text* pUI = CUI_Text::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pUI, );
+	//
+	Engine::CComponent* pComponent = nullptr;
+	Engine::CTexture** pTextureCom = &pUI->m_pTextureCom;
+	if(_uiName == CUI::UIKind::UIK_TipText)
+		pUI->Set_PosToSize(512.f, 120.f, 384.f, 76.8f);
+	else
+		pUI->Set_PosToSize(512.f, 500.f, 384.f, 76.8f);
+	pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, _texTag));
+	pUI->m_UIKind = _uiName;
+	pUI->Emplace_mapComponent(Engine::ID_STATIC, L"Com_Texture", pComponent);
+	//
+	m_sListUI.m_ListUI_Text.emplace_back(pUI);
+}
+
+void Client::CUI_Manager::Create_Art(CUI::UIKind _uiName, _tchar* _texTag) {
+	CUI_Text* pUI = CUI_Text::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pUI, );
+	//
+	Engine::CComponent* pComponent = nullptr;
+	Engine::CTexture** pTextureCom = &pUI->m_pTextureCom;
+	pUI->Set_PosToSize(60.f, 310.f, 128.f, 256.f);
+	pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, _texTag));
+	pUI->m_UIKind = _uiName;
+	pUI->Emplace_mapComponent(Engine::ID_STATIC, L"Com_Texture", pComponent);
+	//
+	m_sListUI.m_ListUI_Text.emplace_back(pUI);
+}
+
+void Client::CUI_Manager::Create_QuestClear() {
+	Engine::CComponent* pComponent = nullptr;
+
+	CUI_Text* pUI = CUI_Text::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pUI, );
+	Engine::CTexture** pTextureCom = &pUI->m_pTextureCom;
+
+	pUI->Set_PosToSize(60.f, 310.f, 128.f, 256.f);
+	pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_LireArt"));
+	pUI->m_UIKind = CUI::UIKind::UIK_Art;
+	pUI->Emplace_mapComponent(Engine::ID_STATIC, L"Com_Texture", pComponent);
+	m_sListUI.m_ListUI_Text.emplace_back(pUI);
+	//
+	pUI = CUI_Text::Create(m_pGraphicDev);
+	NULL_CHECK_RETURN(pUI, );
+	pTextureCom = &pUI->m_pTextureCom;
+
+	pUI->Set_PosToSize(256.f, 310.f, 384.f, 76.8f);
+	pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_Text_99wkfgotdj"));
+	pUI->m_UIKind = CUI::UIKind::UIK_Art;
+	pUI->Emplace_mapComponent(Engine::ID_STATIC, L"Com_Texture", pComponent);
+	m_sListUI.m_ListUI_Text.emplace_back(pUI);
+
 }
 
 void Client::CUI_Manager::Init_MonsterHpBar(CUI_MonsterHp* pUI, int number) {
@@ -249,11 +322,17 @@ void Client::CUI_Manager::Init_Skill_ICon(CUI_Skill* pUI, int number) {
 			pUI->m_Weapon = CPlayer::Weapon_Hammer;
 			break;
 		}
+		case 8: {
+			pUI->Set_PosToSize(271.f, 534.f, 65.6f, 65.6f);
+			pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_SkillWeaponChange"));
+			pUI->m_UIKind = CUI::UIKind::UIK_SkillTab;
+			break;
+		}
 	}
 	pUI->Emplace_mapComponent(Engine::ID_STATIC, L"Com_Texture", pComponent);
 }
 
-void Client::CUI_Manager::Init_SkillIcon(CUI* pUI, int number) {
+void Client::CUI_Manager::Init_SkillIFrame(CUI* pUI, int number) {
 	Engine::CComponent* pComponent = nullptr;
 	Engine::CTexture** pTextureCom = &pUI->m_pTextureCom;
 	
@@ -335,42 +414,36 @@ void Client::CUI_Manager::Init_SkillIcon(CUI* pUI, int number) {
 		break;
 	}
 	case 12: {
-		pUI->Set_PosToSize(271.f, 534.f, 65.6f, 65.6f);
-		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_SkillWeaponChange"));
-		pUI->m_UIKind = CUI::UIKind::UIK_SkillTab;
-		break;
-	}
-	case 13: {
 		pUI->Set_PosToSize(165.f, 446.f, 19.2f, 19.2f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_KeyQ"));
 		pUI->m_UIKind = CUI::UIKind::UIK_KeyQ;
 		break;
 	}
-	case 14: {
+	case 13: {
 		pUI->Set_PosToSize(223.f, 446.f, 19.2f, 19.2f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_KeyE"));
 		pUI->m_UIKind = CUI::UIKind::UIK_KeyE;
 		break;
 	}
-	case 15: {
+	case 14: {
 		pUI->Set_PosToSize(281.f, 446.f, 19.2f, 19.2f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_KeyF"));
 		pUI->m_UIKind = CUI::UIKind::UIK_KeyF;
 		break;
 	}
-	case 16: {
+	case 15: {
 		pUI->Set_PosToSize(35.f, 446.f, 19.2f, 19.2f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_KeyZ"));
 		pUI->m_UIKind = CUI::UIKind::UIK_KeyZ;
 		break;
 	}
-	case 17: {
+	case 16: {
 		pUI->Set_PosToSize(212.f, 580.f, 34.3f, 19.2f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_KeyLShift"));
 		pUI->m_UIKind = CUI::UIKind::UIK_KeyLShift;
 		break;
 	}
-	case 18: {
+	case 17: {
 		pUI->Set_PosToSize(271.f, 580.f, 22.4f, 19.2f);
 		pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_KeyTab"));
 		pUI->m_UIKind = CUI::UIKind::UIK_KeyTab;
@@ -384,11 +457,50 @@ void Client::CUI_Manager::Init_SkillIcon(CUI* pUI, int number) {
 
 CUI* Client::CUI_Manager::Get_UI(CUI::UIKind _uiKind)
 {
-	for (auto& _ui : m_ListUI)
+	if (_uiKind == CUI::UIKind::UIK_TalkText || _uiKind == CUI::UIKind::UIK_TipText)
 	{
-		if (_ui->m_UIKind == _uiKind) {
-			return _ui;
+		for (auto& _ui : m_sListUI.m_ListUI_Text)
+		{
+			if (_ui->m_UIKind == _uiKind) {
+				return _ui;
+			}
 		}
 	}
+	else {
+		for (auto& _ui : m_sListUI.m_ListUI)
+		{
+			if (_ui->m_UIKind == _uiKind) {
+				return _ui;
+			}
+		}
+	}
+
 	return nullptr;
+}
+
+void CUI_Manager::Delete_TalkText()
+{
+	for (auto& iter = m_sListUI.m_ListUI_Text.begin(); iter != m_sListUI.m_ListUI_Text.end();)
+	{
+		if ((*iter)->m_UIKind == CUI::UIKind::UIK_TalkText) {
+			Engine::Safe_Release(*iter);
+			m_sListUI.m_ListUI_Text.erase(iter);
+			return;
+		}
+		iter++;
+	}
+}
+
+void CUI_Manager::Delete_QuestClearText()
+{
+	for (auto& iter = m_sListUI.m_ListUI_Text.begin(); iter != m_sListUI.m_ListUI_Text.end();)
+	{
+		if ((*iter)->m_UIKind == CUI::UIKind::UIK_Art) {
+			Engine::Safe_Release(*iter);
+			iter = m_sListUI.m_ListUI_Text.erase(iter);
+		}
+		else {
+			iter++;
+		}
+	}
 }

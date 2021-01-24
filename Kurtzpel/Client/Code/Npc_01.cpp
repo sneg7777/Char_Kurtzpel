@@ -8,6 +8,7 @@
 #include "Unit_D.h"
 #include "Random_Manager.h"
 #include "UI_Manager.h"
+#include "NpcQuest_Manager.h"
 
 
 CNpc_01::CNpc_01(LPDIRECT3DDEVICE9 pGraphicDev)
@@ -109,8 +110,9 @@ Client::_int Client::CNpc_01::Update_Object(const _float& fTimeDelta)
 	if (m_sStat.m_IsDead)
 		return 1;
 
-	Calc_Time(fTimeDelta);
+	NpcNextTalkKey();
 
+	Calc_Time(fTimeDelta);
 	SetUp_OnTerrain();
 
 	CUnit_D::Update_Object(fTimeDelta);
@@ -181,6 +183,135 @@ void Client::CNpc_01::Talk_Rocate()
 	_vec3 vDir;
 	CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vDir);
 	m_sComponent.m_pTransformCom->Chase_Target(&vDir, 1.f, 0.f);
+}
+
+void CNpc_01::NpcNextTalkKey() {
+	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk && !m_KeyEnter) {
+		if ((Engine::Get_DIKeyState(DIK_RETURN) & 0x80)) {
+			m_KeyEnter = true;
+			NpcNextTalk();
+		}
+	}
+	else if (!(Engine::Get_DIKeyState(DIK_RETURN) & 0x80)) {
+		m_KeyEnter = false;
+	}
+}
+
+void CNpc_01::NpcNextTalk() {
+	CNpcQuest_Manager* questMgr = CNpcQuest_Manager::Get_Instance();
+	CUI_Manager* uiMgr = CUI_Manager::Get_Instance();
+	uiMgr->Delete_TalkText();
+	int talkNumber = questMgr->Get_NpcQuestInfo()->m_TalkNumber += 1;
+	switch (questMgr->Get_NpcQuestInfo()->m_QuestNumber)
+	{
+		case 0: {
+			if (talkNumber == 1)
+				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_1dntjs");
+			else if (talkNumber == 2)
+				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_2tmvpdltm");
+			else if (talkNumber == 3) {
+				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_AttackCount = 0;
+				questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
+			}
+			break;
+		}
+		case 2: {
+			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+			questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
+			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_SkillQCount = 0;
+			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_SkillECount = 0;
+			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_SkillFCount = 0;
+			break;
+		}
+		case 4: {
+			if (talkNumber == 1)
+				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_5dksekrh");
+			else {
+				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+				questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
+				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_RollingCount = 0;
+			}
+			break;
+		}
+		case 6: {
+			if (talkNumber == 1)
+				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_7dlwpdkv");
+			else {
+				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+				questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
+			}
+			break;
+		}
+		case 8: {
+			if (talkNumber == 1) {
+				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_9ghkfdmf");
+				CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck::bCheck_WeaponChange] = true;
+				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_WeaponChange = true;
+			}
+			else if (talkNumber == 2)
+				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_10sorkrkw");
+			else if (talkNumber == 3)
+				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_12ektlans");
+			else {
+				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+				questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
+			}
+			break;
+		}
+		case 10: {
+			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+			questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
+			break;
+		}
+		default: {
+			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+			break;
+		}
+	}
+	return;
+}
+
+void CNpc_01::NpcQuest()
+{
+	CNpcQuest_Manager* questMgr = CNpcQuest_Manager::Get_Instance();
+	CUI_Manager* uiMgr = CUI_Manager::Get_Instance();
+	uiMgr->Delete_QuestClearText();
+	questMgr->Get_NpcQuestInfo()->m_TalkNumber = 0;
+	switch (questMgr->Get_NpcQuestInfo()->m_QuestNumber)
+	{
+		case 0: {
+			uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_0dkssud");
+			break;
+		}
+		case 2: {
+			uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_3ekdmadms");
+			break;
+		}
+		case 4: {
+			uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_4dlehddmf");
+			break;
+		}
+		case 6: {
+			uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_6rnfmrl");
+			break;
+		}
+		case 8: {
+			uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_8duftlagl");
+			break;
+		}
+		case 10: {
+			uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_13dlwpak");
+			break;
+		}
+		default:
+		{
+			uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_znptmxm");
+			break;
+		}
+	}
+	
+	return;
 }
 
 void CNpc_01::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)

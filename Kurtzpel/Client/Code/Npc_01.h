@@ -26,6 +26,9 @@ public:
 	void		Talk_Rocate();
 
 public:
+	void		NpcNextTalkKey();
+	void		NpcNextTalk();
+	void		NpcQuest();
 
 private:
 	HRESULT		Add_Component(void);
@@ -45,6 +48,7 @@ private:
 	//Char
 private:
 	bool m_AniEnd = true;
+	bool m_KeyEnter = false;
 };
 
 END
