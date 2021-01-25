@@ -120,7 +120,7 @@ HRESULT Client::CMonster1_TwoHand::Ready_Object(void)
 Client::_int Client::CMonster1_TwoHand::Update_Object(const _float& fTimeDelta)
 {
 	if (m_sStat.m_IsDead || m_sStat.m_fHp < 0.f) {
-		CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_DeadTwoHand++;
+		CNpcQuest_Manager::Get_NpcQuestInfo()->m_DeadTwoHand++;
 		return 1;
 	}
 
@@ -130,8 +130,8 @@ Client::_int Client::CMonster1_TwoHand::Update_Object(const _float& fTimeDelta)
 	Pattern(fTimeDelta);
 	Update_DelayHpDec(fTimeDelta);
 
-	CMonster::Update_Object(fTimeDelta);
 	m_sComponent.m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
+	CMonster::Update_Object(fTimeDelta);
 
 	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
@@ -149,6 +149,7 @@ Client::_int Client::CMonster1_TwoHand::LateUpdate_Object(const _float& fTimeDel
 void Client::CMonster1_TwoHand::Render_Object(void)
 {
 	//m_sComponent.m_pMeshCom->Play_Animation(0.f);
+	m_sComponent.m_pMeshCom->Play_Animation(0.f);
 	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
 	NULL_CHECK(pEffect);
 	Engine::Safe_AddRef(pEffect);
@@ -256,6 +257,10 @@ void Client::CMonster1_TwoHand::Set_StateToAnimation(State _state, Skill_TH _ski
 		m_sComponent.m_pMeshCom->Set_AnimationSet(16);
 		m_AniSpeed = 1.f;
 		break;
+	case Client::CMonster1_TwoHand::State_Damaged:
+		m_sComponent.m_pMeshCom->Set_AnimationSet(16);
+		m_AniSpeed = 1.f;
+		break;
 	case Client::CMonster1_TwoHand::State_Groggy:
 		m_sComponent.m_pMeshCom->Set_AnimationSet(6);
 		m_AniSpeed = 1.f;
@@ -325,6 +330,11 @@ void Client::CMonster1_TwoHand::Pattern(_float fTimeDelta)
 			m_sComponent.m_pMeshCom->Set_AnimationSet(59);
 		}
 	}
+	else if (m_State == State::State_Damaged) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
+			Set_StateToAnimation(State::State_Wait);
+		}
+	}
 	else if (m_State == State::State_Skill) {
 		Event_Skill(fTimeDelta, pNaviMeshCom, vPos, vDir, playerTodisTance);
 	}
@@ -363,6 +373,27 @@ void Client::CMonster1_TwoHand::Pattern(_float fTimeDelta)
 
 void CMonster1_TwoHand::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)
 {
+
+	//if (_colSphere->m_BonePart == CSphereCollider::BonePart_CollBody && !_colSphere->m_WeaponAttack) {
+	//	CUnit_D* _colUnit = dynamic_cast<CUnit_D*>(_col);
+	//	if (nullptr == _colUnit)
+	//		return;
+
+	//	//
+	//	_vec3 _colUnitPos = _colUnit->Get_sComponent()->m_pTransformCom->m_vInfo[Engine::INFO_POS];
+	//	_vec3 _myUnitPos = m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS];
+	//	float _Radius = (_colUnit->Get_sComponent()->m_pTransformCom->m_vScale.x * _colSphere->m_pTransformCom->m_vScale.x);
+	//	_vec3 CollDir = _myUnitPos - _colUnitPos;
+	//	CollDir.y = 0.f;
+	//	D3DXVec3Normalize(&CollDir, &CollDir);
+	//	Engine::CNaviMesh* pNaviMeshCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_NaviTerrain->m_pNaviMeshCom;
+	//	_vec3	vPos;
+	//	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	//	m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(CollDir * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+	//	Engine::CGameObject::Update_Object(fTimeDelta);
+	//	//
+	//}
+
 	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
 		return;
 
@@ -370,6 +401,8 @@ void CMonster1_TwoHand::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphe
 		if (/*_colSphere->m_BonePart == CSphereCollider::BonePart_PlayerHammer
 			&& */_colSphere->m_WeaponAttack) {
 			if (!_colSphere->Check_DamagedObject(this)) {
+				if(m_sStat.m_fKnockBackHp > 0.f)
+					Set_StateToAnimation(State::State_Damaged);
 				_colSphere->m_VecDamagedObject.emplace_back(this);
 				m_sStat.m_fHp -= _col->Get_sStat()->m_fAttack;
 				Emplace_DelayHpDec(_col->Get_sStat()->m_fAttack);

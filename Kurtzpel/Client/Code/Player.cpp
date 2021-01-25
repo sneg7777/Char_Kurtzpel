@@ -43,7 +43,7 @@ CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
 	{
 		m_bCheck[i] = false;
 	}
-	m_bCheck[bCheck::bCheck_WeaponChange] = CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_WeaponChange;
+	m_bCheck[bCheck::bCheck_WeaponChange] = CNpcQuest_Manager::Get_NpcQuestInfo()->m_WeaponChange;
 	for (int i = 0; i < TimeCheck::TimeCheck_End; i++)
 	{
 		m_TimeCheck[i] = 0.f;
@@ -102,7 +102,7 @@ HRESULT Client::CPlayer::Add_Component(void)
 }
 
 void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDir, float fTimeDelta) {
-	CNpcQuest_Manager::NpcQuestInfo* questInfo = CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo();
+	CNpcQuest_Manager::NpcQuestInfo* questInfo = CNpcQuest_Manager::Get_NpcQuestInfo();
 	if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
 	{
 		switch (_state)
@@ -1791,23 +1791,25 @@ HRESULT Client::CPlayer::Ready_Object(void)
 Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 {
 	Talk_Npc();
-	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk)
+	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk)
 		return 0;
 
 	Calc_Time(fTimeDelta);
-	if (m_JumpIdleState != JumpIdleAni::JumpIdle_None) {
-		if(m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
-			Hammer_Key_InputOfJump(fTimeDelta);
-		else if (m_WeaponEquip == Weapon_Equip::Weapon_LongBow)
-			LongBow_Key_InputOfJump(fTimeDelta);
-		Jump_Control(fTimeDelta);
-	}
-	else {
-		SetUp_OnTerrain();
-		if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
-			Hammer_Key_Input(fTimeDelta);
-		else if (m_WeaponEquip == Weapon_Equip::Weapon_LongBow)
-			LongBow_Key_Input(fTimeDelta);
+	if (!CNpcQuest_Manager::Get_NpcQuestInfo()->m_TalkEnd) {
+		if (m_JumpIdleState != JumpIdleAni::JumpIdle_None) {
+			if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
+				Hammer_Key_InputOfJump(fTimeDelta);
+			else if (m_WeaponEquip == Weapon_Equip::Weapon_LongBow)
+				LongBow_Key_InputOfJump(fTimeDelta);
+			Jump_Control(fTimeDelta);
+		}
+		else {
+			SetUp_OnTerrain();
+			if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
+				Hammer_Key_Input(fTimeDelta);
+			else if (m_WeaponEquip == Weapon_Equip::Weapon_LongBow)
+				LongBow_Key_Input(fTimeDelta);
+		}
 	}
 	//
 	//CameraControl(fTimeDelta);
@@ -1817,8 +1819,8 @@ Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 		m_sComponent.m_pTransformCom->Set_Pos(&Engine::_vec3{ 54.f, 0.f, 54.f });
 	}
 
-	CUnit_D::Update_Object(fTimeDelta);
 	m_sComponent.m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
+	CUnit_D::Update_Object(fTimeDelta);
 
 	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
@@ -2213,7 +2215,8 @@ void CPlayer::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider
 		CUnit_D* _colUnit = dynamic_cast<CUnit_D*>(_col);
 		if (nullptr == _colUnit)
 			return;
-
+		if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk)
+			return;
 		//
 		_vec3 _colUnitPos = _colUnit->Get_sComponent()->m_pTransformCom->m_vInfo[Engine::INFO_POS];
 		_vec3 _myUnitPos = m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS];
@@ -2472,9 +2475,9 @@ void CPlayer::Move_AccelSpeed(_vec3 vPos, _vec3 vDir, float fTimeDelta, Engine::
 
 void CPlayer::Talk_Npc()
 {
-	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerColl && !CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk) {
+	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerColl && !CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk) {
 		if ((Engine::Get_DIKeyState(DIK_T) & 0x80)) {
-			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = true;
+			CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk = true;
 			CNpc_01* pNpc = dynamic_cast<CNpc_01*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc));
 			if (pNpc == nullptr)
 				return;
@@ -2483,9 +2486,9 @@ void CPlayer::Talk_Npc()
 		//dynamic_cast<CNpc_01*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc))->Talk_Rocate();
 	}
 
-	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk) {
+	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk) {
 		if ((Engine::Get_DIKeyState(DIK_ESCAPE) & 0x80)) {
-			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+			CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk = false;
 		}
 	}
 	return;

@@ -34,6 +34,7 @@ public:
 		int		m_DeadApostle = 0;
 		int		m_DeadTwoHand = 0;
 		bool	m_WeaponChange = false;
+		bool	m_TalkEnd = false; // 카메라이동쪽
 	};
 public:
 	static CNpcQuest_Manager* Get_Instance() {
@@ -52,7 +53,7 @@ public:
 	_int Update_Object(const _float& fTimeDelta);
 	void Render_Object(void);
 	void QusetProgress(const _float& fTimeDelta);
-	NpcQuestInfo* Get_NpcQuestInfo() { return &m_NpcQuestInfo; }
+	static NpcQuestInfo* Get_NpcQuestInfo() { return &m_pInstance->m_NpcQuestInfo; }
 	
 private:
 	static CNpcQuest_Manager*				m_pInstance;

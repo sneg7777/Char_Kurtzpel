@@ -46,7 +46,7 @@ Engine::_int CStage::Update_Scene(const _float& fTimeDelta)
 
 Engine::_int CStage::LateUpdate_Scene(const _float& fTimeDelta)
 {
-	CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerColl = false;
+	CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerColl = false;
 	Collision_OnlyDynamic_Object(fTimeDelta);
 	Collision_StaticToDynamic_Object(fTimeDelta);
 	//int temp;

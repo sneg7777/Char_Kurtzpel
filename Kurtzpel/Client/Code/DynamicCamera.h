@@ -27,6 +27,7 @@ private:
 	_bool		m_bClick = false;
 	_bool		m_bFix = true;
 	CPlayer*	m_Player = nullptr;
+	
 public:
 	static CDynamicCamera*	Create(LPDIRECT3DDEVICE9 pGraphicDev, 
 									const _vec3* pEye, 
@@ -39,7 +40,10 @@ public:
 
 	void		Set_pPlayer(CPlayer* _player) { m_Player = _player; }
 private:
+	void Move_NpcCamera(const _float & fTimeDelta);
+	void Move_NpcCamera_No(const _float & fTimeDelta);
 	virtual void Free(void) override;
+
 
 };
 

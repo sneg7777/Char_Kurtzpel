@@ -70,6 +70,19 @@ CSphereCollider* CUnit::Get_BonePartCollider(CSphereCollider::BonePart _bonePart
 	return nullptr;
 }
 
+void CUnit::Set_BonePartCollider_Attack(CSphereCollider::BonePart _bonePart, bool _attackCheck, float _attack)
+{
+	for (auto& col : m_VecSphereCollider)
+	{
+		if (col->m_BonePart == _bonePart) {
+			col->m_WeaponAttack = _attackCheck;
+			col->m_WeaponPower = _attack;
+			return;
+		}
+	}
+	return;
+}
+
 void CUnit::Set_BonePartColliderAttack(CSphereCollider::BonePart _bonePart, float _fattack, bool _battack, float _power)
 {
 	for (auto& col : m_VecSphereCollider)

@@ -186,7 +186,7 @@ void Client::CNpc_01::Talk_Rocate()
 }
 
 void CNpc_01::NpcNextTalkKey() {
-	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk && !m_KeyEnter) {
+	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk && !m_KeyEnter) {
 		if ((Engine::Get_DIKeyState(DIK_RETURN) & 0x80)) {
 			m_KeyEnter = true;
 			NpcNextTalk();
@@ -210,27 +210,30 @@ void CNpc_01::NpcNextTalk() {
 			else if (talkNumber == 2)
 				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_2tmvpdltm");
 			else if (talkNumber == 3) {
-				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
-				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_AttackCount = 0;
+				questMgr->Get_NpcQuestInfo()->m_PlayerTalk = false;
+				questMgr->Get_NpcQuestInfo()->m_AttackCount = 0;
+				questMgr->Get_NpcQuestInfo()->m_TalkEnd = true;
 				questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
 			}
 			break;
 		}
 		case 2: {
-			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+			CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk = false;
 			questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
-			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_SkillQCount = 0;
-			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_SkillECount = 0;
-			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_SkillFCount = 0;
+			questMgr->Get_NpcQuestInfo()->m_SkillQCount = 0;
+			questMgr->Get_NpcQuestInfo()->m_SkillECount = 0;
+			questMgr->Get_NpcQuestInfo()->m_SkillFCount = 0;
+			questMgr->Get_NpcQuestInfo()->m_TalkEnd = true;
 			break;
 		}
 		case 4: {
 			if (talkNumber == 1)
 				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_5dksekrh");
 			else {
-				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+				questMgr->Get_NpcQuestInfo()->m_PlayerTalk = false;
 				questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
-				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_RollingCount = 0;
+				questMgr->Get_NpcQuestInfo()->m_RollingCount = 0;
+				questMgr->Get_NpcQuestInfo()->m_TalkEnd = true;
 			}
 			break;
 		}
@@ -238,7 +241,8 @@ void CNpc_01::NpcNextTalk() {
 			if (talkNumber == 1)
 				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_7dlwpdkv");
 			else {
-				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+				questMgr->Get_NpcQuestInfo()->m_PlayerTalk = false;
+				questMgr->Get_NpcQuestInfo()->m_TalkEnd = true;
 				questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
 			}
 			break;
@@ -247,25 +251,28 @@ void CNpc_01::NpcNextTalk() {
 			if (talkNumber == 1) {
 				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_9ghkfdmf");
 				CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck::bCheck_WeaponChange] = true;
-				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_WeaponChange = true;
+				questMgr->Get_NpcQuestInfo()->m_WeaponChange = true;
 			}
 			else if (talkNumber == 2)
 				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_10sorkrkw");
 			else if (talkNumber == 3)
 				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_12ektlans");
 			else {
-				CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+				questMgr->Get_NpcQuestInfo()->m_PlayerTalk = false;
+				questMgr->Get_NpcQuestInfo()->m_TalkEnd = true;
 				questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
 			}
 			break;
 		}
 		case 10: {
-			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+			questMgr->Get_NpcQuestInfo()->m_PlayerTalk = false;
+			questMgr->Get_NpcQuestInfo()->m_TalkEnd = true;
 			questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
 			break;
 		}
 		default: {
-			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk = false;
+			questMgr->Get_NpcQuestInfo()->m_TalkEnd = true;
+			questMgr->Get_NpcQuestInfo()->m_PlayerTalk = false;
 			break;
 		}
 	}
@@ -325,7 +332,7 @@ void CNpc_01::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider
 
 	if (_mySphere->m_BonePart == CSphereCollider::BonePart_NpcTalk) {
 		if (_colSphere->m_BonePart == CSphereCollider::BonePart_CollBody) {
-			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerColl = true;
+			CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerColl = true;
 		}
 	}
 	

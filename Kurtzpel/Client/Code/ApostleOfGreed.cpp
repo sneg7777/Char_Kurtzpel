@@ -134,7 +134,7 @@ HRESULT Client::CApostleOfGreed::Ready_Object(void)
 Client::_int Client::CApostleOfGreed::Update_Object(const _float& fTimeDelta)
 {
 	if (m_sStat.m_IsDead || m_sStat.m_fHp < 0.f) {
-		CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_DeadApostle++;
+		CNpcQuest_Manager::Get_NpcQuestInfo()->m_DeadApostle++;
 		return 1;
 	}
 

@@ -45,6 +45,7 @@ public:
 	virtual void Render_Object(void) override;
 	virtual void Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
 	CSphereCollider*	Get_BonePartCollider(CSphereCollider::BonePart _bonePart);
+	void Set_BonePartCollider_Attack(CSphereCollider::BonePart _bonePart, bool _attackCheck, float _attack);
 	void Set_BonePartColliderAttack(CSphereCollider::BonePart _bonePart, float _fattack, bool _battack, float _power = 1.f);
 
 	void Set_StaticSphere();

@@ -11,7 +11,7 @@ public:
 	enum State {
 		State_Wait, State_Move, State_Rocate, State_Skill,
 		State_JumpEnd,
-		State_KnockBack, State_Groggy, State_GroggyUp,
+		State_Damaged, State_KnockBack, State_Groggy, State_GroggyUp,
 		State_End
 	};
 	enum TimeCheck {

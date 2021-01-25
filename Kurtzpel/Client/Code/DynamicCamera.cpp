@@ -181,42 +181,14 @@ void CDynamicCamera::Free(void)
 
 Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 {
-	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk) {
-		CUnit_D* pNpc = dynamic_cast<CUnit_D*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc));
-		if (pNpc == nullptr)
-			return 0;
-		_vec3 vPos, vDir, vMoveDir;
-		Engine::CTransform* pNpcTrans = pNpc->Get_sComponent()->m_pTransformCom;
-		pNpcTrans->Get_Info(Engine::INFO_POS, &vPos);
-		vPos.y += 2.f;
-		pNpcTrans->Get_Info(Engine::INFO_LOOK, &vDir);
-		//
-		vMoveDir = (vPos + (vDir * 150.f)) - m_vEye;
-		float dist = sqrtf(vMoveDir.x * vMoveDir.x + vMoveDir.y * vMoveDir.y + vMoveDir.z * vMoveDir.z);
-		if (dist < 0.5f) {
-			m_vEye = vPos + (vDir * 150.f);
-		}
-		else {
-			D3DXVec3Normalize(&vMoveDir, &vMoveDir);
-			m_vEye += vMoveDir * fTimeDelta * 10.f;
-		}
-		//
-		m_vAt = vPos;
+	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk) {
+		Move_NpcCamera(fTimeDelta);
 	}
 	else {
 		Key_Input(fTimeDelta);
+		Move_NpcCamera_No(fTimeDelta);
 
-
-		CPlayer* player = CPlayer::GetInstance();
-		if (player == nullptr)
-			return 0;
-		_vec3	vPos, vDir;
-		player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-		player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
-		m_vEye = vPos - (vDir * player->m_CameraDist);
-		m_vEye.y += 3.5f - player->m_LookAtY * 0.7f;
-		m_vAt = vPos + (vDir * 200.f);
-		m_vAt.y += player->m_LookAtY;
+	
 
 		if (true == m_bFix)
 		{
@@ -226,4 +198,62 @@ Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 	}
 	_int iExit = Engine::CCamera::Update_Object(fTimeDelta);
 	return iExit;
+}
+
+void CDynamicCamera::Move_NpcCamera(const _float& fTimeDelta)
+{
+	CUnit_D* pNpc = dynamic_cast<CUnit_D*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc));
+	if (pNpc == nullptr)
+		return;
+	_vec3 vPos, vDir, vMoveDir;
+	Engine::CTransform* pNpcTrans = pNpc->Get_sComponent()->m_pTransformCom;
+	pNpcTrans->Get_Info(Engine::INFO_POS, &vPos);
+	vPos.y += 2.f;
+	pNpcTrans->Get_Info(Engine::INFO_LOOK, &vDir);
+	//
+	vMoveDir = (vPos + (vDir * 150.f)) - m_vEye;
+	float dist = sqrtf(vMoveDir.x * vMoveDir.x + vMoveDir.y * vMoveDir.y + vMoveDir.z * vMoveDir.z);
+	if (dist < 0.3f) {
+		m_vEye = vPos + (vDir * 150.f);
+	}
+	else {
+		D3DXVec3Normalize(&vMoveDir, &vMoveDir);
+		m_vEye += vMoveDir * fTimeDelta * 10.f;
+	}
+	//
+	m_vAt = vPos;
+	return;
+}
+
+void CDynamicCamera::Move_NpcCamera_No(const _float& fTimeDelta)
+{
+	CPlayer* player = CPlayer::GetInstance();
+	if (player == nullptr)
+		return;
+
+	_vec3	vEyePos, vEyeDir, vPlayerPos, vPlayerDir;
+	player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPlayerPos);
+	player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vPlayerDir);
+	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_TalkEnd) {
+		vEyePos = vPlayerPos - (vPlayerDir * player->m_CameraDist);
+		vEyePos.y += 3.5f - player->m_LookAtY * 0.7f;
+
+		vEyeDir = vEyePos - m_vEye;
+		float dist = sqrtf(vEyeDir.x * vEyeDir.x + vEyeDir.y * vEyeDir.y + vEyeDir.z * vEyeDir.z);
+		if (dist < 0.3f) {
+			CNpcQuest_Manager::Get_NpcQuestInfo()->m_TalkEnd = false;
+		}
+		else {
+			D3DXVec3Normalize(&vEyeDir, &vEyeDir);
+			m_vEye += vEyeDir * fTimeDelta * 15.f;
+		}
+	}
+	else {
+		m_vEye = vPlayerPos - (vPlayerDir * player->m_CameraDist);
+		m_vEye.y += 3.5f - player->m_LookAtY * 0.7f;
+	}
+	m_vAt = vPlayerPos + (vPlayerDir * 200.f);
+	m_vAt.y += player->m_LookAtY;
+
+	return;
 }

@@ -77,7 +77,7 @@ HRESULT Client::CUI::Ready_Object(void)
 }
 Client::_int Client::CUI::Update_Object(const _float& fTimeDelta)
 {
-	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk)
+	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk)
 		return 0;
 	Engine::CGameObject::Update_Object(fTimeDelta);
 		
