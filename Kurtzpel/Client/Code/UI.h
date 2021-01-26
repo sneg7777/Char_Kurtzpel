@@ -27,7 +27,7 @@ public:
 		UIK_KeyQ, UIK_KeyE, UIK_KeyF, UIK_KeyZ, UIK_KeyLShift, UIK_KeyTab,
 		UIK_Player_Hp0, UIK_Player_Hp1, UIK_Player_Hp2, UIK_Player_Hp3,
 		UIK_Monster_Hp0, UIK_Monster_Hp1, UIK_Monster_Hp2, UIK_Monster_Hp3,
-		UIK_TipText, UIK_TalkText, UIK_Art,
+		UIK_TipText, UIK_TalkText, UIK_Art, UIK_TipNpcTalk, UIK_TipPortal,
 		UIK_End
 	};
 public:

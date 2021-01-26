@@ -13,6 +13,7 @@
 #include "UI_Manager.h"
 #include "LongBow.h"
 #include "Npc_01.h"
+#include "Portal.h"
 
 CStage_2::CStage_2(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CStage(pGraphicDev)
@@ -163,6 +164,12 @@ HRESULT CStage_2::Ready_GameLogic_Static_Layer(const _tchar* pLayerTag)
 	pGameObject = CHammer::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CHammer", pGameObject), E_FAIL);
+
+	CPortal* pPortal;
+	pGameObject = pPortal = CPortal::Create(m_pGraphicDev);
+	pPortal->Set_Collider(_vec3{ 60.f, 0.f, 91.f }, 7.f, CSphereCollider::BoneTeam::BoneTeam_Portal);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CPortal", pGameObject), E_FAIL);
 	/*pGameObject = CLongBow::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CLongBow", pGameObject), E_FAIL);*/

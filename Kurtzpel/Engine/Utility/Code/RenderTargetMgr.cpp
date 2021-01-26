@@ -110,12 +110,14 @@ void CRenderTargetMgr::Render_DebugBuffer(const _tchar * pMRTTag)
 	if (nullptr == pMRTList)
 		return;
 
-	if ((GetAsyncKeyState(VK_F1) & 0x8000) && !m_KeyCheck) {
-		m_KeyCheck = true;
-		if (m_RenderCheck)
-			m_RenderCheck = false;
-		else
-			m_RenderCheck = true;
+	if ((GetAsyncKeyState(VK_F1) & 0x8000)) {
+		if (!m_KeyCheck) {
+			m_KeyCheck = true;
+			if (m_RenderCheck)
+				m_RenderCheck = false;
+			else
+				m_RenderCheck = true;
+		}
 	}
 	else {
 		m_KeyCheck = false;

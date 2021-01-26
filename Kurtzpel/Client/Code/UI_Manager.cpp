@@ -137,6 +137,7 @@ void Client::CUI_Manager::Ready_CreateUI() {
 		m_sListUI.m_ListUI_Skill_ICon.emplace_back(pUI);
 	}
 	CUI_Manager::Get_Instance()->Create_Text(CUI::UIKind::UIK_TipText, L"Texture_Text_dncmrdp");
+	CUI_Manager::Get_Instance()->Create_Text(CUI::UIKind::UIK_TipNpcTalk, L"Texture_Text_npcdhk");
 
 }
 
@@ -146,8 +147,10 @@ void Client::CUI_Manager::Create_Text(CUI::UIKind _uiName, _tchar* _texTag) {
 	//
 	Engine::CComponent* pComponent = nullptr;
 	Engine::CTexture** pTextureCom = &pUI->m_pTextureCom;
-	if(_uiName == CUI::UIKind::UIK_TipText)
+	if (_uiName == CUI::UIKind::UIK_TipText)
 		pUI->Set_PosToSize(512.f, 120.f, 384.f, 76.8f);
+	else if (_uiName == CUI::UIKind::UIK_TipNpcTalk)
+		pUI->Set_PosToSize(512.f, 150.f, 384.f, 76.8f);
 	else
 		pUI->Set_PosToSize(512.f, 500.f, 384.f, 76.8f);
 	pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, _texTag));

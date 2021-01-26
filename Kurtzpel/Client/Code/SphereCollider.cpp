@@ -124,15 +124,9 @@ void CSphereCollider::Render_Object(void)
 {
 	if (!CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck_RenderSphere])
 		return;
-	if (m_BonePart != BonePart::BonePart_CollBody && !m_WeaponAttack)
+	if (m_BonePart != BonePart::BonePart_NpcTalk && m_BonePart != BonePart::BonePart_Portal && m_BonePart != BonePart::BonePart_CollBody && !m_WeaponAttack)
 		return;
-	/*if (m_BonePart == BonePart::BonePart_PlayerHammer && !m_WeaponAttack)
-		return;*/
-	if (m_BonePart == BonePart::BonePart_Static) {
-		_vec3 vPos;
-		m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-		int i = 0;
-	}
+
 
 	m_pTransformCom->Set_Transform(m_pGraphicDev);
 	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);

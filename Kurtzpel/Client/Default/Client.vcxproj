@@ -193,6 +193,7 @@
     <ClInclude Include="..\Code\Npc_01.h" />
     <ClInclude Include="..\Code\Phoenix.h" />
     <ClInclude Include="..\Code\Player.h" />
+    <ClInclude Include="..\Code\Portal.h" />
     <ClInclude Include="..\Code\Random_Manager.h" />
     <ClInclude Include="..\Code\SkillCollider.h" />
     <ClInclude Include="..\Code\SkyBox.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="..\Code\Npc_01.cpp" />
     <ClCompile Include="..\Code\Phoenix.cpp" />
     <ClCompile Include="..\Code\Player.cpp" />
+    <ClCompile Include="..\Code\Portal.cpp" />
     <ClCompile Include="..\Code\Random_Manager.cpp" />
     <ClCompile Include="..\Code\SkillCollider.cpp" />
     <ClCompile Include="..\Code\SkyBox.cpp" />

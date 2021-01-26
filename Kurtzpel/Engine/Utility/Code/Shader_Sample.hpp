@@ -61,7 +61,7 @@ PS_OUT		PS_MAIN(PS_IN In)
 
 	Out.vColor = tex2D(BaseSampler, In.vTexUV);	// 2차원 텍스처로부터 uv좌표에 해당하는 색을 얻어오는 함수, 반환 타입이 vector 타입
 
-	Out.vColor.rb = 1.f;
+	//Out.vColor.rb = 1.f;
 
 	return Out;
 }

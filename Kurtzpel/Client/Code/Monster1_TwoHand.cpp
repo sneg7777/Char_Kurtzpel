@@ -112,14 +112,14 @@ HRESULT Client::CMonster1_TwoHand::Ready_Object(void)
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
 	m_sComponent.m_pTransformCom->Set_Scale(0.018f, 0.018f, 0.018f);
-	m_sComponent.m_pMeshCom->Set_AnimationSet(59);
+	Set_StateToAnimation(State::State_Respawn);
 
 	return S_OK;
 }
 
 Client::_int Client::CMonster1_TwoHand::Update_Object(const _float& fTimeDelta)
 {
-	if (m_sStat.m_IsDead || m_sStat.m_fHp < 0.f) {
+	if (m_sStat.m_IsDead || m_sStat.m_IsDeadTime > 3.f) {
 		CNpcQuest_Manager::Get_NpcQuestInfo()->m_DeadTwoHand++;
 		return 1;
 	}
@@ -212,6 +212,17 @@ void Client::CMonster1_TwoHand::Init_BoneAttack() {
 void Client::CMonster1_TwoHand::Set_StateToAnimation(State _state, Skill_TH _skill) {
 	switch (_state)
 	{
+	case Client::CMonster1_TwoHand::State_Respawn:
+		m_sComponent.m_pMeshCom->Set_AnimationSet(63);
+		m_AniSpeed = 1.2f;
+		break;
+	case Client::CMonster1_TwoHand::State_Dead:
+		m_sComponent.m_pMeshCom->Set_AnimationSet(27);
+		m_AniSpeed = 1.f;
+		break;
+	case Client::CMonster1_TwoHand::State_DeadDown:
+		m_sComponent.m_pMeshCom->Set_AnimationSet(50);
+		break;
 	case Client::CMonster1_TwoHand::State_Wait:
 		m_sComponent.m_pMeshCom->Set_AnimationSet(59);
 		m_AniSpeed = 1.f;
@@ -291,6 +302,26 @@ void Client::CMonster1_TwoHand::Pattern(_float fTimeDelta)
 	D3DXVec3Normalize(&vDir, &vDir);
 	//¹¹Áö?
 	vDir *= -1.f;
+	//////////////////////////////////////////////////////////////////////////////////////
+	if (m_State == State::State_Respawn) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.3f)) {
+			Set_StateToAnimation(State::State_Wait);
+		}
+		else {
+			return;
+		}
+	}
+	else if (m_State == State::State_Dead) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.3f)) {
+			Set_StateToAnimation(State::State_DeadDown);
+		}
+		else {
+			return;
+		}
+	}
+	else if (m_State == State::State_DeadDown) {
+		m_sStat.m_IsDeadTime += fTimeDelta;
+	}
 	//////////////////////////////////////////////////////////////////////////////////////
 	if (m_isSearch && m_State == State::State_Wait || m_State == State::State_Move || m_State == State::State_Rocate) {
 		bool state_check = Random_Skill(playerTodisTance);
@@ -394,7 +425,7 @@ void CMonster1_TwoHand::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphe
 	//	//
 	//}
 
-	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
+	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam || m_sStat.m_fHp <= 0.f)
 		return;
 
 	if (_mySphere->m_BonePart == CSphereCollider::BonePart_CollBody) {
@@ -416,8 +447,10 @@ void CMonster1_TwoHand::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphe
 				CUI_Manager::Get_Instance()->Set_DamagedTime(TIME_ENEMYHPBAR);
 				if (m_sStat.m_fHp > 0.f)
 					CUI_Manager::Get_Instance()->Set_DamagedEnemy(this);
-				else
+				else {
 					CUI_Manager::Get_Instance()->Set_DamagedEnemy(nullptr);
+					Set_StateToAnimation(State::State_Dead);
+				}
 			}
 		}
 	}

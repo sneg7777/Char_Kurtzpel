@@ -99,9 +99,7 @@ _uint CLoading::Loading_ForStage(void)
 	lstrcpy(m_szLoading, L"Texture Loading.............................");
 	// ÅØ½ºÃÄ
 
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Logo", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Logo/Logo.jpg"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Player", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Player/Ma.jpg"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Monster", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Monster%d.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Logo", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Logo/Logo.tga"), E_FAIL);
 
 	//FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev,
 	//											Engine::RESOURCE_STAGE,
@@ -176,6 +174,7 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_dncmrdp", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/dncmrdp.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_znptmxm", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/znptmxm.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_npcdhk", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/npcdhk.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_vhxkf", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/vhxkf.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_0dkssud", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/0dkssud.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_1dntjs", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/1dntjs.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_2tmvpdltm", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/2tmvpdltm.png"), E_FAIL);

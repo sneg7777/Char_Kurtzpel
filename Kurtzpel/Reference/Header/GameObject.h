@@ -30,6 +30,7 @@ struct sStat {
 	_float						m_fMaxMp = 0;
 	_float						m_fMp = 0;
 	_bool						m_IsDead = false;
+	_float						m_IsDeadTime = 0.f;
 	//
 	_float						m_fMaxKnockBackHp = 0.f;
 	_float						m_fKnockBackHp = 0.f;

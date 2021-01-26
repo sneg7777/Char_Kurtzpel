@@ -3,6 +3,7 @@
 #include "Export_Function.h"
 #include "UI_Manager.h"
 #include "UI.h"
+#include "NpcQuest_Manager.h"
 
 CUI_Text::CUI_Text(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUI(pGraphicDev)
@@ -71,6 +72,15 @@ Client::_int Client::CUI_Text::Update_Object(const _float& fTimeDelta)
 			m_fSizeY = 76.8 * (m_EffectTime - 0.5f) * 2.f;
 		}
 	}
+	else if (m_UIKind == UIKind::UIK_TipNpcTalk) {
+		if (!CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerColl && !CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk) {
+			return 0;
+		}
+	}
+	else if (m_UIKind == UIKind::UIK_TipPortal) {
+		return 0;
+	}
+
 	Engine::CGameObject::Update_Object(fTimeDelta);
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);

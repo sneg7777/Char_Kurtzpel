@@ -35,7 +35,7 @@ HRESULT Client::CNpc_01::Add_Component(void)
 	//m_pMeshCom->Set_AniAngle(275.f);
 	//
 	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-80.f), true);
-	m_sComponent.m_pTransformCom->Set_Pos(&_vec3(87.5f, 0.f, 58.8f));
+	m_sComponent.m_pTransformCom->Set_Pos(&_vec3(92.2f, 0.f, 59.f));
 	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	Engine::CGameObject::Update_Object(0.f);
 	

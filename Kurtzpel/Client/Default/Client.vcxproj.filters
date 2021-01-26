@@ -115,6 +115,9 @@
     <Filter Include="02. GameObject\01. Stage\20. Monster\02. Monster1_TwoHand">
       <UniqueIdentifier>{c0c1e9da-fa1f-4cde-9a6b-bd51e8b0cc50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Stage\22.Portal">
+      <UniqueIdentifier>{16f2b38f-eb8d-4932-b2eb-8ec0ecc20532}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -273,6 +276,9 @@
     <ClInclude Include="..\Code\Monster1_TwoHand.h">
       <Filter>02. GameObject\01. Stage\20. Monster\02. Monster1_TwoHand</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\Portal.h">
+      <Filter>02. GameObject\01. Stage\22.Portal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -412,6 +418,9 @@
     </ClCompile>
     <ClCompile Include="..\Code\Monster1_TwoHand.cpp">
       <Filter>02. GameObject\01. Stage\20. Monster\02. Monster1_TwoHand</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Portal.cpp">
+      <Filter>02. GameObject\01. Stage\22.Portal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -45,7 +45,7 @@ private:
 	virtual void Free(void);
 	
 	//
-	bool	m_RenderCheck = true;
+	bool	m_RenderCheck = false;
 	bool	m_KeyCheck = false;
 };
 

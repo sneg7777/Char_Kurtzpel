@@ -12,6 +12,7 @@ public:
 		State_Wait, State_Move, State_Rocate, State_Skill,
 		State_JumpEnd,
 		State_Damaged, State_KnockBack, State_Groggy, State_GroggyUp,
+		State_Respawn, State_Dead, State_DeadDown,
 		State_End
 	};
 	enum TimeCheck {
@@ -53,7 +54,7 @@ private:
 	//float						m_TimeCheck[TimeCheck::TimeCheck_End];
 	
 public:
-	State						m_State =  State::State_Wait;
+	State						m_State;
 	Skill_TH					m_SkillState = Skill_TH::Skill_TH_None;
 	//bool						m_StateReady = false;
 	float						m_SkillCool[SCool_TH_End];
