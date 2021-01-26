@@ -11,7 +11,7 @@ public:
 		Up, UpLeft, UpRight, Down, DownLeft, DownRight, Left, Right, Dir_End
 	};
 	enum UnitName {
-		Player, PlayerBullet, Monster, Boss, MonsterBullet, Npc, NameEnd
+		Player, PlayerBullet, Monster, Boss, MonsterBullet, Npc, Portal, NameEnd
 	};
 struct sStat {
 	EnumDir		m_EnumDir = EnumDir::Dir_End;

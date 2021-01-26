@@ -2,6 +2,9 @@
 #include "NpcQuest_Manager.h"
 #include "Export_Function.h"
 #include "UI_Manager.h"
+#include "Portal.h"
+#include "Stage_1.h"
+#include "Stage_2.h"
 
 CNpcQuest_Manager* CNpcQuest_Manager::m_pInstance = nullptr;
 
@@ -83,5 +86,23 @@ void Client::CNpcQuest_Manager::QusetProgress(const _float& fTimeDelta)
 			CUI_Manager::Get_Instance()->Create_QuestClear();
 			m_NpcQuestInfo.m_WeaponChange = true;
 		}
+	}
+}
+
+void Client::CNpcQuest_Manager::Portal_MapMove() {
+	CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_MapMove = false;
+	CPortal* pPortal = dynamic_cast<CPortal*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Static, Engine::CGameObject::UnitName::Portal));
+	int portalMapNumber = pPortal->Get_PortalMapNumber();
+	if (portalMapNumber == 1) {
+		Engine::CScene* pScene = nullptr;
+		pScene = CStage_1::Create(m_pGraphicDev);
+
+		FAILED_CHECK_RETURN(Engine::SetUp_Scene(pScene), );
+	}
+	else if (portalMapNumber == 2) {
+		Engine::CScene* pScene = nullptr;
+		pScene = CStage_2::Create(m_pGraphicDev);
+
+		FAILED_CHECK_RETURN(Engine::SetUp_Scene(pScene), );
 	}
 }

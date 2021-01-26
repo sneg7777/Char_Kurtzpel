@@ -2,6 +2,7 @@
 #include "Terrain.h"
 #include "Export_Function.h"
 #include "Player.h"
+#include "Portal.h"
 
 CTerrain::CTerrain(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
@@ -197,6 +198,12 @@ HRESULT CTerrain::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 		pEffect->SetVector("g_vPlayerPos", &_vec4(_vec3{0.f, 0.f, 0.f}, 1.f));
 	_float	fRange = 6.f;
 	pEffect->SetFloat("g_fRange", fRange);
+	///////////////////////////////////////////////////////////////////////////////////////////
+	CPortal* pPortal = dynamic_cast<CPortal*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Static, Engine::CGameObject::UnitName::Portal));
+	if (pPortal == nullptr)
+		return S_OK;
+
+	///////////////////////////////////////////////////////////////////////////////////////////
 	
 #pragma endregion Aura
 

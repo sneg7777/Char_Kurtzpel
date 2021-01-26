@@ -2,6 +2,8 @@
 #include "Portal.h"
 #include "Export_Function.h"
 #include "Player.h"
+#include "Stage_1.h"
+#include "Stage_2.h"
 
 
 CPortal::CPortal(LPDIRECT3DDEVICE9 pGraphicDev)
@@ -50,7 +52,7 @@ void CPortal::Free(void)
 HRESULT Client::CPortal::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
-	
+	m_UnitName = UnitName::Portal;
 	return S_OK;
 }
 Client::_int Client::CPortal::Update_Object(const _float& fTimeDelta)
@@ -109,14 +111,21 @@ HRESULT Client::CPortal::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 
 void Client::CPortal::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta)
 {
-	//if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
-	//	return;
+	if (CSphereCollider::BoneTeam_Player != _colSphere->m_BoneTeam)
+		return;
 
-	//if(_colSphere->m_BonePart == CSphereCollider::BonePart::BonePart_CollBody)
-	//	m_sStat.m_IsDead = true;
+	//if (_mySphere->m_BonePart == CSphereCollider::BonePart_CollBody) {
+
+	//}
+
+	if (_mySphere->m_BonePart == CSphereCollider::BonePart_Portal) {
+		if (_colSphere->m_BonePart == CSphereCollider::BonePart_CollBody) {
+			CNpcQuest_Manager::Get_NpcQuestInfo()->m_PortalColl = true;
+		}
+	}
 }
 
-void Client::CPortal::Set_Collider(_vec3 _pos, float _scale, CSphereCollider::BoneTeam _team) {
+void Client::CPortal::Set_Collider(_vec3 _pos, float _scale, CSphereCollider::BoneTeam _team, int _portalMapNumber) {
 	m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] = _pos;
 	CUnit::Update_Object(0.f);
 	CSphereCollider* sphereCol = CSphereCollider::Create(m_pGraphicDev);
@@ -125,7 +134,7 @@ void Client::CPortal::Set_Collider(_vec3 _pos, float _scale, CSphereCollider::Bo
 	sphereCol->m_WeaponAttack = false;
 	sphereCol->m_BoneTeam = _team;
 	sphereCol->m_BonePart = CSphereCollider::BonePart::BonePart_Portal;
-
+	m_PortalMapNumber = _portalMapNumber;
 	sphereCol->Engine::CGameObject::Update_Object(0.f);
 	m_VecSphereCollider.emplace_back(sphereCol);
 

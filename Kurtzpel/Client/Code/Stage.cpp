@@ -34,6 +34,10 @@ HRESULT CStage::Ready_Scene(void)
 
 Engine::_int CStage::Update_Scene(const _float& fTimeDelta)
 {
+	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_MapMove) {
+		CNpcQuest_Manager::Get_Instance()->Portal_MapMove();
+		return 1;
+	}
 	int temp;
 	temp = Engine::CScene::Update_Scene(fTimeDelta);
 	CUI_Manager::Get_Instance()->Update_Object(fTimeDelta);
@@ -46,7 +50,8 @@ Engine::_int CStage::Update_Scene(const _float& fTimeDelta)
 
 Engine::_int CStage::LateUpdate_Scene(const _float& fTimeDelta)
 {
-	CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerColl = false;
+	CNpcQuest_Manager::Get_NpcQuestInfo()->m_NpcColl = false;
+	CNpcQuest_Manager::Get_NpcQuestInfo()->m_PortalColl = false;
 	Collision_OnlyDynamic_Object(fTimeDelta);
 	Collision_StaticToDynamic_Object(fTimeDelta);
 	//int temp;

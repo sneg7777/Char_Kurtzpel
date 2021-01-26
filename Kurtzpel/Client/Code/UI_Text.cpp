@@ -73,12 +73,14 @@ Client::_int Client::CUI_Text::Update_Object(const _float& fTimeDelta)
 		}
 	}
 	else if (m_UIKind == UIKind::UIK_TipNpcTalk) {
-		if (!CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerColl && !CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk) {
+		if (!CNpcQuest_Manager::Get_NpcQuestInfo()->m_NpcColl && !CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk) {
 			return 0;
 		}
 	}
 	else if (m_UIKind == UIKind::UIK_TipPortal) {
-		return 0;
+		if (!CNpcQuest_Manager::Get_NpcQuestInfo()->m_PortalColl) {
+			return 0;
+		}
 	}
 
 	Engine::CGameObject::Update_Object(fTimeDelta);

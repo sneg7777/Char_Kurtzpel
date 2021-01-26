@@ -106,7 +106,7 @@ private:
 	void		Create_Phoenix_SkillZ(_vec3 _vPos, _vec3 _vDir);
 	void		Move_AccelSpeed(_vec3 vPos, _vec3 vDir, float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom);
 
-	void		Talk_Npc();
+	void		Talk_NpcToPortal();
 
 private:
 	//มกวม

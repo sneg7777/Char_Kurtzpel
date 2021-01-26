@@ -128,11 +128,25 @@ void Client::CUI::Render_Object(void)
 
 	//Engine::Safe_Release(pEffect);
 	////////////////
+	/*LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
+	NULL_CHECK(pEffect);
+	Engine::Safe_AddRef(pEffect);
+
+	_uint	iMaxPass = 0;
+
+	pEffect->Begin(&iMaxPass, 0);	// 현재 쉐이더 파일이 갖고 있는 최대 패스의 개수를 리턴, 사용하는 방식
+	pEffect->BeginPass(0);
+
+	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );*/
+	////////////////
 	m_pTextureCom->Render_Texture();
 	m_pBufferCom->Render_Buffer();
 
 	m_pGraphicDev->SetTransform(D3DTS_VIEW, &matOriginView);
 	m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &matOriginProj);
+
+	/*pEffect->EndPass();
+	pEffect->End();*/
 }
 
 HRESULT Client::CUI::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)

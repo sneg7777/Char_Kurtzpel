@@ -13,10 +13,10 @@
 #define PLAYER_SEARCH_DISTANCE 14.f
 #define PLAYER_ATTACK_DISTANCE 6.f
 #define THSkill_CoolTotal 3.f
-#define THSkill_Cool1 5.f
-#define THSkill_Cool2 5.f
+#define THSkill_Cool1 1.f
+#define THSkill_Cool2 1.f
 #define THSkill_Cool2_DisTance 15.f
-#define THSkill_Cool3 5.f
+#define THSkill_Cool3 1.f
 #define THSkill_Cool3_DisTance 30.f
 CMonster1_TwoHand::CMonster1_TwoHand(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CMonster(pGraphicDev)
@@ -119,7 +119,7 @@ HRESULT Client::CMonster1_TwoHand::Ready_Object(void)
 
 Client::_int Client::CMonster1_TwoHand::Update_Object(const _float& fTimeDelta)
 {
-	if (m_sStat.m_IsDead || m_sStat.m_IsDeadTime > 3.f) {
+	if (m_sStat.m_IsDead || m_sStat.m_IsDeadTime > 2.f) {
 		CNpcQuest_Manager::Get_NpcQuestInfo()->m_DeadTwoHand++;
 		return 1;
 	}

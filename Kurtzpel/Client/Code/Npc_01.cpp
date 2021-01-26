@@ -326,13 +326,13 @@ void CNpc_01::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider
 	if (CSphereCollider::BoneTeam_Player != _colSphere->m_BoneTeam)
 		return;
 
-	if (_mySphere->m_BonePart == CSphereCollider::BonePart_CollBody) {
+	//if (_mySphere->m_BonePart == CSphereCollider::BonePart_CollBody) {
 
-	}
+	//}
 
 	if (_mySphere->m_BonePart == CSphereCollider::BonePart_NpcTalk) {
 		if (_colSphere->m_BonePart == CSphereCollider::BonePart_CollBody) {
-			CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerColl = true;
+			CNpcQuest_Manager::Get_NpcQuestInfo()->m_NpcColl = true;
 		}
 	}
 	

@@ -137,7 +137,7 @@ Client::_int Client::CApostleOfGreed::Update_Object(const _float& fTimeDelta)
 		CNpcQuest_Manager::Get_NpcQuestInfo()->m_DeadApostle++;
 		return 1;
 	}
-
+	dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(2.f);
 	Calc_Time(fTimeDelta);
 
 	SetUp_OnTerrain();

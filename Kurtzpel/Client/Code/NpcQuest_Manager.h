@@ -23,7 +23,7 @@ public:
 	{
 		int		m_QuestNumber = 0;
 		int		m_TalkNumber = 0;
-		bool	m_PlayerColl = false;
+		bool	m_NpcColl = false;
 		bool	m_PlayerTalk = false;
 		int		m_AttackCount = 0;
 		int		m_SkillQCount = 0;
@@ -35,6 +35,8 @@ public:
 		int		m_DeadTwoHand = 0;
 		bool	m_WeaponChange = false;
 		bool	m_TalkEnd = false; // 카메라이동쪽
+		bool	m_PortalColl = false;
+		bool	m_MapMove = false;
 	};
 public:
 	static CNpcQuest_Manager* Get_Instance() {
@@ -53,6 +55,7 @@ public:
 	_int Update_Object(const _float& fTimeDelta);
 	void Render_Object(void);
 	void QusetProgress(const _float& fTimeDelta);
+	void Portal_MapMove();
 	static NpcQuestInfo* Get_NpcQuestInfo() { return &m_pInstance->m_NpcQuestInfo; }
 	
 private:

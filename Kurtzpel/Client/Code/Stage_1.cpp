@@ -127,7 +127,7 @@ HRESULT CStage_1::Ready_GameLogic_Dynamic_Layer(const _tchar * pLayerTag)
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Player", pGameObject), E_FAIL);
 	
 	int questNumber = CNpcQuest_Manager::Get_NpcQuestInfo()->m_QuestNumber;
-	if (true){//questNumber == 7 || questNumber == 9) {
+	if (false){//questNumber == 7 || questNumber == 9) {
 		pGameObject = CMonster1_TwoHand::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pGameObject, E_FAIL);
 		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"M_Monster1_TwoHand", pGameObject), E_FAIL);
@@ -142,7 +142,7 @@ HRESULT CStage_1::Ready_GameLogic_Dynamic_Layer(const _tchar * pLayerTag)
 		dynamic_cast<CMonster1_TwoHand*>(pGameObject)->Get_sComponent()->m_pTransformCom->Set_Pos(75.f, 0.f, 80.f);
 		pGameObject->Engine::CGameObject::Update_Object(0.f);
 	}
-	else if(questNumber == 11){
+	else /*if(questNumber == 11)*/{
 		pGameObject = CApostleOfGreed::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pGameObject, E_FAIL);
 		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"B_ApostleOfGreed", pGameObject), E_FAIL);

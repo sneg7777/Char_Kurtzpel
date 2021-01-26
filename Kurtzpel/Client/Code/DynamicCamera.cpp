@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "NpcQuest_Manager.h"
 #include "Stage.h"
+#include "Random_Manager.h"
 
 CDynamicCamera::CDynamicCamera(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CCamera(pGraphicDev)	
@@ -196,6 +197,7 @@ Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 			Mouse_Move();
 		}
 	}
+	Shake_CameraMove(fTimeDelta);
 	_int iExit = Engine::CCamera::Update_Object(fTimeDelta);
 	return iExit;
 }
@@ -222,6 +224,7 @@ void CDynamicCamera::Move_NpcCamera(const _float& fTimeDelta)
 	}
 	//
 	m_vAt = vPos;
+	
 	return;
 }
 
@@ -254,6 +257,21 @@ void CDynamicCamera::Move_NpcCamera_No(const _float& fTimeDelta)
 	}
 	m_vAt = vPlayerPos + (vPlayerDir * 200.f);
 	m_vAt.y += player->m_LookAtY;
+
+	return;
+}
+
+void CDynamicCamera::Shake_CameraMove(const _float& fTimeDelta)
+{
+	if (m_ShakeTime <= 0.f)
+		return;
+
+	m_ShakeTime -= fTimeDelta;
+	m_ShakeX = -0.25f + (CRandom_Manager::Random() % 20) * 0.025f;
+	m_ShakeY = -0.25f + (CRandom_Manager::Random() % 20) * 0.025f;
+
+	m_vEye.x += m_ShakeX;
+	m_vEye.y += m_ShakeY;
 
 	return;
 }

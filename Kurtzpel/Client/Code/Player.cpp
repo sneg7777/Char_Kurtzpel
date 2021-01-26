@@ -14,6 +14,7 @@
 #include "NpcQuest_Manager.h"
 #include "Phoenix.h"
 #include "Npc_01.h"
+#include "Portal.h"
 
 #define COOLTIME_GH_Q 5.f
 #define COOLTIME_GH_E 5.f
@@ -1790,7 +1791,7 @@ HRESULT Client::CPlayer::Ready_Object(void)
 }
 Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 {
-	Talk_Npc();
+	Talk_NpcToPortal();
 	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk)
 		return 0;
 
@@ -2473,9 +2474,9 @@ void CPlayer::Move_AccelSpeed(_vec3 vPos, _vec3 vDir, float fTimeDelta, Engine::
 	return;
 }
 
-void CPlayer::Talk_Npc()
+void CPlayer::Talk_NpcToPortal()
 {
-	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerColl && !CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk) {
+	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_NpcColl && !CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk) {
 		if ((Engine::Get_DIKeyState(DIK_T) & 0x80)) {
 			CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk = true;
 			CNpc_01* pNpc = dynamic_cast<CNpc_01*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc));
@@ -2486,10 +2487,18 @@ void CPlayer::Talk_Npc()
 		//dynamic_cast<CNpc_01*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc))->Talk_Rocate();
 	}
 
-	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk) {
+	/*if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk) {
 		if ((Engine::Get_DIKeyState(DIK_ESCAPE) & 0x80)) {
 			CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk = false;
 		}
+	}*/
+
+	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PortalColl) {
+		if ((Engine::Get_DIKeyState(DIK_T) & 0x80)) {
+			CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_MapMove = true;
+			
+		}
+		//dynamic_cast<CNpc_01*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc))->Talk_Rocate();
 	}
 	return;
 }

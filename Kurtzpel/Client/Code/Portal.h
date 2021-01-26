@@ -31,7 +31,8 @@ public:
 	//_pos : À§Ä¡
 	//_scale : Å©±â(float)
 	//_team : ÆÀ
-	void Set_Collider(_vec3 _pos, float _scale, CSphereCollider::BoneTeam _team);
+	void		Set_Collider(_vec3 _pos, float _scale, CSphereCollider::BoneTeam _team, int _portalMapNumber);
+	int			Get_PortalMapNumber() { return m_PortalMapNumber; }
 	//
 private:
 	HRESULT		Add_Component(void);
@@ -41,6 +42,7 @@ public:
 
 private:
 	virtual void Free(void) override;
+	int			m_PortalMapNumber = 0;
 
 };
 
