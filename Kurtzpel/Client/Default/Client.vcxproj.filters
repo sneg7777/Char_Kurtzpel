@@ -279,6 +279,9 @@
     <ClInclude Include="..\Code\Portal.h">
       <Filter>02. GameObject\01. Stage\22.Portal</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\CameraScene_Manager.h">
+      <Filter>97. Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -421,6 +424,9 @@
     </ClCompile>
     <ClCompile Include="..\Code\Portal.cpp">
       <Filter>02. GameObject\01. Stage\22.Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\CameraScene_Manager.cpp">
+      <Filter>97. Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

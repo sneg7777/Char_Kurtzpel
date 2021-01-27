@@ -31,7 +31,7 @@ HRESULT Client::CHammer::Add_Component(void)
 	m_sComponent.m_pTransformCom->m_vScale = { 0.7f, 0.7f, 0.7f };
 
 	CPlayer::GetInstance()->m_Hammer = this;
-	CPlayer::GetInstance()->m_WeaponEquip = CPlayer::Weapon_Hammer;
+	CPlayer::Set_Weapon_Equip(CPlayer::Weapon_Hammer);
 	return S_OK;
 }
 
@@ -60,6 +60,7 @@ HRESULT Client::CHammer::Ready_Object(void)
 	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(22.5f));
 	m_RocationX = 172.5f;
 	m_RocationZ = 22.5f;
+	Set_Pos();
 	return S_OK;
 }
 Client::_int Client::CHammer::Update_Object(const _float& fTimeDelta)

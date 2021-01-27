@@ -5,6 +5,7 @@
 #include "NpcQuest_Manager.h"
 #include "Stage.h"
 #include "Random_Manager.h"
+#include "CameraScene_Manager.h"
 
 CDynamicCamera::CDynamicCamera(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CCamera(pGraphicDev)	
@@ -182,7 +183,10 @@ void CDynamicCamera::Free(void)
 
 Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 {
-	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk) {
+	if (CCameraScene_Manager::Get_Instance()->Get_CameraScene() != 0) {
+
+	}
+	else if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk) {
 		Move_NpcCamera(fTimeDelta);
 	}
 	else {
@@ -196,8 +200,8 @@ Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 			Mouse_Fix();
 			Mouse_Move();
 		}
+		Shake_CameraMove(fTimeDelta);
 	}
-	Shake_CameraMove(fTimeDelta);
 	_int iExit = Engine::CCamera::Update_Object(fTimeDelta);
 	return iExit;
 }
@@ -267,8 +271,9 @@ void CDynamicCamera::Shake_CameraMove(const _float& fTimeDelta)
 		return;
 
 	m_ShakeTime -= fTimeDelta;
-	m_ShakeX = -0.25f + (CRandom_Manager::Random() % 20) * 0.025f;
-	m_ShakeY = -0.25f + (CRandom_Manager::Random() % 20) * 0.025f;
+	float shakePer = m_ShakeTime / m_InitShakeTime;
+	m_ShakeX = (-0.5f * shakePer) + (CRandom_Manager::Random() % 20) * (0.05f * shakePer);
+	m_ShakeY = (-0.5f * shakePer) + (CRandom_Manager::Random() % 20) * (0.05f * shakePer);
 
 	m_vEye.x += m_ShakeX;
 	m_vEye.y += m_ShakeY;

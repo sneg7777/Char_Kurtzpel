@@ -34,6 +34,7 @@
 #define COLLDOWNPOWER 2.5f
 #define ATTACK_JUMPACCEL 1.2f
 CPlayer* CPlayer::m_pInstance = nullptr;
+CPlayer::Weapon_Equip CPlayer::m_WeaponEquip = CPlayer::Weapon_Equip::Weapon_Hammer;
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit_D(pGraphicDev)
@@ -1782,8 +1783,11 @@ HRESULT Client::CPlayer::Ready_Object(void)
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
 	m_sComponent.m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
-	Set_StateToAnimation(State::State_Idle);
 
+	m_sComponent.m_pMeshCom->Set_AnimationSet(243);
+	m_AniSpeed = 1.f;
+	m_Attack_State = Attack_State::StateA_None;
+	Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
 	m_sStat.m_dwNaviIndex = 0;
 	//m_pNaviMeshCom->Set_NaviIndex(0);
 

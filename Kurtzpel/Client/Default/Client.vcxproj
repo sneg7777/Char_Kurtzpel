@@ -177,6 +177,7 @@
     <ClInclude Include="..\Code\Arrow_SkillF.h" />
     <ClInclude Include="..\Code\Arrow_SkillQ.h" />
     <ClInclude Include="..\Code\BackGround.h" />
+    <ClInclude Include="..\Code\CameraScene_Manager.h" />
     <ClInclude Include="..\Code\DynamicCamera.h" />
     <ClInclude Include="..\Code\Effect.h" />
     <ClInclude Include="..\Code\Equip_Top_01.h" />
@@ -232,6 +233,7 @@
     <ClCompile Include="..\Code\Arrow_SkillF.cpp" />
     <ClCompile Include="..\Code\Arrow_SkillQ.cpp" />
     <ClCompile Include="..\Code\BackGround.cpp" />
+    <ClCompile Include="..\Code\CameraScene_Manager.cpp" />
     <ClCompile Include="..\Code\DynamicCamera.cpp" />
     <ClCompile Include="..\Code\Effect.cpp" />
     <ClCompile Include="..\Code\Equip_Top_01.cpp" />

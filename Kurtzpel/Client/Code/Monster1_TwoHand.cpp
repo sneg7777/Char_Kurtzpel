@@ -214,7 +214,7 @@ void Client::CMonster1_TwoHand::Set_StateToAnimation(State _state, Skill_TH _ski
 	{
 	case Client::CMonster1_TwoHand::State_Respawn:
 		m_sComponent.m_pMeshCom->Set_AnimationSet(63);
-		m_AniSpeed = 1.2f;
+		m_AniSpeed = 1.1f;
 		break;
 	case Client::CMonster1_TwoHand::State_Dead:
 		m_sComponent.m_pMeshCom->Set_AnimationSet(27);

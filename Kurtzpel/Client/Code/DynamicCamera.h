@@ -17,7 +17,8 @@ public:
 						 const _float& fFovY, const _float& fAspect, const _float& fNear,	const _float& fFar );
 
 	virtual _int Update_Object(const _float& fTimeDelta) override;
-	void		Set_ShakeTime(float _time) { m_ShakeTime = _time; }
+	void		Set_ShakeTime(float _time) { m_InitShakeTime = m_ShakeTime = _time; }
+	void		Set_PosToAt(_vec3 _eye, _vec3 _at) { m_vEye = _eye; m_vAt = _at; }
 private:
 	void		Key_Input(const _float& fTimeDelta);
 	void		Mouse_Move(void);
@@ -28,6 +29,7 @@ private:
 	_bool		m_bFix = true;
 	CPlayer*	m_Player = nullptr;
 	_float		m_ShakeTime = 0.f;
+	_float		m_InitShakeTime = 0.f;
 	_float		m_ShakeX = 0.f;
 	_float		m_ShakeY = 0.f;
 public:

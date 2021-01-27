@@ -9,7 +9,8 @@
 #include "Random_Manager.h"
 #include "UI_Manager.h"
 #include "NpcQuest_Manager.h"
-
+#include "Monster1_TwoHand.h"
+#include "CameraScene_Manager.h"
 
 CNpc_01::CNpc_01(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit_D(pGraphicDev)
@@ -214,6 +215,7 @@ void CNpc_01::NpcNextTalk() {
 				questMgr->Get_NpcQuestInfo()->m_AttackCount = 0;
 				questMgr->Get_NpcQuestInfo()->m_TalkEnd = true;
 				questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
+
 			}
 			break;
 		}
@@ -239,11 +241,18 @@ void CNpc_01::NpcNextTalk() {
 		}
 		case 6: {
 			if (talkNumber == 1)
-				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_7dlwpdkv");
+				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_7dlwpenl");
 			else {
 				questMgr->Get_NpcQuestInfo()->m_PlayerTalk = false;
 				questMgr->Get_NpcQuestInfo()->m_TalkEnd = true;
 				questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
+				Engine::CGameObject* pGameObject = CMonster1_TwoHand::Create(m_pGraphicDev);
+				NULL_CHECK_RETURN(pGameObject, );
+				Engine::CManagement::GetInstance()->m_pScene->Get_Layer(Engine::CLayer::Layer_Dynamic)->Add_GameObject(L"M_Monster1_TwoHand", pGameObject);
+				dynamic_cast<CMonster1_TwoHand*>(pGameObject)->Get_sComponent()->m_pTransformCom->Set_Pos(41.7f, 0.f, 47.8f);
+				pGameObject->Engine::CGameObject::Update_Object(0.f);
+				dynamic_cast<CUnit*>(pGameObject)->Get_sComponent()->m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(240.f));
+				CCameraScene_Manager::Get_Instance()->Set_CameraScene(1);
 			}
 			break;
 		}

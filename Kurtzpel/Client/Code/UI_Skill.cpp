@@ -52,7 +52,7 @@ HRESULT Client::CUI_Skill::Ready_Object(void)
 }
 Client::_int Client::CUI_Skill::Update_Object(const _float& fTimeDelta)
 {
-	if (m_Weapon != CPlayer::Weapon_None && m_Weapon != CPlayer::GetInstance()->m_WeaponEquip) {
+	if (m_Weapon != CPlayer::Weapon_None && m_Weapon != CPlayer::GetInstance()->Get_Weapon_Equip()) {
 		return 0;
 	}
 	if (m_UIKind == UIKind::UIK_SkillTab && !CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck::bCheck_WeaponChange]) {

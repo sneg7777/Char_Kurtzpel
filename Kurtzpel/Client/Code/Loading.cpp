@@ -182,7 +182,8 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_4dlehddmf", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/4dlehddmf.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_5dksekrh", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/5dksekrh.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_6rnfmrl", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/6rnfmrl.png"), E_FAIL);
-	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_7dlwpdkv", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/7dlwpdkv.png"), E_FAIL);
+	//FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_7dlwpdkv", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/7dlwpdkv.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_7dlwpenl", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/7dlwpenl.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_8duftlagl", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/8duftlagl.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_9ghkfdmf", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/9ghkfdmf.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_10sorkrkw", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/10sorkrkw.png"), E_FAIL);

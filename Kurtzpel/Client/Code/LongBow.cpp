@@ -31,7 +31,7 @@ HRESULT Client::CLongBow::Add_Component(void)
 	m_sComponent.m_pTransformCom->m_vScale = { 1.f, 1.f, 1.f };
 
 	CPlayer::GetInstance()->m_LongBow = this;
-	CPlayer::GetInstance()->m_WeaponEquip = CPlayer::Weapon_LongBow;
+	CPlayer::Set_Weapon_Equip(CPlayer::Weapon_LongBow);
 	return S_OK;
 }
 
@@ -63,6 +63,7 @@ HRESULT Client::CLongBow::Ready_Object(void)
 	m_RocationX = 204.f;
 	m_RocationY = 211.f;
 	m_RocationZ = 128.f;
+	Set_Pos();
 	return S_OK;
 }
 Client::_int Client::CLongBow::Update_Object(const _float& fTimeDelta)

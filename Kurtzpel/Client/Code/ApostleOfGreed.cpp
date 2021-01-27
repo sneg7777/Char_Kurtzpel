@@ -137,7 +137,7 @@ Client::_int Client::CApostleOfGreed::Update_Object(const _float& fTimeDelta)
 		CNpcQuest_Manager::Get_NpcQuestInfo()->m_DeadApostle++;
 		return 1;
 	}
-	dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(2.f);
+	
 	Calc_Time(fTimeDelta);
 
 	SetUp_OnTerrain();
@@ -457,6 +457,9 @@ void CApostleOfGreed::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMesh
 			}
 			else {
 				Set_BonePartColliderAttack(CSphereCollider::BonePart_BodyWeapon, m_sStat.m_fAttack, false);
+			}
+			if (0.72f < trackPos && trackPos < 0.8f) {
+				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(1.2f);
 			}
 		}
 	}

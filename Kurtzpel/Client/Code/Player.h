@@ -123,7 +123,6 @@ public:
 	//애니메이션 Start Loop End 로 나누어져있는거 순서로 이용할려고
 	AnimationClip				m_AniClip = AnimationClip::Ani_End;
 	//무기
-	Weapon_Equip				m_WeaponEquip;
 	CHammer*					m_Hammer = nullptr;
 	CLongBow*					m_LongBow =  nullptr;
 	float						m_RocateY = 0.f;
@@ -136,6 +135,10 @@ public:
 	float						m_DashGauge = 0.f;
 public:
 	static CPlayer*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
+	static void Set_Weapon_Equip(Weapon_Equip _weapon) { m_WeaponEquip = _weapon; }
+	static Weapon_Equip Get_Weapon_Equip() { return m_WeaponEquip; }
+private:
+	static Weapon_Equip			m_WeaponEquip;
 
 private:
 	virtual void Free(void) override;

@@ -3,6 +3,7 @@
 #include "Logo.h"
 #include "UI_Manager.h"
 #include "Random_Manager.h"
+#include "CameraScene_Manager.h"
 
 CMainApp::CMainApp(void)
 {
@@ -32,7 +33,7 @@ HRESULT CMainApp::Ready_MainApp(void)
 	CRandom_Manager::Get_Instance()->Ready_Random();
 	CUI_Manager::Get_Instance()->Ready_Object(m_pGraphicDev);
 	CNpcQuest_Manager::Get_Instance()->Ready_Object(m_pGraphicDev);
-
+	CCameraScene_Manager::Get_Instance()->Ready_Object(m_pGraphicDev);
 	return S_OK;
 }
 
@@ -135,6 +136,7 @@ void CMainApp::Free(void)
 	CRandom_Manager::Destroy_Instance();
 	CUI_Manager::Destroy_Instance();
 	CNpcQuest_Manager::Destroy_Instance();
+	CCameraScene_Manager::Destroy_Instance();
 
 	Engine::Release_Utility();
 	Engine::Release_Resoures();

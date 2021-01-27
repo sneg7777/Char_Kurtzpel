@@ -161,9 +161,16 @@ HRESULT CStage_2::Ready_GameLogic_Static_Layer(const _tchar* pLayerTag)
 
 	Engine::CGameObject* pGameObject = nullptr;
 
-	pGameObject = CHammer::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CHammer", pGameObject), E_FAIL);
+	if (CPlayer::Get_Weapon_Equip() == CPlayer::Weapon_Equip::Weapon_Hammer) {
+		pGameObject = CHammer::Create(m_pGraphicDev);
+		NULL_CHECK_RETURN(pGameObject, E_FAIL);
+		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CHammer", pGameObject), E_FAIL);
+	}
+	else {
+		pGameObject = CLongBow::Create(m_pGraphicDev);
+		NULL_CHECK_RETURN(pGameObject, E_FAIL);
+		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CLongBow", pGameObject), E_FAIL);
+	}
 
 	CPortal* pPortal;
 	pGameObject = pPortal = CPortal::Create(m_pGraphicDev);
