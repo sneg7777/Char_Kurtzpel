@@ -106,8 +106,6 @@ _int CSphereCollider::Update_Object(const _float& fTimeDelta)
 
 
 		//m_bColl = Collision_ToObject(L"GameLogic", L"Player");
-
-		m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	}
 	else {
 		Engine::CGameObject::Update_Object(fTimeDelta);
@@ -115,17 +113,20 @@ _int CSphereCollider::Update_Object(const _float& fTimeDelta)
 		dynamic_cast<CUnit*>(m_pStaticThis)->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
 		m_pTransformCom->m_vInfo[Engine::INFO_POS] = vPos;
 		
-		m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 	}
+
+
+	if (!CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck_RenderSphere])
+		return;
+	if (m_BonePart != BonePart::BonePart_NpcTalk && m_BonePart != BonePart::BonePart_Portal && m_BonePart != BonePart::BonePart_CollBody && !m_WeaponAttack)
+		return;
+
+	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
 	return 0;
 }
 void CSphereCollider::Render_Object(void)
 {
-	if (!CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck_RenderSphere])
-		return;
-	if (m_BonePart != BonePart::BonePart_NpcTalk && m_BonePart != BonePart::BonePart_Portal && m_BonePart != BonePart::BonePart_CollBody && !m_WeaponAttack)
-		return;
 
 
 	m_pTransformCom->Set_Transform(m_pGraphicDev);

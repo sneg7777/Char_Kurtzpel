@@ -37,16 +37,16 @@ public:
 	void Render_Object(void);
 	void Update_CameraScene(const _float& fTimeDelta);
 	int	 Get_CameraScene() { return m_CameraSceneNumber; }
-	void Set_CameraScene(float _number) { m_CameraSceneNumber = _number; 
-	if (_number == 1)
-		m_CameraSceneTime = 5.f;
-	}
+	void Set_CameraScene(float _number);
+
 private:
 	static CCameraScene_Manager*			m_pInstance;
 	LPDIRECT3DDEVICE9						m_pGraphicDev;
 	int										m_CameraSceneNumber = 0;
 	float									m_CameraSceneTime = 0.f;
 	CDynamicCamera*							m_Camera;
+	_vec3									m_CameraPosInit = { 0.f, 0.f, 0.f };
+	_vec3									m_CameraPosAdd = { 0.f, 0.f, 0.f };
 
 };
 

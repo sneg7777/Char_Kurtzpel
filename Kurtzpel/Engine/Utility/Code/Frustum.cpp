@@ -22,7 +22,7 @@ CFrustum::CFrustum(const CFrustum & rhs)
 
 Engine::CFrustum::~CFrustum(void)
 {
-
+	
 }
 
 HRESULT Engine::CFrustum::Ready_Frustum(void)

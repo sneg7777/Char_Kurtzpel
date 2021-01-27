@@ -15,6 +15,7 @@
 #include "Phoenix.h"
 #include "Npc_01.h"
 #include "Portal.h"
+#include "CameraScene_Manager.h"
 
 #define COOLTIME_GH_Q 5.f
 #define COOLTIME_GH_E 5.f
@@ -33,6 +34,7 @@
 #define RollGauge 35.f
 #define COLLDOWNPOWER 2.5f
 #define ATTACK_JUMPACCEL 1.2f
+#define ATTACK_INIT 600.f
 CPlayer* CPlayer::m_pInstance = nullptr;
 CPlayer::Weapon_Equip CPlayer::m_WeaponEquip = CPlayer::Weapon_Equip::Weapon_Hammer;
 
@@ -56,7 +58,7 @@ CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
 	m_sStat.m_fMaxHp = 1000.f;
 	m_sStat.m_fHp = m_sStat.m_fMaxHp;
 	m_sStat.m_fDelayHp = m_sStat.m_fMaxHp;
-	m_sStat.m_fAttack = 600.f;
+	m_sStat.m_fAttack = ATTACK_INIT;
 	m_sStat.m_fMaxMp = 300.f;
 	m_sStat.m_fMp = m_sStat.m_fMaxMp;
 	m_CameraDist = 400.f;
@@ -110,9 +112,10 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 		switch (_state)
 		{
 		case Client::CPlayer::State_Idle: {
+			m_sStat.m_fAttack = ATTACK_INIT;
 			m_sComponent.m_pMeshCom->Set_AnimationSet(243);
 			m_AniSpeed = 1.f;
-			
+			m_Attack_State = Attack_State::StateA_None;
 			m_Hammer->Set_Pos();
 			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = false;
 			break;
@@ -189,6 +192,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			switch (m_Attack_State)
 			{
 			case Client::CPlayer::StateA_SkillQ:
+				m_sStat.m_fAttack = ATTACK_INIT * 5.f;
 				m_sComponent.m_pMeshCom->Set_AnimationSet(123);
 				m_AniSpeed = 1.2f;
 				m_AniClip = AnimationClip::Ani_1;
@@ -197,6 +201,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				questInfo->m_SkillQCount++;
 				break;
 			case Client::CPlayer::StateA_SkillE: {
+				m_sStat.m_fAttack = ATTACK_INIT * 3.5f;
 				m_sComponent.m_pMeshCom->Set_AnimationSet(134);
 				m_AniSpeed = 1.2f;
 				m_sStat.m_fMp -= MP_GH_E;
@@ -204,6 +209,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				break;
 			}
 			case Client::CPlayer::StateA_SkillF: {
+				m_sStat.m_fAttack = ATTACK_INIT * 1.5f;
 				m_sComponent.m_pMeshCom->Set_AnimationSet(130);
 				m_AniSpeed = 1.3f;
 				m_bCheck[bCheck::bCheck_Skill_F1] = false;
@@ -219,6 +225,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
 				m_TimeCheck[TimeCheck::TimeCheck_Invin] = 10.f;
+				CCameraScene_Manager::Get_Instance()->Set_CameraScene(2);
 				break;
 			}
 			default:
