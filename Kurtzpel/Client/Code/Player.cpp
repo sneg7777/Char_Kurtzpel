@@ -1026,7 +1026,7 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 	}
 	else if (m_bCheck[bCheck_LB_SkillE] && (Engine::Get_DIKeyState(DIK_E) & 0x80) && m_TimeCheck[TimeCheck_Cool_E] <= COOLTIME_LB_E - CancelTime) {
 		m_bCheck[bCheck_LB_SkillE] = false;
-		m_sStat.m_fMp += MP_LB_E * 0.5f;
+		//m_sStat.m_fMp += MP_LB_E * 0.5f;
 		if (m_sStat.m_fMp > m_sStat.m_fMaxMp)
 			m_sStat.m_fMp = m_sStat.m_fMaxMp;
 	}
@@ -2421,7 +2421,8 @@ void CPlayer::Create_Phoenix_SkillZ(_vec3 _vPos, _vec3 _vDir)
 	Engine::CGameObject* pGameObject = pUnit = CPhoenix::Create(m_pGraphicDev);
 	pUnit->Get_sComponent()->m_pTransformCom->m_vInfo[Engine::INFO_POS] = _vPos + _vDir * 3.2f;
 	pUnit->Get_sComponent()->m_pTransformCom->m_vInfo[Engine::INFO_POS].y += 3.f;
-	_vDir.y = -0.4f + m_LookAtY * 0.25f;
+	//_vDir.y = -0.4f + m_LookAtY * 0.25f;
+	_vDir.y = -0.4f + 2.5f * 0.25f;
 
 	D3DXVec3Normalize(&_vDir, &_vDir);
 	pUnit->Get_sStat()->m_vDir = _vDir;
@@ -2437,6 +2438,10 @@ void CPlayer::Create_Phoenix_SkillZ(_vec3 _vPos, _vec3 _vDir)
 
 void CPlayer::Move_AccelSpeed(_vec3 vPos, _vec3 vDir, float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom)
 {
+	if (m_Attack_State == StateA_SkillZ) {
+		m_AccelSpeed = 0.f;
+		return;
+	}
 	if (m_AccelSpeed <= 0.f)
 		return;
 

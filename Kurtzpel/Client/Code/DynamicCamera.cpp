@@ -183,6 +183,18 @@ void CDynamicCamera::Free(void)
 
 Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 {
+	CPlayer* pPlayer = CPlayer::GetInstance();
+	if (pPlayer->Get_Weapon_Equip() == CPlayer::Weapon_Equip::Weapon_LongBow && pPlayer->m_Attack_State == CPlayer::Attack_State::StateA_SkillZ) {
+		LB_SkillZScene(fTimeDelta);
+		if (m_bFix)
+			Mouse_Fix();
+		
+		_int iExit = Engine::CCamera::Update_Object(fTimeDelta);
+		return iExit;
+	}
+	else
+		m_vUp = { 0.f, 1.f, 0.f };
+
 	if (CCameraScene_Manager::Get_Instance()->Get_CameraScene() != 0) {
 
 	}
@@ -193,7 +205,7 @@ Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 		Key_Input(fTimeDelta);
 		Move_NpcCamera_No(fTimeDelta);
 
-	
+
 
 		if (true == m_bFix)
 		{
@@ -202,6 +214,7 @@ Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 		}
 		Shake_CameraMove(fTimeDelta);
 	}
+
 	_int iExit = Engine::CCamera::Update_Object(fTimeDelta);
 	return iExit;
 }
@@ -211,6 +224,7 @@ void CDynamicCamera::Move_NpcCamera(const _float& fTimeDelta)
 	CUnit_D* pNpc = dynamic_cast<CUnit_D*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc));
 	if (pNpc == nullptr)
 		return;
+
 	_vec3 vPos, vDir, vMoveDir;
 	Engine::CTransform* pNpcTrans = pNpc->Get_sComponent()->m_pTransformCom;
 	pNpcTrans->Get_Info(Engine::INFO_POS, &vPos);
@@ -247,7 +261,7 @@ void CDynamicCamera::Move_NpcCamera_No(const _float& fTimeDelta)
 
 		vEyeDir = vEyePos - m_vEye;
 		float dist = sqrtf(vEyeDir.x * vEyeDir.x + vEyeDir.y * vEyeDir.y + vEyeDir.z * vEyeDir.z);
-		if (dist < 0.3f) {
+		if (dist < 0.1f) {
 			CNpcQuest_Manager::Get_NpcQuestInfo()->m_TalkEnd = false;
 		}
 		else {
@@ -279,4 +293,19 @@ void CDynamicCamera::Shake_CameraMove(const _float& fTimeDelta)
 	m_vEye.y += m_ShakeY;
 
 	return;
+}
+
+void CDynamicCamera::LB_SkillZScene(const _float& fTimeDelta)
+{
+	CPlayer* pPlayer = CPlayer::GetInstance();
+	_vec3 vPlayerDir, vPlayerPos;
+	pPlayer->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vPlayerDir);
+	pPlayer->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPlayerPos);
+	//m_vUp = { vPlayerDir.x + vPlayerDir.z , 0.f , -vPlayerDir.z + vPlayerDir.x };
+	m_vUp = { vPlayerDir.x - vPlayerDir.z , 0.f , vPlayerDir.z + vPlayerDir.x };
+	D3DXVec3Normalize(&m_vUp, &m_vUp);
+	m_vUp.y = 4.f;
+	D3DXVec3Normalize(&m_vUp, &m_vUp);
+	vPlayerPos.y += 2.f;
+	m_vAt = vPlayerPos;
 }

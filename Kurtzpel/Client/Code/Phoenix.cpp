@@ -10,8 +10,8 @@
 CPhoenix::CPhoenix(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit_D(pGraphicDev)
 {
-	m_LifeTime = 10.f;
-	m_sStat.m_fInitSpeed = 25.f;
+	m_LifeTime = 100.f;
+	m_sStat.m_fInitSpeed = 2.f;
 	m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 }
 
@@ -88,7 +88,10 @@ HRESULT Client::CPhoenix::Ready_Object(void)
 
 	m_sComponent.m_pTransformCom->Set_Scale(0.018f, 0.018f, 0.018f);
 	m_sComponent.m_pMeshCom->Set_AnimationSet(0);
+	//m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(265.f), true);
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(281.f), true);
 
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(210.f), true);
 	return S_OK;
 }
 
@@ -116,8 +119,21 @@ Client::_int Client::CPhoenix::Update_Object(const _float& fTimeDelta)
 	else
 		m_sComponent.m_pTransformCom->Chase_Target(&vPosAfter, m_sStat.m_fSpeed, fTimeDelta);
 
-	//m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-30.f), true);
-	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(265.f), true);
+	//m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-30.f), true);
+	if (Engine::Get_DIKeyState(DIK_1) & 0x80) {
+		m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(1.f));
+		m_Test++;
+		if (m_Test >= 360)
+			m_Test -= 360;
+		//261
+	}
+	if (Engine::Get_DIKeyState(DIK_2) & 0x80) {
+		m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(1.f));
+		m_Test2++;
+		if (m_Test2 >= 360)
+			m_Test2 -= 360;
+		//152
+	}
 
 	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
 

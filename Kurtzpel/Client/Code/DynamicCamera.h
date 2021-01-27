@@ -20,6 +20,7 @@ public:
 	void		Set_ShakeTime(float _time) { m_InitShakeTime = m_ShakeTime = _time; }
 	void		Set_PosToAt(_vec3 _eye, _vec3 _at) { m_vEye = _eye; m_vAt = _at; }
 	_vec3*		Get_pPos() { return &m_vEye; }
+	_vec3*		Get_pAt() { return &m_vAt; }
 private:
 	void		Key_Input(const _float& fTimeDelta);
 	void		Mouse_Move(void);
@@ -48,6 +49,7 @@ private:
 	void Move_NpcCamera(const _float & fTimeDelta);
 	void Move_NpcCamera_No(const _float & fTimeDelta);
 	void Shake_CameraMove(const _float & fTimeDelta);
+	void LB_SkillZScene(const _float& fTimeDelta);
 	virtual void Free(void) override;
 
 

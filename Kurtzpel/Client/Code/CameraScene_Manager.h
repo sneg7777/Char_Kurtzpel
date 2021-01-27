@@ -36,6 +36,8 @@ public:
 	_int Update_Object(const _float& fTimeDelta);
 	void Render_Object(void);
 	void Update_CameraScene(const _float& fTimeDelta);
+	void Update_CameraScene_QuestNumber_7(const _float& fTimeDelta);
+	void Update_CameraScene_SkillZ_GH(const _float& fTimeDelta);
 	int	 Get_CameraScene() { return m_CameraSceneNumber; }
 	void Set_CameraScene(float _number);
 
@@ -46,7 +48,7 @@ private:
 	float									m_CameraSceneTime = 0.f;
 	CDynamicCamera*							m_Camera;
 	_vec3									m_CameraPosInit = { 0.f, 0.f, 0.f };
-	_vec3									m_CameraPosAdd = { 0.f, 0.f, 0.f };
+	_vec3									m_CameraBeforeNomal = { 0.f, 0.f, 0.f };
 
 };
 

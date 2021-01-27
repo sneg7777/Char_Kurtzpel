@@ -5,13 +5,14 @@
 #include "Portal.h"
 #include "Stage_1.h"
 #include "Stage_2.h"
+#include "NpcQuest_Manager.h"
 
 #define QuestNuber_7 1
 #define PlayerSkillZ_GH 2
 #define PlayerSkillZ_LB 3
 #define QuestNumber_7_Time 5.f
-#define PlayerSkillZ_GH_Time 3.f
-#define PlayerSkillZ_GH_TimeHalf 1.5f
+#define PlayerSkillZ_GH_Time 2.f
+#define PlayerSkillZ_GH_TimeHalf 1.f
 CCameraScene_Manager* CCameraScene_Manager::m_pInstance = nullptr;
 
 void CCameraScene_Manager::Destroy_Instance()
@@ -61,56 +62,33 @@ void Client::CCameraScene_Manager::Update_CameraScene(const _float& fTimeDelta)
 {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	if (m_CameraSceneNumber == QuestNuber_7) {
-		Engine::CGameObject* pGameObject = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Monster);
-		CMonster* pMonster = dynamic_cast<CMonster*>(pGameObject);
-		Engine::CTransform* pTrans = pMonster->Get_sComponent()->m_pTransformCom;
-		_vec3 vPos, vDir, vAfterPos, vAfterAt;
-		pTrans->Get_Info(Engine::INFO_POS, &vPos);
-		pTrans->Get_Info(Engine::INFO_LOOK, &vDir);
-		vAfterPos = vPos - vDir * 700.f;
-		vAfterPos.y += 1.5f;
-		_matrix sphereMat = *pMonster->Get_BonePartCollider(CSphereCollider::BonePart::BonePart_CollBody)->m_pTransformCom->Get_WorldMatrix();
-		vAfterAt = { sphereMat._41, sphereMat._42, sphereMat._43 };
-		m_Camera->Set_PosToAt(vAfterPos, vAfterAt);
+		Update_CameraScene_QuestNumber_7(fTimeDelta);
 	}
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	else if (m_CameraSceneNumber == PlayerSkillZ_GH) {
-		_vec3* pCameraPos = m_Camera->Get_pPos();
-		_vec3 vPos, vDir, vAfterDir;
-		Engine::CTransform* pTrans = CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom;
-		pTrans->Get_Info(Engine::INFO_POS, &vPos);
-		pTrans->Get_Info(Engine::INFO_LOOK, &vDir);
-		vPos.y = 2.5f;
-		//*pCameraPos = vPos + m_CameraPosAdd;
-		//m_CameraPosInit.x * 1.f * (fTimeDelta / PlayerSkillZ_GH_TimeHalf);
-		m_CameraPosAdd.x -= m_CameraPosInit.x * (fTimeDelta / PlayerSkillZ_GH_TimeHalf);
-		if (m_CameraSceneTime > PlayerSkillZ_GH_TimeHalf)
-			m_CameraPosAdd.z -= m_CameraPosInit.z * (fTimeDelta / PlayerSkillZ_GH_TimeHalf);
-		else
-			m_CameraPosAdd.z += m_CameraPosInit.z * (fTimeDelta / PlayerSkillZ_GH_TimeHalf);
-		*pCameraPos = vPos + m_CameraPosAdd;
-		/*_vec3* pCameraPos = m_Camera->Get_pPos();
-		pCameraPos->x -= m_CameraPosInit.x * 1.f * (fTimeDelta / PlayerSkillZ_GH_TimeHalf);
-		if (m_CameraSceneTime > PlayerSkillZ_GH_TimeHalf)
-			pCameraPos->z += m_CameraPosInit.z * 1.f * (fTimeDelta / PlayerSkillZ_GH_TimeHalf);
-		else
-			pCameraPos->z -= m_CameraPosInit.z * 1.f * (fTimeDelta / PlayerSkillZ_GH_TimeHalf);*/
+		Update_CameraScene_SkillZ_GH(fTimeDelta);
 	}
+	
+
 
 	m_CameraSceneTime -= fTimeDelta;
 	if (m_CameraSceneTime < 0.f) {
 		_vec3 vPos, vDir, vAfterPos, vAfterAt;
+		if (m_CameraSceneNumber == QuestNuber_7) {
+			CPlayer* player = CPlayer::GetInstance();
+			player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+			player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
+			vAfterPos = vPos - (vDir * player->m_CameraDist);
+			vAfterPos.y += 3.5f - player->m_LookAtY * 0.7f;
+			vAfterAt = vPos + (vDir * 200.f);
+			vAfterAt.y += player->m_LookAtY;
+			m_Camera->Set_PosToAt(vAfterPos, vAfterAt);
+		}
+		else if (m_CameraSceneNumber == PlayerSkillZ_GH) {
+			CNpcQuest_Manager::Get_NpcQuestInfo()->m_TalkEnd = true;
+		}
 		m_CameraSceneTime = 0.f;
 		m_CameraSceneNumber = 0;
-		CPlayer* player = CPlayer::GetInstance();
-		player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-		player->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &vDir);
-		vAfterPos = vPos - (vDir * player->m_CameraDist);
-		vAfterPos.y += 3.5f - player->m_LookAtY * 0.7f;
-		vAfterAt = vPos + (vDir * 200.f);
-		vAfterAt.y += player->m_LookAtY;
-		m_Camera->Set_PosToAt(vAfterPos, vAfterAt);
 	}
 }
 
@@ -128,12 +106,12 @@ void CCameraScene_Manager::Set_CameraScene(float _number)
 			Engine::CTransform* pTrans = CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom;
 			pTrans->Get_Info(Engine::INFO_POS, &vPos);
 			pTrans->Get_Info(Engine::INFO_LOOK, &vDir);
-			m_CameraPosAdd = m_CameraPosInit = vDir * 300.f;
+			m_CameraPosInit = vDir * 250.f;
 			vAfterPos = vPos + m_CameraPosInit;
-			vAfterPos.y = 2.f;
+			vPos.y += 1.f;
+			vAfterPos.y += 2.5f;
+			m_CameraBeforeNomal = vAfterPos;
 			m_Camera->Set_PosToAt(vAfterPos, vPos);
-			
-			//m_CameraPosAdd = vAfterPos;
 			m_CameraSceneTime = PlayerSkillZ_GH_Time;
 			break;
 		}
@@ -141,5 +119,48 @@ void CCameraScene_Manager::Set_CameraScene(float _number)
 			break;
 	}
 
+
+}
+
+void Client::CCameraScene_Manager::Update_CameraScene_QuestNumber_7(const _float& fTimeDelta)
+{
+	Engine::CGameObject* pGameObject = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Monster);
+	CMonster* pMonster = dynamic_cast<CMonster*>(pGameObject);
+	Engine::CTransform* pTrans = pMonster->Get_sComponent()->m_pTransformCom;
+	_vec3 vPos, vDir, vAfterPos, vAfterAt;
+	pTrans->Get_Info(Engine::INFO_POS, &vPos);
+	pTrans->Get_Info(Engine::INFO_LOOK, &vDir);
+	vAfterPos = vPos - vDir * 700.f;
+	vAfterPos.y += 1.5f;
+	_matrix sphereMat = *pMonster->Get_BonePartCollider(CSphereCollider::BonePart::BonePart_CollBody)->m_pTransformCom->Get_WorldMatrix();
+	vAfterAt = { sphereMat._41, sphereMat._42, sphereMat._43 };
+	m_Camera->Set_PosToAt(vAfterPos, vAfterAt);
+}
+
+void Client::CCameraScene_Manager::Update_CameraScene_SkillZ_GH(const _float& fTimeDelta)
+{
+	_vec3* pCameraPos = m_Camera->Get_pPos();
+	_vec3 pPlayerPos;
+	CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &pPlayerPos);
+	if (m_CameraSceneTime > PlayerSkillZ_GH_TimeHalf) {
+		_vec3 vTemp = _vec3{ m_CameraPosInit.z , m_CameraPosInit.y, -m_CameraPosInit.x };
+		_vec3 vDistance = vTemp - m_CameraPosInit;
+		m_CameraBeforeNomal += vDistance * (fTimeDelta / PlayerSkillZ_GH_TimeHalf);
+		_vec3 vAfterPos = m_CameraBeforeNomal - pPlayerPos;
+		D3DXVec3Normalize(&vAfterPos, &vAfterPos);
+		*pCameraPos = pPlayerPos + vAfterPos * 3.5f;
+		pCameraPos->y = 2.5f;
+		if (m_CameraSceneTime - fTimeDelta < PlayerSkillZ_GH_TimeHalf)
+			m_CameraPosInit = _vec3{ m_CameraPosInit.z , m_CameraPosInit.y, -m_CameraPosInit.x };
+	}
+	else {
+		_vec3 vTemp = _vec3{ m_CameraPosInit.z , m_CameraPosInit.y, -m_CameraPosInit.x };
+		_vec3 vDistance = vTemp - m_CameraPosInit;
+		m_CameraBeforeNomal += vDistance * (fTimeDelta / PlayerSkillZ_GH_TimeHalf);
+		_vec3 vAfterPos = m_CameraBeforeNomal - pPlayerPos;
+		D3DXVec3Normalize(&vAfterPos, &vAfterPos);
+		*pCameraPos = pPlayerPos + vAfterPos * 3.5f;
+		pCameraPos->y = 2.5f;
+	}
 
 }

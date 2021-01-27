@@ -33,7 +33,8 @@ public:
 
 	float m_Attack = 0.f;
 	float m_IntervalTime = 0.f;
-
+	int		m_Test = 281.f;
+	int		m_Test2 = 152.f;
 private:
 	virtual void Free(void) override;
 

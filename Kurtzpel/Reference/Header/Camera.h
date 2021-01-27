@@ -16,6 +16,7 @@ public:
 	virtual _int			Update_Object(const _float& fTimeDelta);
 	_vec3* Get_pPos()		{ return &m_vEye; }
 	_vec3* Get_pAt()		{ return &m_vAt; }
+	_vec3* Get_pUp()		{ return &m_vUp; }
 protected:
 	_matrix			m_matView, m_matProj;
 	_vec3			m_vEye, m_vAt, m_vUp;
