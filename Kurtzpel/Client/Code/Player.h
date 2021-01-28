@@ -53,7 +53,7 @@ public:
 		bCheck_DBKeyW, bCheck_DBKeyA, bCheck_DBKeyS, bCheck_DBKeyD,
 		bCheck_KeyW, bCheck_KeyA, bCheck_KeyS, bCheck_KeyD, bCheck_KeyF2, bCheck_RenderSphere,
 		bCheck_MouseL, bCheck_MouseR, bCheck_MouseL_Already, bCheck_MouseR_Already,
-		bCheck_Skill_F1, bCheck_Skill_F2, bCheck_LB_SkillE, bCheck_LB_Phoenix_SkillZ,
+		bCheck_Skill_F1, bCheck_Skill_F2, bCheck_Skill_F3, bCheck_LB_SkillE, bCheck_LB_Phoenix_SkillZ,
 		bCheck_DamagedUp, bCheck_JumpToDamagedUp/*약한충격에도 점프상태에서 다운이 되고 그대로 착지후에도 호완성을 위해*/,
 		bCheck_WeaponChange,
 		bCheck_End
@@ -82,7 +82,8 @@ public:
 
 public:
 	void		Add_LookAtY(float lookat);
-
+	void		Add_AngleY(_float _add) { m_AngleY += _add; if (m_AngleY > 360.f) { m_AngleY -= 360.f; } if (m_AngleY < 0.f) { m_AngleY += 360.f; }}
+	_float		Get_AngleY() { return m_AngleY; }
 private:
 	HRESULT		Add_Component(void);
 	void		Set_StateToAnimation(State _state, _vec3 _vPos = { 0.f, 0.f, 0.f }, _vec3 _vDir = { 0.f, 0.f, 0.f }, float fTimeDelta = 0.f);
@@ -107,11 +108,12 @@ private:
 	void		Move_AccelSpeed(_vec3 vPos, _vec3 vDir, float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom);
 
 	void		Talk_NpcToPortal();
-
 private:
 	//점프
 	_float						m_fJumpPower = 0.12f;
 	_float						m_fJumpAccel = 0.f;
+	//Y각도
+	_float						m_AngleY = 0.f;
 public:
 	_float						m_LookAtY = 2.5f;
 	_float						m_CameraDist = 320.f;
@@ -125,7 +127,6 @@ public:
 	//무기
 	CHammer*					m_Hammer = nullptr;
 	CLongBow*					m_LongBow =  nullptr;
-	float						m_RocateY = 0.f;
 	_vec3						m_LB_SkillE_Pos = { 0.f, 0.f, 0.f };
 	//_vec3						m_SkillPosSave = { 0.f, 0.f, 0.f };
 	int							m_LB_Arrow_Count = 0;

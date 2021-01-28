@@ -13,10 +13,11 @@
 #define QuestNumber_7_Time 5.f
 #define PlayerSkillZ_GH_Time 2.f
 #define PlayerSkillZ_GH_TimeHalf 1.f
-#define PlayerSkillZ_LB_Time 3.f
-#define PlayerSkillZ_LB_Time_1 2.f
-#define PlayerSkillZ_LB_Time_2 1.5f
-#define PlayerSkillZ_LB_Time_3 1.f
+#define PlayerSkillZ_LB_Time 2.8f
+#define PlayerSkillZ_LB_Time_1 1.8f
+#define PlayerSkillZ_LB_Time_2 1.2f
+#define PlayerSkillZ_LB_Time_3 0.6f
+#define PlayerSkillZ_LB_Time_4 0.2f
 CCameraScene_Manager* CCameraScene_Manager::m_pInstance = nullptr;
 
 void CCameraScene_Manager::Destroy_Instance()
@@ -133,7 +134,7 @@ void CCameraScene_Manager::Set_CameraScene(float _number)
 			vAfterPos.y += 2.5f;
 			m_CameraBeforeNomal = vAfterPos;
 			m_Camera->Set_PosToAt(vAfterPos, vPos);
-			m_CameraSceneTime = PlayerSkillZ_GH_Time;
+			m_CameraSceneTime = PlayerSkillZ_LB_Time;
 			break;
 		}
 		default:
@@ -200,13 +201,15 @@ void Client::CCameraScene_Manager::Update_CameraScene_SkillZ_LB(const _float& fT
 		_vec3 vAfterPos = m_CameraBeforeNomal - playerPos;
 		D3DXVec3Normalize(&vAfterPos, &vAfterPos);
 		*pCameraPos = playerPos + vAfterPos * 3.5f;
-		pCameraPos->y = 2.5f;
+		pCameraPos->y = 3.5f;
 		if (m_CameraSceneTime - fTimeDelta < PlayerSkillZ_LB_Time_1) {
-			playerDir.y = 0.5f;
+			playerDir.y = 0.005f;
 			D3DXVec3Normalize(&playerDir, &playerDir);
-			*pCameraPos = playerPos + playerDir * 10.f;
+			*pCameraPos = playerPos + playerDir * 0.2f;
+			pCameraPos->y += 0.5f;
 			m_CameraBeforeNomal = m_CameraPosInit = *pCameraPos;
-			m_CameraPosInit.y -= 0.6f;
+			m_CameraPosInit += playerDir * 2.5f;
+			m_CameraPosInit.y -= 0.7f;
 			m_CameraMoveDir = playerDir;
 			//m_CameraPosInit = _vec3{ m_CameraPosInit.z , m_CameraPosInit.y, -m_CameraPosInit.x };
 		}
@@ -214,13 +217,14 @@ void Client::CCameraScene_Manager::Update_CameraScene_SkillZ_LB(const _float& fT
 	else if (m_CameraSceneTime > PlayerSkillZ_LB_Time_2) {
 		_vec3 vMoveDir;
 		vMoveDir = m_CameraPosInit - m_CameraBeforeNomal;
+		*pCameraPos += vMoveDir * fTimeDelta / (PlayerSkillZ_LB_Time_2 - PlayerSkillZ_LB_Time_3);
 		//TODO
 	}
 	else if (m_CameraSceneTime > PlayerSkillZ_LB_Time_3) {
 
 	}
-	else {
-		*pCameraPos += m_CameraMoveDir * 10.f * fTimeDelta;
+	else if (m_CameraSceneTime > PlayerSkillZ_LB_Time_4) {
+		*pCameraPos += m_CameraMoveDir * 25.f * fTimeDelta;
 	}
 
 }

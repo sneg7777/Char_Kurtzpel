@@ -30,6 +30,7 @@ HRESULT CStage_2::Ready_Scene(void)
 {
 	FAILED_CHECK_RETURN(Ready_Environment_Layer(L"Environment"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_GameLogic_Dynamic_Layer(L"GameLogic"), E_FAIL);
+	FAILED_CHECK_RETURN(Ready_GameLogic_DynamicNoColl_Layer(L"GameLogicNoColl"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_GameLogic_Static_Layer(L"GameLogic_Static"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_GameLogic_StaticNoColl_Layer(L"GameLogic_StaticNoColl"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_GameLogic_Decoration_Layer(L"GameLogic_Decoration"), E_FAIL);
@@ -149,6 +150,19 @@ HRESULT CStage_2::Ready_GameLogic_Dynamic_Layer(const _tchar * pLayerTag)
 	//}
 
 	pLayer->m_LayerName = Engine::CLayer::LayerName::Layer_Dynamic;
+	m_mapLayer.emplace(pLayerTag, pLayer);
+
+	return S_OK;
+}
+
+HRESULT CStage_2::Ready_GameLogic_DynamicNoColl_Layer(const _tchar* pLayerTag)
+{
+	Engine::CLayer* pLayer = Engine::CLayer::Create();
+	NULL_CHECK_RETURN(pLayer, E_FAIL);
+
+	Engine::CGameObject* pGameObject = nullptr;
+
+	pLayer->m_LayerName = Engine::CLayer::LayerName::Layer_DynamicNoColl;
 	m_mapLayer.emplace(pLayerTag, pLayer);
 
 	return S_OK;

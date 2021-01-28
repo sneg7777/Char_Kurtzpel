@@ -181,6 +181,7 @@
     <ClInclude Include="..\Code\DynamicCamera.h" />
     <ClInclude Include="..\Code\Effect.h" />
     <ClInclude Include="..\Code\Equip_Top_01.h" />
+    <ClInclude Include="..\Code\GH_RockIn.h" />
     <ClInclude Include="..\Code\Hammer.h" />
     <ClInclude Include="..\Code\Loading.h" />
     <ClInclude Include="..\Code\Logo.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="..\Code\MainApp.h" />
     <ClInclude Include="..\Code\Monster.h" />
     <ClInclude Include="..\Code\Monster1_TwoHand.h" />
+    <ClInclude Include="..\Code\Monster2_CrossBow.h" />
     <ClInclude Include="..\Code\MonsterTemp.h" />
     <ClInclude Include="..\Code\NaviTerrain.h" />
     <ClInclude Include="..\Code\NpcQuest_Manager.h" />
@@ -237,6 +239,7 @@
     <ClCompile Include="..\Code\DynamicCamera.cpp" />
     <ClCompile Include="..\Code\Effect.cpp" />
     <ClCompile Include="..\Code\Equip_Top_01.cpp" />
+    <ClCompile Include="..\Code\GH_RockIn.cpp" />
     <ClCompile Include="..\Code\Hammer.cpp" />
     <ClCompile Include="..\Code\Loading.cpp" />
     <ClCompile Include="..\Code\Logo.cpp" />
@@ -244,6 +247,7 @@
     <ClCompile Include="..\Code\MainApp.cpp" />
     <ClCompile Include="..\Code\Monster.cpp" />
     <ClCompile Include="..\Code\Monster1_TwoHand.cpp" />
+    <ClCompile Include="..\Code\Monster2_CrossBow.cpp" />
     <ClCompile Include="..\Code\MonsterTemp.cpp" />
     <ClCompile Include="..\Code\NaviTerrain.cpp" />
     <ClCompile Include="..\Code\NpcQuest_Manager.cpp" />

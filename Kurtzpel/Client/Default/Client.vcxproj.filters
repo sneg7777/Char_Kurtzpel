@@ -118,6 +118,9 @@
     <Filter Include="02. GameObject\01. Stage\22.Portal">
       <UniqueIdentifier>{16f2b38f-eb8d-4932-b2eb-8ec0ecc20532}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Stage\20. Monster\03. Monster2_CrossBow">
+      <UniqueIdentifier>{6a61d0c3-9546-42f4-8d2f-4d4efd30dfa4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -282,6 +285,12 @@
     <ClInclude Include="..\Code\CameraScene_Manager.h">
       <Filter>97. Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\GH_RockIn.h">
+      <Filter>02. GameObject\01. Stage\10.Equip\Hammer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Monster2_CrossBow.h">
+      <Filter>02. GameObject\01. Stage\20. Monster\03. Monster2_CrossBow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -427,6 +436,12 @@
     </ClCompile>
     <ClCompile Include="..\Code\CameraScene_Manager.cpp">
       <Filter>97. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\GH_RockIn.cpp">
+      <Filter>02. GameObject\01. Stage\10.Equip\Hammer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Monster2_CrossBow.cpp">
+      <Filter>02. GameObject\01. Stage\20. Monster\03. Monster2_CrossBow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

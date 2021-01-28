@@ -64,12 +64,7 @@ public:
 private:
 	virtual void Free(void) override;
 
-	
-
-	//Char
-private:
-	bool m_AniEnd = true;
 };
 
 END
-#endif // Player_h__
+#endif

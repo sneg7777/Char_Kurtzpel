@@ -16,6 +16,7 @@
 #include "Npc_01.h"
 #include "Portal.h"
 #include "CameraScene_Manager.h"
+#include "GH_RockIn.h"
 
 #define COOLTIME_GH_Q 5.f
 #define COOLTIME_GH_E 5.f
@@ -214,6 +215,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_AniSpeed = 1.3f;
 				m_bCheck[bCheck::bCheck_Skill_F1] = false;
 				m_bCheck[bCheck::bCheck_Skill_F2] = false;
+				m_bCheck[bCheck::bCheck_Skill_F3] = false;
 				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
 				m_sStat.m_fMp -= MP_GH_F;
 				questInfo->m_SkillFCount++;
@@ -2034,13 +2036,20 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 				Set_StateToAnimation(State::State_Idle);
 			}
 			float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
-			if (!m_bCheck[bCheck::bCheck_Skill_F1] && trackPos > 0.7f) {
+			if (!m_bCheck[bCheck::bCheck_Skill_F1] && trackPos > 0.3f) {
 				m_bCheck[bCheck::bCheck_Skill_F1] = true;
 				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+				CGH_RockIn::Create(m_pGraphicDev, true);
 			}
-			else if (!m_bCheck[bCheck::bCheck_Skill_F2] && trackPos > 2.f) {
+			else if (!m_bCheck[bCheck::bCheck_Skill_F2] && trackPos > 0.9f) {
 				m_bCheck[bCheck::bCheck_Skill_F2] = true;
 				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+				CGH_RockIn::Create(m_pGraphicDev, true);
+			}
+			else if (!m_bCheck[bCheck::bCheck_Skill_F3] && trackPos > 2.3f) {
+				m_bCheck[bCheck::bCheck_Skill_F3] = true;
+				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+				CGH_RockIn::Create(m_pGraphicDev, false);
 			}
 			if (1.6f < trackPos && trackPos < 2.3f) {
 				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed * 0.5f), &m_sStat.m_dwNaviIndex));
@@ -2205,7 +2214,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 					m_AniClip = AnimationClip::Ani_3;
 					m_sComponent.m_pMeshCom->Set_AnimationSet(7);
 				}
-				if (!m_bCheck[bCheck::bCheck_LB_Phoenix_SkillZ] && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(1.f)) {
+				if (!m_bCheck[bCheck::bCheck_LB_Phoenix_SkillZ] && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(1.1f)) {
 					m_bCheck[bCheck::bCheck_LB_Phoenix_SkillZ] = true;
 					Create_Phoenix_SkillZ(vPos, vDir);
 				}
@@ -2426,7 +2435,8 @@ void CPlayer::Create_Phoenix_SkillZ(_vec3 _vPos, _vec3 _vDir)
 	pUnit->Get_sComponent()->m_pTransformCom->m_vInfo[Engine::INFO_POS] = _vPos + _vDir * 3.2f;
 	pUnit->Get_sComponent()->m_pTransformCom->m_vInfo[Engine::INFO_POS].y += 3.f;
 	//_vDir.y = -0.4f + m_LookAtY * 0.25f;
-	_vDir.y = -0.4f + 2.5f * 0.25f;
+	//_vDir.y = -0.4f + 2.5f * 0.25f;
+	_vDir.y = 0.f;
 
 	D3DXVec3Normalize(&_vDir, &_vDir);
 	pUnit->Get_sStat()->m_vDir = _vDir;

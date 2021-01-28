@@ -148,11 +148,8 @@ void Client::CDynamicCamera::Mouse_Move(void)
 	if (dwMouseMove = Engine::Get_DIMouseMove(Engine::DIMS_X))
 	{
 		m_Player->Get_sComponent()->m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(dwMouseMove * 0.1f));
-		m_Player->m_RocateY += dwMouseMove * 0.1f;
-		if (m_Player->m_RocateY > 360.f)
-			m_Player->m_RocateY -= 360.f;
-		else if (m_Player->m_RocateY < 0.f)
-			m_Player->m_RocateY += 360.f;
+		//m_Player->m_RocateY += dwMouseMove * 0.1f;
+		m_Player->Add_AngleY(dwMouseMove * 0.1f);
 		/*_vec3		vUp = _vec3(0.f, 1.f, 0.f);
 		
 		_vec3	vLook = m_vAt - m_vEye;

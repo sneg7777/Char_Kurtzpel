@@ -10,8 +10,10 @@
 CPhoenix::CPhoenix(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit_D(pGraphicDev)
 {
-	m_LifeTime = 100.f;
-	m_sStat.m_fInitSpeed = 2.f;
+	m_LifeTime = 15.f;
+	m_sStat.m_fInitSpeed = 25.f;
+	//m_LifeTime = 150.f;
+	//m_sStat.m_fInitSpeed = 0.5f;
 	m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 }
 
@@ -29,11 +31,11 @@ HRESULT Client::CPhoenix::Add_Component(void)
 	pComponent = m_sComponent.m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Phoenix"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
-	m_sComponent.m_pMeshCom->Set_AniAngle(185.f);
-	//m_pMeshCom->Set_AniAngle(275.f);
+	m_sComponent.m_pMeshCom->Set_AniAngle(272.f);
+	
 	//
 	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
-	Engine::CGameObject::Update_Object(1.f);
+	Engine::CGameObject::Update_Object(0.f);
 	
 	//m_pMeshCom->Play_Animation(1.f);
 
@@ -88,10 +90,10 @@ HRESULT Client::CPhoenix::Ready_Object(void)
 
 	m_sComponent.m_pTransformCom->Set_Scale(0.018f, 0.018f, 0.018f);
 	m_sComponent.m_pMeshCom->Set_AnimationSet(0);
-	//m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(265.f), true);
-	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(3.f), true);
-
-	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(98.f), true);
+	m_AniSpeed = 1.5f;
+	//m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(0.f), true);
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(CPlayer::GetInstance()->Get_AngleY()), true);
+	//m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(0.f), true);
 	return S_OK;
 }
 
@@ -112,28 +114,41 @@ Client::_int Client::CPhoenix::Update_Object(const _float& fTimeDelta)
 	CUnit::Update_Object(fTimeDelta);
 	m_sComponent.m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
 
-	vPosAfter = vPos + m_sStat.m_vDir * m_sStat.m_fSpeed * 5.f;// * fTimeDelta;
+	//vPosAfter = vPos + m_sStat.m_vDir * m_sStat.m_fSpeed * 5.f;// * fTimeDelta;
 	//m_pTransformCom->Set_Pos(&vPosAfter, true);
-	if(!m_AniClip)
-		m_sComponent.m_pTransformCom->Chase_Target(&vPosAfter, 0.f, fTimeDelta);
-	else
-		m_sComponent.m_pTransformCom->Chase_Target(&vPosAfter, m_sStat.m_fSpeed, fTimeDelta);
+	if (!m_AniClip) {
+		//m_sComponent.m_pTransformCom->Chase_Target(&vPosAfter, 0.f, fTimeDelta);
+	}
+	else {
+		vPosAfter = vPos + m_sStat.m_vDir * m_sStat.m_fSpeed * fTimeDelta;
+		m_sComponent.m_pTransformCom->Set_Pos(&vPosAfter, true);
+		//m_sComponent.m_pTransformCom->Chase_Target(&vPosAfter, m_sStat.m_fSpeed, fTimeDelta);
+	}
 
-	//m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(-30.f), true);
-	if (Engine::Get_DIKeyState(DIK_1) & 0x80) {
-		m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(1.f));
-		m_Test++;
-		if (m_Test >= 360)
-			m_Test -= 360;
-		//261
-	}
-	if (Engine::Get_DIKeyState(DIK_2) & 0x80) {
-		m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(1.f));
-		m_Test2++;
-		if (m_Test2 >= 360)
-			m_Test2 -= 360;
-		//152
-	}
+	//if (Engine::Get_DIKeyState(DIK_1) & 0x80) {
+	//	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(1.f));
+	//	m_Test++;
+	//	if (m_Test >= 360)
+	//		m_Test -= 360;
+	//}
+	//if (Engine::Get_DIKeyState(DIK_2) & 0x80) {
+	//	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(1.f));
+	//	m_Test1++;
+	//	if (m_Test1 >= 360)
+	//		m_Test1 -= 360;
+	//}
+	//if (Engine::Get_DIKeyState(DIK_3) & 0x80) {
+	//	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(1.f));
+	//	m_Test2++;
+	//	if (m_Test2 >= 360)
+	//		m_Test2 -= 360;
+	//}
+	//if (Engine::Get_DIKeyState(DIK_4) & 0x80) {
+	//	m_Test3++;
+	//	if (m_Test3 >= 360)
+	//		m_Test3 -= 360;
+	//	m_sComponent.m_pMeshCom->Set_AniAngle(m_Test3);
+	//}
 
 	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
 

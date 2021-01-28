@@ -98,7 +98,14 @@ HRESULT CStage::Ready_Environment_Layer(const _tchar * pLayerTag)
 	return S_OK;
 }
 
-HRESULT CStage::Ready_GameLogic_Dynamic_Layer(const _tchar * pLayerTag)
+HRESULT CStage::Ready_GameLogic_Dynamic_Layer(const _tchar* pLayerTag)
+{
+
+
+	return S_OK;
+}
+
+HRESULT CStage::Ready_GameLogic_DynamicNoColl_Layer(const _tchar* pLayerTag)
 {
 
 

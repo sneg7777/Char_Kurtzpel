@@ -299,7 +299,13 @@ _uint CLoading::Loading_ForStage(void)
 												L"../Bin/Resource/Mesh/StaticMesh/Stage2_WoodFence2/",
 												L"Stage2_WoodFence2.X"),
 												E_FAIL);
-
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_Monster2_CrossBowArrow", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/Monster2_CrossBowArrow/",
+												L"Monster2_CrossBowArrow.X"),
+												E_FAIL);
 	/////////////////////////////////////////////////
 
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
@@ -369,6 +375,28 @@ _uint CLoading::Loading_ForStage(void)
 												Engine::TYPE_DYNAMIC,
 												L"../Bin/Resource/Mesh/DynamicMesh/Monster/Monster1_TwoHand/",
 												L"Monster1_TwoHand.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_M_Monster2_CrossBow",
+												Engine::TYPE_DYNAMIC,
+												L"../Bin/Resource/Mesh/DynamicMesh/Monster/Monster2_CrossBow/",
+												L"Monster2_CrossBow.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_GH_SkillF_StoneIn",
+												Engine::TYPE_DYNAMIC,
+												L"../Bin/Resource/Mesh/DynamicMesh/GH_SkillF_StoneIn/",
+												L"GH_SkillF_StoneIn.X"),
+												E_FAIL);
+
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_GH_SkillF_StoneOut",
+												Engine::TYPE_DYNAMIC,
+												L"../Bin/Resource/Mesh/DynamicMesh/GH_SkillF_StoneOut/",
+												L"GH_SkillF_StoneOut.X"),
 												E_FAIL);
 
 	/*FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,

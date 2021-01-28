@@ -9,7 +9,7 @@ class ENGINE_DLL CLayer : public CBase
 {
 public:
 	enum LayerName {
-		Layer_Environment, Layer_Dynamic, Layer_Static, Layer_StaticNoColl, Layer_Decoration, Layer_UI, Layer_End
+		Layer_Environment, Layer_Dynamic, Layer_DynamicNoColl, Layer_Static, Layer_StaticNoColl, Layer_Decoration, Layer_UI, Layer_End
 	};
 private:
 	explicit CLayer(void);

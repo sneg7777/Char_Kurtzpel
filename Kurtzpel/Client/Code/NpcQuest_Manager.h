@@ -33,6 +33,7 @@ public:
 		//bool	m_ClearEffect = false;
 		int		m_DeadApostle = 0;
 		int		m_DeadTwoHand = 0;
+		int		m_DeadCrossBow = 0;
 		bool	m_WeaponChange = true;
 		bool	m_TalkEnd = false; // 카메라이동쪽
 		bool	m_PortalColl = false;
