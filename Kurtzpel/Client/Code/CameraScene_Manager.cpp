@@ -15,7 +15,8 @@
 #define PlayerSkillZ_GH_TimeHalf 1.f
 #define PlayerSkillZ_LB_Time 3.f
 #define PlayerSkillZ_LB_Time_1 2.f
-#define PlayerSkillZ_LB_Time_2 1.f
+#define PlayerSkillZ_LB_Time_2 1.5f
+#define PlayerSkillZ_LB_Time_3 1.f
 CCameraScene_Manager* CCameraScene_Manager::m_pInstance = nullptr;
 
 void CCameraScene_Manager::Destroy_Instance()
@@ -200,11 +201,26 @@ void Client::CCameraScene_Manager::Update_CameraScene_SkillZ_LB(const _float& fT
 		D3DXVec3Normalize(&vAfterPos, &vAfterPos);
 		*pCameraPos = playerPos + vAfterPos * 3.5f;
 		pCameraPos->y = 2.5f;
-		if (m_CameraSceneTime - fTimeDelta < PlayerSkillZ_LB_Time_1)
-			m_CameraPosInit = _vec3{ m_CameraPosInit.z , m_CameraPosInit.y, -m_CameraPosInit.x };
+		if (m_CameraSceneTime - fTimeDelta < PlayerSkillZ_LB_Time_1) {
+			playerDir.y = 0.5f;
+			D3DXVec3Normalize(&playerDir, &playerDir);
+			*pCameraPos = playerPos + playerDir * 10.f;
+			m_CameraBeforeNomal = m_CameraPosInit = *pCameraPos;
+			m_CameraPosInit.y -= 0.6f;
+			m_CameraMoveDir = playerDir;
+			//m_CameraPosInit = _vec3{ m_CameraPosInit.z , m_CameraPosInit.y, -m_CameraPosInit.x };
+		}
+	}
+	else if (m_CameraSceneTime > PlayerSkillZ_LB_Time_2) {
+		_vec3 vMoveDir;
+		vMoveDir = m_CameraPosInit - m_CameraBeforeNomal;
+		//TODO
+	}
+	else if (m_CameraSceneTime > PlayerSkillZ_LB_Time_3) {
+
 	}
 	else {
-		
+		*pCameraPos += m_CameraMoveDir * 10.f * fTimeDelta;
 	}
 
 }

@@ -50,7 +50,7 @@ private:
 	CDynamicCamera*							m_Camera;
 	_vec3									m_CameraPosInit = { 0.f, 0.f, 0.f };
 	_vec3									m_CameraBeforeNomal = { 0.f, 0.f, 0.f };
-
+	_vec3									m_CameraMoveDir = { 0.f, 0.f, 0.f };
 };
 
 END
