@@ -38,6 +38,7 @@ public:
 	void Update_CameraScene(const _float& fTimeDelta);
 	void Update_CameraScene_QuestNumber_7(const _float& fTimeDelta);
 	void Update_CameraScene_SkillZ_GH(const _float& fTimeDelta);
+	void Update_CameraScene_SkillZ_LB(const _float & fTimeDelta);
 	int	 Get_CameraScene() { return m_CameraSceneNumber; }
 	void Set_CameraScene(float _number);
 

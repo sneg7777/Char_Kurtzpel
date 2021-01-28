@@ -13,6 +13,9 @@
 #define QuestNumber_7_Time 5.f
 #define PlayerSkillZ_GH_Time 2.f
 #define PlayerSkillZ_GH_TimeHalf 1.f
+#define PlayerSkillZ_LB_Time 3.f
+#define PlayerSkillZ_LB_Time_1 2.f
+#define PlayerSkillZ_LB_Time_2 1.f
 CCameraScene_Manager* CCameraScene_Manager::m_pInstance = nullptr;
 
 void CCameraScene_Manager::Destroy_Instance()
@@ -68,6 +71,9 @@ void Client::CCameraScene_Manager::Update_CameraScene(const _float& fTimeDelta)
 	else if (m_CameraSceneNumber == PlayerSkillZ_GH) {
 		Update_CameraScene_SkillZ_GH(fTimeDelta);
 	}
+	else if (m_CameraSceneNumber == PlayerSkillZ_LB) {
+		Update_CameraScene_SkillZ_LB(fTimeDelta);
+	}
 	
 
 
@@ -102,6 +108,20 @@ void CCameraScene_Manager::Set_CameraScene(float _number)
 			m_CameraSceneTime = QuestNumber_7_Time;
 			break;
 		case PlayerSkillZ_GH: {
+			_vec3 vPos, vDir, vAfterPos;
+			Engine::CTransform* pTrans = CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom;
+			pTrans->Get_Info(Engine::INFO_POS, &vPos);
+			pTrans->Get_Info(Engine::INFO_LOOK, &vDir);
+			m_CameraPosInit = vDir * 250.f;
+			vAfterPos = vPos + m_CameraPosInit;
+			vPos.y += 1.f;
+			vAfterPos.y += 2.5f;
+			m_CameraBeforeNomal = vAfterPos;
+			m_Camera->Set_PosToAt(vAfterPos, vPos);
+			m_CameraSceneTime = PlayerSkillZ_GH_Time;
+			break;
+		}
+		case PlayerSkillZ_LB: {
 			_vec3 vPos, vDir, vAfterPos;
 			Engine::CTransform* pTrans = CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom;
 			pTrans->Get_Info(Engine::INFO_POS, &vPos);
@@ -161,6 +181,30 @@ void Client::CCameraScene_Manager::Update_CameraScene_SkillZ_GH(const _float& fT
 		D3DXVec3Normalize(&vAfterPos, &vAfterPos);
 		*pCameraPos = pPlayerPos + vAfterPos * 3.5f;
 		pCameraPos->y = 2.5f;
+	}
+	m_Camera->Shake_CameraMove(fTimeDelta);
+
+}
+
+void Client::CCameraScene_Manager::Update_CameraScene_SkillZ_LB(const _float& fTimeDelta)
+{
+	_vec3* pCameraPos = m_Camera->Get_pPos();
+	_vec3 playerPos, playerDir;
+	CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &playerPos);
+	CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_LOOK, &playerDir);
+	if (m_CameraSceneTime > PlayerSkillZ_LB_Time_1) {
+		_vec3 vTemp = _vec3{ m_CameraPosInit.z , m_CameraPosInit.y, -m_CameraPosInit.x };
+		_vec3 vDistance = vTemp - m_CameraPosInit;
+		m_CameraBeforeNomal += vDistance * (fTimeDelta / PlayerSkillZ_LB_Time_1);
+		_vec3 vAfterPos = m_CameraBeforeNomal - playerPos;
+		D3DXVec3Normalize(&vAfterPos, &vAfterPos);
+		*pCameraPos = playerPos + vAfterPos * 3.5f;
+		pCameraPos->y = 2.5f;
+		if (m_CameraSceneTime - fTimeDelta < PlayerSkillZ_LB_Time_1)
+			m_CameraPosInit = _vec3{ m_CameraPosInit.z , m_CameraPosInit.y, -m_CameraPosInit.x };
+	}
+	else {
+		
 	}
 
 }

@@ -170,7 +170,7 @@ void Engine::CCollider::Render_Collider(COLLTYPE eType, const _matrix* pCollider
 {
 	m_matCollMatrix = *pColliderMatrix;
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, pColliderMatrix);
 
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
@@ -181,7 +181,7 @@ void Engine::CCollider::Render_Collider(COLLTYPE eType, const _matrix* pCollider
 	m_pGraphicDev->SetIndices(m_pIB);
 	m_pGraphicDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
 	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-#endif
+//#endif
 
 
 }

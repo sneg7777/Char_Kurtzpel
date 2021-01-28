@@ -29,7 +29,7 @@ HRESULT Client::CPhoenix::Add_Component(void)
 	pComponent = m_sComponent.m_pMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Phoenix"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
-	m_sComponent.m_pMeshCom->Set_AniAngle(95.f);
+	m_sComponent.m_pMeshCom->Set_AniAngle(185.f);
 	//m_pMeshCom->Set_AniAngle(275.f);
 	//
 	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
@@ -89,9 +89,9 @@ HRESULT Client::CPhoenix::Ready_Object(void)
 	m_sComponent.m_pTransformCom->Set_Scale(0.018f, 0.018f, 0.018f);
 	m_sComponent.m_pMeshCom->Set_AnimationSet(0);
 	//m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(265.f), true);
-	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(281.f), true);
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(3.f), true);
 
-	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(210.f), true);
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(98.f), true);
 	return S_OK;
 }
 

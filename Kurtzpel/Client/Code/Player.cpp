@@ -391,6 +391,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_bCheck[bCheck::bCheck_LB_Phoenix_SkillZ] = false;
 				m_TimeCheck[TimeCheck::TimeCheck_Invin] = 10.f;
 				m_AniClip = AnimationClip::Ani_1;
+				CCameraScene_Manager::Get_Instance()->Set_CameraScene(3);
 				break;
 			}
 			default:
@@ -2084,6 +2085,9 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 			float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
 			if (trackPos > 0.7f) {
 				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+			}
+			if (trackPos > 1.6f && trackPos < 1.7f) {
+				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(1.2f);
 			}
 		}
 		Move_AccelSpeed(vPos, vDir, fTimeDelta, pNaviMeshCom);

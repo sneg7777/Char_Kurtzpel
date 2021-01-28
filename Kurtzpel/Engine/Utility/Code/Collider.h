@@ -25,13 +25,13 @@ private:
 	_vec3		m_vMin, m_vMax;
 	_matrix		m_matCollMatrix;
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	LPDIRECT3DDEVICE9			m_pGraphicDev;
 	LPDIRECT3DVERTEXBUFFER9		m_pVB;
 	LPDIRECT3DINDEXBUFFER9		m_pIB;
 	LPDIRECT3DTEXTURE9			m_pTexture[COL_END];
 
-#endif
+//#endif
 
 public:
 	static CCollider*			Create(LPDIRECT3DDEVICE9 pGraphicDev, const _vec3* pVtxPos, const _ulong& dwNumVtxCnt, const _ulong& dwStride);
