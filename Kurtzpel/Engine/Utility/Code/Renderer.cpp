@@ -187,10 +187,11 @@ void Engine::CRenderer::Render_Blend(LPDIRECT3DDEVICE9 & pGraphicDev)
 {
 	CShader*		pShader = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Blend"));
 	NULL_CHECK(pShader);
-
+	
 	LPD3DXEFFECT pEffect = pShader->Get_EffectHandle();
 	Safe_AddRef(pEffect);
-
+	pEffect->SetBool("g_Active", m_MotionBlurActive);
+	pEffect->SetFloat("g_Power", m_MotionBlurPower);
 	Engine::Throw_RenderTargetTexture(pEffect, L"Target_Albedo", "g_AlbedoTexture");
 	Engine::Throw_RenderTargetTexture(pEffect, L"Target_Shade", "g_ShadeTexture");
 	Engine::Throw_RenderTargetTexture(pEffect, L"Target_Specular", "g_SpecularTexture");

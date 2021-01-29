@@ -149,7 +149,25 @@ Client::_int Client::CNpc_01::LateUpdate_Object(const _float& fTimeDelta)
 
 void Client::CNpc_01::Render_Object(void)
 {
-	CUnit_D::Render_Object();
+	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
+	NULL_CHECK(pEffect);
+	Engine::Safe_AddRef(pEffect);
+
+	_uint	iMaxPass = 0;
+	pEffect->Begin(&iMaxPass, 0);	// 현재 쉐이더 파일이 갖고 있는 최대 패스의 개수를 리턴, 사용하는 방식
+	for (_int i = 0; i < iMaxPass; i++)
+	{
+		pEffect->BeginPass(i);
+
+		FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
+
+		m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
+
+		pEffect->EndPass();
+	}
+	pEffect->End();
+
+	Engine::Safe_Release(pEffect);
 }
 
 void Client::CNpc_01::SetUp_OnTerrain(void)

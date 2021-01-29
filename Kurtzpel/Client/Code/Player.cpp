@@ -144,6 +144,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			m_sStat.m_fSpeed = 2.4f * m_sStat.m_fInitSpeed;
 			m_AniSpeed = 2.1f;
 			m_DashGauge -= DashGauge;
+			Engine::CRenderer::GetInstance()->Set_MotionBlur(0.8f);
 			break;
 		}
 		case Client::CPlayer::State_Rolling: {

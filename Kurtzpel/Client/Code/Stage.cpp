@@ -44,6 +44,7 @@ Engine::_int CStage::Update_Scene(const _float& fTimeDelta)
 	CUI_Manager::Get_Instance()->Update_Object(fTimeDelta);
 	CNpcQuest_Manager::Get_Instance()->Update_Object(fTimeDelta);
 	CCameraScene_Manager::Get_Instance()->Update_Object(fTimeDelta);
+	Engine::CRenderer::GetInstance()->Dec_MotionPower(fTimeDelta);
 	//
 	//CameraControl(fTimeDelta);
 	//
@@ -91,45 +92,6 @@ void CStage::CameraControl(_float fTimeDelta)
 
 }
 
-HRESULT CStage::Ready_Environment_Layer(const _tchar * pLayerTag)
-{
-
-	
-	return S_OK;
-}
-
-HRESULT CStage::Ready_GameLogic_Dynamic_Layer(const _tchar* pLayerTag)
-{
-
-
-	return S_OK;
-}
-
-HRESULT CStage::Ready_GameLogic_DynamicNoColl_Layer(const _tchar* pLayerTag)
-{
-
-
-	return S_OK;
-}
-
-HRESULT CStage::Ready_GameLogic_Static_Layer(const _tchar* pLayerTag)
-{
-
-	return S_OK;
-}
-
-HRESULT CStage::Ready_GameLogic_StaticNoColl_Layer(const _tchar* pLayerTag)
-{
-
-	return S_OK;
-}
-
-HRESULT CStage::Ready_GameLogic_Decoration_Layer(const _tchar* pLayerTag)
-{
-
-	return S_OK;
-}
-
 HRESULT CStage::Ready_UI_Layer(const _tchar * pLayerTag)
 {
 
@@ -147,12 +109,13 @@ HRESULT CStage::Ready_LightInfo(void)
 
 CStage* CStage::Create(LPDIRECT3DDEVICE9 pGraphicDev)
 {
-	CStage*	pInstance = new CStage(pGraphicDev);
+	/*CStage*	pInstance = new CStage(pGraphicDev);
 
 	if (FAILED(pInstance->Ready_Scene()))
 		Client::Safe_Release(pInstance);
 
-	return pInstance;
+	return pInstance;*/
+	return nullptr;
 }
 
 void CStage::Free(void)

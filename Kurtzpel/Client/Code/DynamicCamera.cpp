@@ -180,6 +180,18 @@ void CDynamicCamera::Free(void)
 
 Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 {
+	if (CPlayer::GetInstance()->m_State == CPlayer::State::State_Dash) {
+		// m_fFovY = D3DXToRadian(50.f);
+		if (m_FovYAccel > 50.f)
+			m_FovYAccel -= fTimeDelta * 20.f;
+		m_fFovY = D3DXToRadian(m_FovYAccel);
+	}
+	else {
+		// m_fFovY = D3DXToRadian(60.f);
+		if (m_FovYAccel < 60.f)
+			m_FovYAccel += fTimeDelta * 20.f;
+		m_fFovY = D3DXToRadian(m_FovYAccel);
+	}
 	CPlayer* pPlayer = CPlayer::GetInstance();
 	if (pPlayer->Get_Weapon_Equip() == CPlayer::Weapon_Equip::Weapon_LongBow && pPlayer->m_Attack_State == CPlayer::Attack_State::StateA_SkillZ) {
 		LB_SkillZScene(fTimeDelta);

@@ -35,6 +35,7 @@ private:
 	_float		m_InitShakeTime = 0.f;
 	_float		m_ShakeX = 0.f;
 	_float		m_ShakeY = 0.f;
+	float		m_FovYAccel = 60.f;
 public:
 	static CDynamicCamera*	Create(LPDIRECT3DDEVICE9 pGraphicDev, 
 									const _vec3* pEye, 
@@ -51,7 +52,6 @@ private:
 	void Move_NpcCamera_No(const _float & fTimeDelta);
 	void LB_SkillZScene(const _float& fTimeDelta);
 	virtual void Free(void) override;
-
 
 };
 

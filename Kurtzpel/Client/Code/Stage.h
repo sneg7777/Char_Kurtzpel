@@ -36,12 +36,12 @@ public:
 	CDynamicCamera* Get_DynamicCamera() { return m_Camera; }
 		
 protected:
-	virtual HRESULT		Ready_Environment_Layer(const _tchar* pLayerTag);
-	virtual HRESULT		Ready_GameLogic_Dynamic_Layer(const _tchar* pLayerTag);
-	virtual HRESULT		Ready_GameLogic_DynamicNoColl_Layer(const _tchar* pLayerTag);
-	virtual HRESULT		Ready_GameLogic_Static_Layer(const _tchar* pLayerTag);
-	virtual HRESULT		Ready_GameLogic_StaticNoColl_Layer(const _tchar* pLayerTag);
-	virtual HRESULT		Ready_GameLogic_Decoration_Layer(const _tchar* pLayerTag);
+	virtual HRESULT		Ready_Environment_Layer(const _tchar* pLayerTag) PURE;
+	virtual HRESULT		Ready_GameLogic_Dynamic_Layer(const _tchar* pLayerTag) PURE;
+	virtual HRESULT		Ready_GameLogic_DynamicNoColl_Layer(const _tchar* pLayerTag) PURE;
+	virtual HRESULT		Ready_GameLogic_Static_Layer(const _tchar* pLayerTag) PURE;
+	virtual HRESULT		Ready_GameLogic_StaticNoColl_Layer(const _tchar* pLayerTag) PURE;
+	virtual HRESULT		Ready_GameLogic_Decoration_Layer(const _tchar* pLayerTag) PURE;
 	virtual HRESULT		Ready_UI_Layer(const _tchar* pLayerTag);
 
 	virtual HRESULT		Ready_LightInfo(void);

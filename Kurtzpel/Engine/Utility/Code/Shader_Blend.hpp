@@ -1,4 +1,6 @@
 texture			g_AlbedoTexture;
+float			g_Power = 0.8f;
+bool			g_Active;
 
 sampler AlbedoSampler = sampler_state
 {
@@ -44,6 +46,28 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	vector		vAlbedo = tex2D(AlbedoSampler, In.vTexUV);
+	if (g_Active) {
+		float2 vDir = 0.5f - In.vTexUV;
+		float fDist = length(vDir);
+
+		vDir /= fDist;
+		vector vSum = vAlbedo;
+
+		vSum += tex2D(AlbedoSampler, In.vTexUV + vDir * -0.04f * g_Power);
+		vSum += tex2D(AlbedoSampler, In.vTexUV + vDir * -0.03f * g_Power);
+		vSum += tex2D(AlbedoSampler, In.vTexUV + vDir * -0.02f * g_Power);
+		vSum += tex2D(AlbedoSampler, In.vTexUV + vDir * -0.01f * g_Power);
+
+		vSum += tex2D(AlbedoSampler, In.vTexUV + vDir * 0.01f * g_Power);
+		vSum += tex2D(AlbedoSampler, In.vTexUV + vDir * 0.02f * g_Power);
+		vSum += tex2D(AlbedoSampler, In.vTexUV + vDir * 0.03f * g_Power);
+		vSum += tex2D(AlbedoSampler, In.vTexUV + vDir * 0.04f * g_Power);
+
+		vSum *= (1.f / 9.f);
+		float fT = saturate(fDist * 2.2f);
+
+		vAlbedo = lerp(vAlbedo, vSum, fT);
+	}
 	vector		vShade = tex2D(ShadeSampler, In.vTexUV);
 
 	//vector		vSpecular = tex2D(SpecularSampler, In.vTexUV);
