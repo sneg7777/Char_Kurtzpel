@@ -55,15 +55,7 @@ HRESULT Client::CPhoenix::Add_Component(void)
 
 HRESULT CPhoenix::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
-	_matrix		matWorld, matView, matProj;
-
-	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
-	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
-	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
-
-	pEffect->SetMatrix("g_matWorld", &matWorld);
-	pEffect->SetMatrix("g_matView", &matView);
-	pEffect->SetMatrix("g_matProj", &matProj);
+	CUnit::SetUp_ConstantTable(pEffect);
 
 	return S_OK;
 }
@@ -170,25 +162,20 @@ void Client::CPhoenix::Render_Object(void)
 	Engine::Safe_AddRef(pEffect);
 
 	_uint	iMaxPass = 0;
-
 	pEffect->Begin(&iMaxPass, 0);	// 현재 쉐이더 파일이 갖고 있는 최대 패스의 개수를 리턴, 사용하는 방식
-	pEffect->BeginPass(0);
+	for (_int i = 0; i < iMaxPass; i++)
+	{
+		pEffect->BeginPass(i);
 
-	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
+		FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-	m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
+		m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
 
-	pEffect->EndPass();
+		pEffect->EndPass();
+	}
 	pEffect->End();
 
-	//m_pNaviMeshCom->Render_NaviMeshes();
-
-
 	Engine::Safe_Release(pEffect);
-	/*_matrix matWorld;
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
-
-	m_pColliderCom->Render_Collider(Engine::COL_TRUE, &matWorld);*/
 }
 
 

@@ -51,7 +51,8 @@ HRESULT Client::CUnit::Add_Component(void)
 	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Optimization", pComponent);
 
 	// Shader
-	pComponent = m_sComponent.m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Mesh"));
+	//pComponent = m_sComponent.m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Mesh"));
+	pComponent = m_sComponent.m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Unit"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
@@ -177,6 +178,10 @@ HRESULT Client::CUnit::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	pEffect->SetMatrix("g_matWorld", &matWorld);
 	pEffect->SetMatrix("g_matView", &matView);
 	pEffect->SetMatrix("g_matProj", &matProj);
+
+	_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
+	pEffect->SetVector("g_vColor", &vColor);
+	pEffect->SetFloat("g_fBoldSize", 0.01f);
 
 	//////////////////////////////////////
 	//const D3DLIGHT9* pLightInfo = Engine::Get_Light(0);

@@ -54,15 +54,7 @@ HRESULT Client::CGH_RockIn::Add_Component(bool _inCheck)
 
 HRESULT CGH_RockIn::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
-	_matrix		matWorld, matView, matProj;
-
-	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
-	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
-	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
-
-	pEffect->SetMatrix("g_matWorld", &matWorld);
-	pEffect->SetMatrix("g_matView", &matView);
-	pEffect->SetMatrix("g_matProj", &matProj);
+	CUnit::SetUp_ConstantTable(pEffect);
 
 	return S_OK;
 }

@@ -70,6 +70,21 @@ HRESULT CNpc_01::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	pEffect->SetMatrix("g_matWorld", &matWorld);
 	pEffect->SetMatrix("g_matView", &matView);
 	pEffect->SetMatrix("g_matProj", &matProj);
+	if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_PlayerTalk) {
+		_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
+		pEffect->SetVector("g_vColor", &vColor);
+		pEffect->SetFloat("g_fBoldSize", 0.005f);
+	}
+	else if (CNpcQuest_Manager::Get_Instance()->Get_NpcQuestInfo()->m_NpcColl) {
+		_vec4 vColor = { 171.f / 255.f, 242.f / 255.f, 0.f / 255.f, 1.f };
+		pEffect->SetVector("g_vColor", &vColor);
+		pEffect->SetFloat("g_fBoldSize", 0.01f);
+	}
+	else {
+		_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
+		pEffect->SetVector("g_vColor", &vColor);
+		pEffect->SetFloat("g_fBoldSize", 0.01f);
+	}
 
 	return S_OK;
 }
@@ -134,30 +149,7 @@ Client::_int Client::CNpc_01::LateUpdate_Object(const _float& fTimeDelta)
 
 void Client::CNpc_01::Render_Object(void)
 {
-	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
-	NULL_CHECK(pEffect);
-	Engine::Safe_AddRef(pEffect);
-
-	_uint	iMaxPass = 0;
-
-	pEffect->Begin(&iMaxPass, 0);	// 현재 쉐이더 파일이 갖고 있는 최대 패스의 개수를 리턴, 사용하는 방식
-	pEffect->BeginPass(0);
-
-	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
-
-	m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
-
-	pEffect->EndPass();
-	pEffect->End();
-
-	//m_pNaviMeshCom->Render_NaviMeshes();
-
-
-	Engine::Safe_Release(pEffect);
-	/*_matrix matWorld;
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
-
-	m_pColliderCom->Render_Collider(Engine::COL_TRUE, &matWorld);*/
+	CUnit_D::Render_Object();
 }
 
 void Client::CNpc_01::SetUp_OnTerrain(void)

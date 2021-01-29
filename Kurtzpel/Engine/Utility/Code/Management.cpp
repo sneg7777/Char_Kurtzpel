@@ -111,6 +111,12 @@ HRESULT CManagement::Ready_Shader(LPDIRECT3DDEVICE9& pGraphicDev)
 	NULL_CHECK_RETURN(pShader, E_FAIL);
 	FAILED_CHECK_RETURN(Ready_Proto(L"Proto_Shader_Effect", pShader), E_FAIL);
 
+
+	// Unit
+	pShader = CShader::Create(pGraphicDev, L"../../Reference/Header/Shader_Unit.hpp");
+	NULL_CHECK_RETURN(pShader, E_FAIL);
+	FAILED_CHECK_RETURN(Ready_Proto(L"Proto_Shader_Unit", pShader), E_FAIL);
+
 	// Test
 	//pShader = CShader::Create(pGraphicDev, L"../../Reference/Header/Shader_Test.hpp");
 	//NULL_CHECK_RETURN(pShader, E_FAIL);

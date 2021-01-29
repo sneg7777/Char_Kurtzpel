@@ -106,16 +106,24 @@ void Client::CUnit_D::Render_Object(void)
 	Engine::Safe_AddRef(pEffect);
 
 	_uint	iMaxPass = 0;
-
 	pEffect->Begin(&iMaxPass, 0);	// 현재 쉐이더 파일이 갖고 있는 최대 패스의 개수를 리턴, 사용하는 방식
+	for (_int i = 0; i < iMaxPass; i++)
+	{
+		pEffect->BeginPass(i);
 
-	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
+		FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-	m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
+		m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
 
+		pEffect->EndPass();
+	}
 	pEffect->End();
 
 	Engine::Safe_Release(pEffect);
+	/*_matrix matWorld;
+	m_pTransformCom->Get_WorldMatrix(&matWorld);
+
+	m_pColliderCom->Render_Collider(Engine::COL_TRUE, &matWorld);*/
 }
 
 HRESULT Client::CUnit_D::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
@@ -129,6 +137,20 @@ HRESULT Client::CUnit_D::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	pEffect->SetMatrix("g_matWorld", &matWorld);
 	pEffect->SetMatrix("g_matView", &matView);
 	pEffect->SetMatrix("g_matProj", &matProj);
+	_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
+	pEffect->SetVector("g_vColor", &vColor);
+	pEffect->SetFloat("g_fBoldSize", 0.01f);
+	
+
+	//_matrix		matWorld, matView, matProj;
+
+	//m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
+	//m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	//m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+
+	//pEffect->SetMatrix("g_matWorld", &matWorld);
+	//pEffect->SetMatrix("g_matView", &matView);
+	//pEffect->SetMatrix("g_matProj", &matProj);
 
 	//////////////////////////////////////
 	//const D3DLIGHT9* pLightInfo = Engine::Get_Light(0);

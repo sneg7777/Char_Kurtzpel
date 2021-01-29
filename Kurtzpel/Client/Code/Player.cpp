@@ -1844,30 +1844,8 @@ Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 
 void Client::CPlayer::Render_Object(void)
 {
-	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
-	NULL_CHECK(pEffect);
-	Engine::Safe_AddRef(pEffect);
+	CUnit_D::Render_Object();
 
-	_uint	iMaxPass = 0;
-
-	pEffect->Begin(&iMaxPass, 0);	// 현재 쉐이더 파일이 갖고 있는 최대 패스의 개수를 리턴, 사용하는 방식
-	pEffect->BeginPass(0);
-
-	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
-
-	m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
-
-	pEffect->EndPass();
-	pEffect->End();
-
-	//m_pNaviMeshCom->Render_NaviMeshes();
-
-
-	Engine::Safe_Release(pEffect);
-	/*_matrix matWorld;
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
-
-	m_pColliderCom->Render_Collider(Engine::COL_TRUE, &matWorld);*/
 }
 void CPlayer::Add_LookAtY(float lookat)
 {
