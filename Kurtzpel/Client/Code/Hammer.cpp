@@ -32,6 +32,10 @@ HRESULT Client::CHammer::Add_Component(void)
 
 	CPlayer::GetInstance()->m_Hammer = this;
 	CPlayer::Set_Weapon_Equip(CPlayer::Weapon_Hammer);
+
+	pComponent = m_pTexture = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_DissolveTex"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Texture", pComponent);
 	return S_OK;
 }
 
@@ -68,6 +72,22 @@ Client::_int Client::CHammer::Update_Object(const _float& fTimeDelta)
 	if (m_sStat.m_IsDead) {
 		return 1;
 	}
+	if (m_IsTest) {
+		if(m_fDeltaTime < 1.f)
+			m_fDeltaTime += fTimeDelta;
+	}
+	else {
+		if (m_fDeltaTime > 0.f)
+			m_fDeltaTime -= fTimeDelta;
+	}
+	if (Engine::Get_DIKeyState(DIK_P) & 0x80) {
+		//m_IsTest = m_IsTest ? false : true;
+		m_IsTest = true;
+	}
+	else if (Engine::Get_DIKeyState(DIK_O) & 0x80) {
+		m_IsTest = false;
+	}
+	//
 	if (CNpcQuest_Manager::Get_NpcQuestInfo()->m_PlayerTalk)
 		return 0;
 
@@ -132,6 +152,7 @@ void CHammer::Set_Pos() {
 			m_RocationZ = 22.5f;
 		}
 	}
+	
 }
 
 void CHammer::BoneAttach(string _frame)
@@ -151,7 +172,24 @@ void CHammer::BoneAttach(string _frame)
 
 HRESULT Client::CHammer::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
-	CUnit::SetUp_ConstantTable(pEffect);
+	_matrix		matWorld, matView, matProj;
+
+	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+
+	pEffect->SetMatrix("g_matWorld", &matWorld);
+	pEffect->SetMatrix("g_matView", &matView);
+	pEffect->SetMatrix("g_matProj", &matProj);
+
+	_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
+	pEffect->SetVector("g_vColor", &vColor);
+	pEffect->SetFloat("g_fBoldSize", 0.01f);
+
+	pEffect->SetFloat("g_fTimeDelta", m_fDeltaTime);
+	pEffect->SetBool("g_bIsDissolve", m_IsTest);
+	// 디졸브 텍스쳐
+	m_pTexture->Set_Texture(pEffect, "g_DissolveTexture");
 
 	return S_OK;
 }

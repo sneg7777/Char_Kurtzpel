@@ -2,13 +2,25 @@ matrix			g_matWorld;		// 상수 테이블
 matrix			g_matView;
 float4x4		g_matProj;
 
+float			g_fTimeDelta;
 float			g_fBoldSize;
 vector			g_vColor;
-texture			g_BaseTexture;
 
+bool			g_bIsDissolve = false;
+
+texture			g_BaseTexture;
 sampler BaseSampler = sampler_state
 {
 	texture = g_BaseTexture;
+
+	minfilter = linear;
+	magfilter = linear;
+};
+
+texture			g_DissolveTexture;
+sampler DissolveSampler = sampler_state
+{
+	texture = g_DissolveTexture;
 
 	minfilter = linear;
 	magfilter = linear;
@@ -56,14 +68,6 @@ VS_OUT VS_OUTLINE(VS_IN In)
 
 	matrix matW, matWV, matWVP;
 
-
-
-
-	//matWV = mul(g_matWorld, g_matView);
-	//matWVP = mul(matWV, g_matProj);
-
-
-
 	Out.vNormal = normalize(mul(vector(In.vNormal.xyz, 0.f), g_matWorld));
 	Out.vPosition = mul(vector(In.vPosition.xyz, 1.f), g_matWorld);
 	Out.vPosition += Out.vNormal * g_fBoldSize;
@@ -98,12 +102,17 @@ PS_OUT		PS_MAIN(PS_IN In)
 {
 	PS_OUT		Out = (PS_OUT)0;
 
-	Out.vColor = tex2D(BaseSampler, In.vTexUV);	// 2차원 텍스처로부터 uv좌표에 해당하는 색을 얻어오는 함수, 반환 타입이 vector 타입
+	Out.vColor = tex2D(BaseSampler, In.vTexUV);
+	vector vDissolve = tex2D(DissolveSampler, In.vTexUV);
 	
-	// (-1 ~ 1)값은 월드 상태의 법선 벡터를 정규화하였기 때문에 xyz값이 나올 수 있는 범위에 해당
-	// (0 ~ 1) 텍스쳐 uv좌표로 변환
-	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	if (g_bIsDissolve)
+	{
+		float fAmount = vDissolve.r + g_fTimeDelta;
+		if (fAmount >= 1.f)
+			Out.vColor.a = 0.f;
+	}
 
+	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w * 0.01f, 0.f, 0.f);
 	
 	return Out;
@@ -117,7 +126,16 @@ PS_OUT		PS_OUTLINE(PS_IN In)
 	//float fColor = 0.f;
 	//Out.vColor = vector(fColor.xxx, 1.f);	// 2차원 텍스처로부터 uv좌표에 해당하는 색을 얻어오는 함수, 반환 타입이 vector 타입
 	Out.vColor = vector(g_vColor.x, g_vColor.y, g_vColor.z, 1.f);
-	
+	vector vDissolve = tex2D(DissolveSampler, In.vTexUV);
+
+	if (g_bIsDissolve)
+	{
+		float fAmount = vDissolve.r + g_fTimeDelta;
+		if (fAmount >= 1.f)
+			Out.vColor.a = 0.f;
+	}
+
+
 	return Out;
 }
 
@@ -126,13 +144,18 @@ technique Default_Device
 	// 기능의 캡슐화
 	pass Default
 	{
-
+		alphatestenable = true;
+		alpharef = 0xc0;
+		alphafunc = greater;
 		vertexshader = compile vs_3_0 VS_MAIN();
 		pixelshader = compile ps_3_0 PS_MAIN();
 	}
 
 	pass Outline
 	{
+		alphatestenable = true;
+	alpharef = 0xc0;
+	alphafunc = greater;
 		cullmode = cw;
 
 		vertexshader = compile vs_3_0 VS_OUTLINE();

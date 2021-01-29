@@ -191,6 +191,7 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_12ektlans", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/12ektlans.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_13dlwpak", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/13dlwpak.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_99wkfgotdj", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/99wkfgotdj.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_DissolveTex", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/DissolveTex.tga"), E_FAIL);
 	
 	lstrcpy(m_szLoading, L"Mesh Loading.............................");
 	///////////////////////////////////////////////// Static Mesh
