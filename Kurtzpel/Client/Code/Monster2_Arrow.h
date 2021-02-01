@@ -1,5 +1,5 @@
-#ifndef Portal_h__
-#define Portal_h__
+#ifndef Monster2_Arrow_h__
+#define Monster2_Arrow_h__
 
 #include "Unit.h"
 #include "Define.h"
@@ -16,10 +16,10 @@ class CShader;
 END
 
 BEGIN(Client)
-class CPortal : public CUnit {
+class CMonster2_Arrow : public CUnit {
 private:
-	explicit CPortal(LPDIRECT3DDEVICE9 pGraphicDev);
-	virtual ~CPortal(void);
+	explicit CMonster2_Arrow(LPDIRECT3DDEVICE9 pGraphicDev);
+	virtual ~CMonster2_Arrow(void);
 
 public:
 	virtual HRESULT Ready_Object(void) override;
@@ -28,24 +28,22 @@ public:
 	//
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
 	virtual void Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
-	//_pos : À§Ä¡
-	//_scale : Å©±â(float)
-	//_team : ÆÀ
-	void		Set_Collider(_vec3 _pos, float _scale, CSphereCollider::BoneTeam _team, int _portalMapNumber);
-	int			Get_PortalMapNumber() { return m_PortalMapNumber; }
+	void Create_Coll();
+	void Set_SpeedToLife(float _speed, float _life = -1.f);
 	//
 private:
 	HRESULT		Add_Component(void);
 
+private:
+	float		m_LifeTime = 0.f;
+
 public:
-	static CPortal* Create(LPDIRECT3DDEVICE9 pGraphicDev);
+	static CMonster2_Arrow*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 
 private:
 	virtual void Free(void) override;
-	int			m_PortalMapNumber = 0;
-	float		m_EffectTime = 0;
 
 };
 
 END
-#endif
+#endif // Sword_h__

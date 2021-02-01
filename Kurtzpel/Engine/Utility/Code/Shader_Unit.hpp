@@ -103,6 +103,7 @@ PS_OUT		PS_MAIN(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	Out.vColor = tex2D(BaseSampler, In.vTexUV);
+	
 	vector vDissolve = tex2D(DissolveSampler, In.vTexUV);
 	
 	if (g_bIsDissolve)
@@ -154,8 +155,8 @@ technique Default_Device
 	pass Outline
 	{
 		alphatestenable = true;
-	alpharef = 0xc0;
-	alphafunc = greater;
+		alpharef = 0xc0;
+		alphafunc = greater;
 		cullmode = cw;
 
 		vertexshader = compile vs_3_0 VS_OUTLINE();

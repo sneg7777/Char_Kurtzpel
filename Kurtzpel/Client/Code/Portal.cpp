@@ -21,13 +21,36 @@ HRESULT Client::CPortal::Add_Component(void)
 {
 	Engine::CComponent* pComponent = nullptr;
 
-	CUnit::Add_Component();
-	// Mesh
-	//pComponent = m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Arrow"));
-	//NULL_CHECK_RETURN(pComponent, E_FAIL);
-	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
+	//CUnit::Add_Component();
 
-	//m_pTransformCom->m_vScale = { 0.01f, 0.01f, 0.01f };
+	//Mesh
+	pComponent = m_sComponent.m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_GH_Trace02"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
+
+	//Texture
+	pComponent = m_sComponent.m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_Effect_Test"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Texture", pComponent);
+
+	// Transform
+	pComponent = m_sComponent.m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_mapComponent[Engine::ID_DYNAMIC].emplace(L"Com_Transform", pComponent);
+
+	// Renderer
+	pComponent = m_sComponent.m_pRendererCom = Engine::Get_Renderer();
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	Safe_AddRef(pComponent);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Renderer", pComponent);
+
+	// Shader
+	//pComponent = m_sComponent.m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Mesh"));
+	pComponent = m_sComponent.m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_EffectMesh"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
+
+	m_sComponent.m_pTransformCom->m_vScale = { 0.015f, 0.015f, 0.015f };
 
 	return S_OK;
 }
@@ -53,6 +76,12 @@ HRESULT Client::CPortal::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 	m_UnitName = UnitName::Portal;
+	//
+	//_vec3 TempPos;
+	//m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &TempPos);
+	//TempPos.y = 0.5f;
+	//m_sComponent.m_pTransformCom->Set_Pos(&TempPos, true);
+	//
 	return S_OK;
 }
 Client::_int Client::CPortal::Update_Object(const _float& fTimeDelta)
@@ -61,37 +90,40 @@ Client::_int Client::CPortal::Update_Object(const _float& fTimeDelta)
 		return 1;
 	}
 
-
-
+	m_EffectTime += fTimeDelta * 10.f;
+	if (m_EffectTime > 6)
+		m_EffectTime -= 6.f;
+	//SetUp_OnTerrain();
 	CUnit::Update_Object(fTimeDelta);
-	//m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
+	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
 	return 0;
 }
 void Client::CPortal::Render_Object(void)
 {
-	//LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
-	//NULL_CHECK(pEffect);
-	//Engine::Safe_AddRef(pEffect);
+	LPD3DXEFFECT	 pEffect = m_sComponent.m_pShaderCom->Get_EffectHandle();
+	NULL_CHECK(pEffect);
+	Engine::Safe_AddRef(pEffect);
 
-	//_uint	iMaxPass = 0;
+	_uint	iMaxPass = 0;
 
-	//pEffect->Begin(&iMaxPass, 0);	// 현재 쉐이더 파일이 갖고 있는 최대 패스의 개수를 리턴, 사용하는 방식
-	//pEffect->BeginPass(0);
+	pEffect->Begin(&iMaxPass, 0);	// 현재 쉐이더 파일이 갖고 있는 최대 패스의 개수를 리턴, 사용하는 방식
+	pEffect->BeginPass(0);
 
-	//FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
+	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-	////m_pStaticMeshCom->Render_Meshes(pEffect);
+	//m_sComponent.m_pStaticMeshCom->Render_Meshes(pEffect);
+	m_sComponent.m_pStaticMeshCom->Render_MeshesEffect(pEffect, m_sComponent.m_pTextureCom);
 
-	//pEffect->EndPass();
-	//pEffect->End();
+	pEffect->EndPass();
+	pEffect->End();
 
 
-	//Engine::Safe_Release(pEffect);
-	///*_matrix matWorld;
-	//m_pTransformCom->Get_WorldMatrix(&matWorld);
+	Engine::Safe_Release(pEffect);
+	/*_matrix matWorld;
+	m_pTransformCom->Get_WorldMatrix(&matWorld);
 
-	//m_pColliderCom->Render_Collider(Engine::COL_TRUE, &matWorld);*/
+	m_pColliderCom->Render_Collider(Engine::COL_TRUE, &matWorld);*/
 }
 
 HRESULT Client::CPortal::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
@@ -106,6 +138,12 @@ HRESULT Client::CPortal::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	pEffect->SetMatrix("g_matView", &matView);
 	pEffect->SetMatrix("g_matProj", &matProj);
 
+	pEffect->SetFloat("g_bIsDissolve", false);
+	pEffect->SetFloat("g_uOffset", 0.5f);
+	pEffect->SetFloat("g_vOffset", 0.33f);
+	pEffect->SetFloat("g_uStep", (int)m_EffectTime % 2);
+	pEffect->SetFloat("g_vStep", (int)m_EffectTime / 2);
+	
 	return S_OK;
 }
 
@@ -127,6 +165,7 @@ void Client::CPortal::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphere
 
 void Client::CPortal::Set_Collider(_vec3 _pos, float _scale, CSphereCollider::BoneTeam _team, int _portalMapNumber) {
 	m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] = _pos;
+	m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS].y += 2.f;
 	CUnit::Update_Object(0.f);
 	CSphereCollider* sphereCol = CSphereCollider::Create(m_pGraphicDev);
 	sphereCol->Set_Transform(_scale);

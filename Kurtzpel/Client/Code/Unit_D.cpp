@@ -141,7 +141,11 @@ HRESULT Client::CUnit_D::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	pEffect->SetVector("g_vColor", &vColor);
 	pEffect->SetFloat("g_fBoldSize", 0.01f);
 	
-
+	pEffect->SetBool("g_bIsDissolve", false);
+	//if (false) {
+		// 디졸브 텍스쳐
+		//m_sComponent.m_pTexture->Set_Texture(pEffect, "g_DissolveTexture");
+	//}
 	//_matrix		matWorld, matView, matProj;
 
 	//m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);

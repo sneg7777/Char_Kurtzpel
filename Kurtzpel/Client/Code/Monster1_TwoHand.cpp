@@ -74,19 +74,7 @@ HRESULT Client::CMonster1_TwoHand::Add_Component(void)
 
 HRESULT CMonster1_TwoHand::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
-	_matrix		matWorld, matView, matProj;
-
-	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
-	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
-	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
-
-	pEffect->SetMatrix("g_matWorld", &matWorld);
-	pEffect->SetMatrix("g_matView", &matView);
-	pEffect->SetMatrix("g_matProj", &matProj);
-
-	_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
-	pEffect->SetVector("g_vColor", &vColor);
-	pEffect->SetFloat("g_fBoldSize", 0.01f);
+	CMonster::SetUp_ConstantTable(pEffect);
 
 	return S_OK;
 }
@@ -152,8 +140,8 @@ Client::_int Client::CMonster1_TwoHand::LateUpdate_Object(const _float& fTimeDel
 
 void Client::CMonster1_TwoHand::Render_Object(void)
 {	
-	m_sComponent.m_pMeshCom->Play_Animation(0.f);
-	CUnit_D::Render_Object();
+	//m_sComponent.m_pMeshCom->Play_Animation(0.f);
+	CMonster::Render_Object();
 }
 
 void Client::CMonster1_TwoHand::SetUp_OnTerrain(void)

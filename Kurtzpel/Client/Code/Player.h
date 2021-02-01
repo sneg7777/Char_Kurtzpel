@@ -55,7 +55,7 @@ public:
 		bCheck_MouseL, bCheck_MouseR, bCheck_MouseL_Already, bCheck_MouseR_Already,
 		bCheck_Skill_F1, bCheck_Skill_F2, bCheck_Skill_F3, bCheck_LB_SkillE, bCheck_LB_Phoenix_SkillZ,
 		bCheck_DamagedUp, bCheck_JumpToDamagedUp/*약한충격에도 점프상태에서 다운이 되고 그대로 착지후에도 호완성을 위해*/,
-		bCheck_WeaponChange,
+		bCheck_WeaponChangeIdle, bCheck_WeaponChange, bCheck_State_WeaponChange, bCheck_State_WeaponChangeHalf,
 		bCheck_End
 	};
 	enum TimeCheck {
@@ -90,6 +90,8 @@ private:
 	void		Set_StateToAnimation_Jump(State _state, _vec3 _vPos = { 0.f, 0.f, 0.f }, _vec3 _vDir = { 0.f, 0.f, 0.f }, float fTimeDelta = 0.f);
 	void		Hammer_Key_Input(const _float& fTimeDelta);
 	void		LongBow_Key_Input(const _float& fTimeDelta);
+	void		WeaponChangeState_Key_Input(const _float& fTimeDelta);
+	void		Move_WASD(_float fTimeDelta, _vec3& vPos, _vec3& vDir, _vec3& vDir2, Engine::CNaviMesh* pNaviMeshCom);
 	void		Hammer_Key_InputOfJump(const _float& fTimeDelta);
 	void		LongBow_Key_InputOfJump(const _float& fTimeDelta);
 	void		Calc_Time(_float fTimeDelta);
@@ -108,6 +110,7 @@ private:
 	void		Move_AccelSpeed(_vec3 vPos, _vec3 vDir, float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom);
 
 	void		Talk_NpcToPortal();
+	void		Dissolve_WeaponIdle(float fTimeDelta);
 private:
 	//점프
 	_float						m_fJumpPower = 0.12f;
@@ -134,6 +137,7 @@ public:
 	float						m_AccelSpeedInit = 0.f;
 	float						m_MaxDashGauge = 0.f;
 	float						m_DashGauge = 0.f;
+	float						m_WeaponDissolve = 0.f;
 public:
 	static CPlayer*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 	static void Set_Weapon_Equip(Weapon_Equip _weapon) { m_WeaponEquip = _weapon; }

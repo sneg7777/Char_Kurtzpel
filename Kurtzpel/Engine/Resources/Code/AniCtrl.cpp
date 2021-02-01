@@ -11,7 +11,8 @@ Engine::CAniCtrl::CAniCtrl(LPD3DXANIMATIONCONTROLLER pAniCtrl)
 {
 	m_pAniCtrl->AddRef();
 }
-
+//#define DURATION 0.1
+#define DURATION 0.1
 Engine::CAniCtrl::CAniCtrl(const CAniCtrl& rhs)
 	: m_iCurrentTrack(rhs.m_iCurrentTrack)
 	, m_iNewTrack(rhs.m_iNewTrack)
@@ -62,19 +63,19 @@ void Engine::CAniCtrl::Set_AnimationSet(const _uint& iIndex)
 	m_pAniCtrl->UnkeyAllTrackEvents(m_iNewTrack);
 
 	// 현재 설정된 트랙을 재생 또는 종료 시키기 위한 함수(3인자 : 언제부터 현재 트랙을 해제할 것인가)
-	m_pAniCtrl->KeyTrackEnable(m_iCurrentTrack, FALSE, m_fAccTime + 0.25);
+	m_pAniCtrl->KeyTrackEnable(m_iCurrentTrack, FALSE, m_fAccTime + DURATION);
 
 	// 인자값으로 들어오는 트랙에 세팅된 애니메이션 셋을 어떤 속도로 움직일 것인지 설정하는 함수(속도의 상수 값은 1)
-	m_pAniCtrl->KeyTrackSpeed(m_iCurrentTrack, 1.f, m_fAccTime, 0.25, D3DXTRANSITION_LINEAR);
+	m_pAniCtrl->KeyTrackSpeed(m_iCurrentTrack, 1.f, m_fAccTime, DURATION, D3DXTRANSITION_LINEAR);
 
 	// 인자값으로 들어오는 트랙의 가중치를 설정하는 함수
-	m_pAniCtrl->KeyTrackWeight(m_iCurrentTrack, 0.1f, m_fAccTime, 0.25, D3DXTRANSITION_LINEAR);
+	m_pAniCtrl->KeyTrackWeight(m_iCurrentTrack, 0.1f, m_fAccTime, DURATION, D3DXTRANSITION_LINEAR);
 
 
 	// New 트랙의 활성화를 지시하는 함수
 	m_pAniCtrl->SetTrackEnable(m_iNewTrack, m_Loop);
-	m_pAniCtrl->KeyTrackSpeed(m_iNewTrack, 1.f, m_fAccTime, 0.25, D3DXTRANSITION_LINEAR);
-	m_pAniCtrl->KeyTrackWeight(m_iNewTrack, 0.9f, m_fAccTime, 0.25, D3DXTRANSITION_LINEAR);
+	m_pAniCtrl->KeyTrackSpeed(m_iNewTrack, 1.f, m_fAccTime, DURATION, D3DXTRANSITION_LINEAR);
+	m_pAniCtrl->KeyTrackWeight(m_iNewTrack, 0.9f, m_fAccTime, DURATION, D3DXTRANSITION_LINEAR);
 
 	m_pAniCtrl->ResetTime(); // AdvanceTime 호출 시 내부적으로 누적되던 시간을 초기화하는 함수
 	m_fAccTime = 0.f;

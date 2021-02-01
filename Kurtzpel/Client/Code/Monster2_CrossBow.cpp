@@ -9,9 +9,11 @@
 #include "Random_Manager.h"
 #include "UI_Manager.h"
 #include "NpcQuest_Manager.h"
+#include "Monster2_Arrow.h"
 
-#define PLAYER_SEARCH_DISTANCE 15.f
-#define PLAYER_ATTACK_DISTANCE 12.f
+#define PLAYER_SEARCH_DISTANCE 16.f
+#define PLAYER_ATTACK_DISTANCE 14.f
+#define PLAYER_ATTACK2_DISTANCE 10.f
 #define THSkill_CoolTotal 5.f
 #define THSkill_Cool1 1.f
 #define THSkill_Cool2 1.f
@@ -21,7 +23,7 @@
 CMonster2_CrossBow::CMonster2_CrossBow(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CMonster(pGraphicDev)
 {
-	for (int i = 0; i < SKill_Cool_TH::SCool_TH_End; i++)
+	for (int i = 0; i < SKill_Cool_CB::SCool_CB_End; i++)
 	{
 		m_SkillCool[i] = 0.f;
 	}
@@ -71,19 +73,7 @@ HRESULT Client::CMonster2_CrossBow::Add_Component(void)
 
 HRESULT CMonster2_CrossBow::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
-	_matrix		matWorld, matView, matProj;
-
-	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
-	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
-	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
-
-	pEffect->SetMatrix("g_matWorld", &matWorld);
-	pEffect->SetMatrix("g_matView", &matView);
-	pEffect->SetMatrix("g_matProj", &matProj);
-
-	_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
-	pEffect->SetVector("g_vColor", &vColor);
-	pEffect->SetFloat("g_fBoldSize", 0.01f);
+	CMonster::SetUp_ConstantTable(pEffect);
 
 	return S_OK;
 }
@@ -150,7 +140,7 @@ Client::_int Client::CMonster2_CrossBow::LateUpdate_Object(const _float& fTimeDe
 void Client::CMonster2_CrossBow::Render_Object(void)
 {
 	m_sComponent.m_pMeshCom->Play_Animation(0.f);
-	CUnit_D::Render_Object();
+	CMonster::Render_Object();
 }
 
 void Client::CMonster2_CrossBow::SetUp_OnTerrain(void)
@@ -172,7 +162,7 @@ void Client::CMonster2_CrossBow::Calc_Time(_float fTimeDelta)
 	if (m_TimeGroggy > 0.f) {
 		m_TimeGroggy -= fTimeDelta;
 	}
-	for (int i = 0; i < SKill_Cool_TH::SCool_TH_End; i++)
+	for (int i = 0; i < SKill_Cool_CB::SCool_CB_End; i++)
 	{
 		if (m_SkillCool[i] > 0.f)
 			m_SkillCool[i] -= fTimeDelta;
@@ -186,7 +176,7 @@ void Client::CMonster2_CrossBow::Init_BoneAttack() {
 	}
 }
 
-void Client::CMonster2_CrossBow::Set_StateToAnimation(State _state, Skill_TH _skill) {
+void Client::CMonster2_CrossBow::Set_StateToAnimation(State _state, Skill_CB _skill) {
 	switch (_state)
 	{
 	case Client::CMonster2_CrossBow::State_Respawn:
@@ -203,6 +193,7 @@ void Client::CMonster2_CrossBow::Set_StateToAnimation(State _state, Skill_TH _sk
 	case Client::CMonster2_CrossBow::State_Wait:
 		m_sComponent.m_pMeshCom->Set_AnimationSet(50);
 		m_AniSpeed = 1.f;
+		m_ShotCheck = ShotCheck::ShotCheck_None;
 		//Init_BoneAttack();
 		break;
 	case Client::CMonster2_CrossBow::State_Move:
@@ -216,26 +207,29 @@ void Client::CMonster2_CrossBow::Set_StateToAnimation(State _state, Skill_TH _sk
 		break;
 	case Client::CMonster2_CrossBow::State_Skill: {
 		m_SkillState = _skill;
-		if (m_SkillState == Skill_TH_1) {
-			m_SkillCool[SKill_Cool_TH::SCool_TH_1] = THSkill_Cool1;
+		if (m_SkillState == Skill_CB_1) {
+			m_SkillCool[SKill_Cool_CB::SCool_CB_1] = THSkill_Cool1;
 			m_sComponent.m_pMeshCom->Set_AnimationSet(6);
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.3f;
-			//Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, true);
 		}
-		else if (m_SkillState == Skill_TH_2) {
-			m_SkillCool[SKill_Cool_TH::SCool_TH_2] = THSkill_Cool2;
+		else if (m_SkillState == Skill_CB_2) {
+			m_SkillCool[SKill_Cool_CB::SCool_CB_2] = THSkill_Cool2;
 			m_sComponent.m_pMeshCom->Set_AnimationSet(5);
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.3f;
-			//Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, true);
 		}
-		else if (m_SkillState == Skill_TH_3) {
-			m_SkillCool[SKill_Cool_TH::SCool_TH_3] = THSkill_Cool3;
+		else if (m_SkillState == Skill_CB_3) {
+			m_SkillCool[SKill_Cool_CB::SCool_CB_3] = THSkill_Cool3;
 			m_sComponent.m_pMeshCom->Set_AnimationSet(4);
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.3f;
-			//Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, true);
+		}
+		else if (m_SkillState == Skill_CB_3_2) {
+			m_sComponent.m_pMeshCom->Set_AnimationSet(3);
+		}
+		else if (m_SkillState == Skill_CB_3_3) {
+			m_sComponent.m_pMeshCom->Set_AnimationSet(0);
 		}
 	}
 		break;
@@ -304,7 +298,7 @@ void Client::CMonster2_CrossBow::Pattern(_float fTimeDelta)
 		bool state_check = Random_Skill(playerTodisTance);
 		if (state_check) {
 			m_State = State::State_Skill;
-			m_SkillCool[SKill_Cool_TH::SCool_TH_Total] = THSkill_CoolTotal;
+			m_SkillCool[SKill_Cool_CB::SCool_CB_Total] = THSkill_CoolTotal;
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -435,61 +429,76 @@ void CMonster2_CrossBow::Collision(CSphereCollider* _mySphere, CUnit* _col, CSph
 }
 
 void CMonster2_CrossBow::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _vec3 vPos, _vec3 vDir, float playerTodisTance) {
-	if (m_SkillState == Skill_TH::Skill_TH_1) {
+	if (m_SkillState == Skill_CB::Skill_CB_1) {
 		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.15f)) {
 			Set_StateToAnimation(State::State_Wait);
 		}
 		else {
 			float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
-			//m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
 
-			if (true) {
-				//Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, true);
+			if (m_ShotCheck == ShotCheck::ShotCheck_None && trackPos > 1.2f) {
+				m_ShotCheck = ShotCheck::ShotCheck_1;
+				Create_ArrowShot(vPos, fTimeDelta);
 			}
-			else {
-				//Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, false);
+			else if (m_ShotCheck == ShotCheck::ShotCheck_1 && trackPos > 1.5f) {
+				m_ShotCheck = ShotCheck::ShotCheck_2;
+				Create_ArrowShot(vPos, fTimeDelta);
 			}
-			return;
-		}
-	}
-	else if (m_SkillState == Skill_TH::Skill_TH_2) {
-		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
-			Set_StateToAnimation(State::State_Wait);
-		}
-		else {
-			if (true) {
-				//Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, true);
-			}
-			else {
-				//Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, false);
+			else if (m_ShotCheck == ShotCheck::ShotCheck_2 && trackPos > 2.3f) {
+				m_ShotCheck = ShotCheck::ShotCheck_3;
+				Create_ArrowShot(vPos, fTimeDelta);
 			}
 			return;
 		}
 	}
-	else if (m_SkillState == Skill_TH::Skill_TH_3) {
+	else if (m_SkillState == Skill_CB::Skill_CB_2) {
 		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
 			Set_StateToAnimation(State::State_Wait);
 		}
 		else {
-			if (true) {
-				//Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, true);
+			float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
+			if (0.1f < trackPos && trackPos < 0.9f) {
+				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * -1.f * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
 			}
-			else {
-				//Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, false);
+			else if (m_ShotCheck == ShotCheck::ShotCheck_None && trackPos > 2.f) {
+				m_ShotCheck = ShotCheck::ShotCheck_1;
+				Create_ArrowShot(vPos, fTimeDelta);
 			}
+			return;
+		}
+	}
+	else if (m_SkillState == Skill_CB::Skill_CB_3) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
+			Set_StateToAnimation(State::State_Skill, Skill_CB::Skill_CB_3_2);
+		}
+	}
+	else if (m_SkillState == Skill_CB::Skill_CB_3_2) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
+			Set_StateToAnimation(State::State_Skill, Skill_CB::Skill_CB_3_3);
+		}
+		else {
+			if (m_ShotCheck == ShotCheck::ShotCheck_None) {
+				m_ShotCheck = ShotCheck::ShotCheck_1;
+				Create_ArrowShot(vPos, fTimeDelta);
+			}
+		}
+	}
+	else if (m_SkillState == Skill_CB::Skill_CB_3_3) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
+			Set_StateToAnimation(State::State_Wait);
 		}
 	}
 }
 
 bool CMonster2_CrossBow::Random_Skill(float playerTodisTance) {
-	if (m_SkillCool[SKill_Cool_TH::SCool_TH_Total] > 0.f)
+	if (m_SkillCool[SKill_Cool_CB::SCool_CB_Total] > 0.f)
 		return false;
-	int iPattern = CRandom_Manager::Random() % 1;
+	int iPattern = CRandom_Manager::Random() % 3;
 	switch (iPattern)
 	{
 	case 0: {
-		if (m_SkillCool[SKill_Cool_TH::SCool_TH_1] <= 0.f && playerTodisTance < PLAYER_ATTACK_DISTANCE && m_AngleOfSame) {
-			Set_StateToAnimation(State::State_Skill, Skill_TH::Skill_TH_1);
+		if (m_SkillCool[SKill_Cool_CB::SCool_CB_1] <= 0.f && playerTodisTance < PLAYER_ATTACK_DISTANCE && m_AngleOfSame) {
+			Set_StateToAnimation(State::State_Skill, Skill_CB::Skill_CB_1);
 			return true;
 		}
 		else {
@@ -498,8 +507,8 @@ bool CMonster2_CrossBow::Random_Skill(float playerTodisTance) {
 		break;
 	}
 	case 1: {
-		if (m_SkillCool[SKill_Cool_TH::SCool_TH_2] <= 0.f && playerTodisTance < PLAYER_ATTACK_DISTANCE && m_AngleOfSame) {
-			Set_StateToAnimation(State::State_Skill, Skill_TH::Skill_TH_2);
+		if (m_SkillCool[SKill_Cool_CB::SCool_CB_2] <= 0.f && playerTodisTance < PLAYER_ATTACK2_DISTANCE && m_AngleOfSame) {
+			Set_StateToAnimation(State::State_Skill, Skill_CB::Skill_CB_2);
 			return true;
 		}
 		else {
@@ -508,8 +517,8 @@ bool CMonster2_CrossBow::Random_Skill(float playerTodisTance) {
 		break;
 	}
 	case 2: {
-		if (m_SkillCool[SKill_Cool_TH::SCool_TH_3] <= 0.f && playerTodisTance < PLAYER_ATTACK_DISTANCE && m_AngleOfSame) {
-			Set_StateToAnimation(State::State_Skill, Skill_TH::Skill_TH_3);
+		if (m_SkillCool[SKill_Cool_CB::SCool_CB_3] <= 0.f && playerTodisTance < PLAYER_ATTACK_DISTANCE && m_AngleOfSame) {
+			Set_StateToAnimation(State::State_Skill, Skill_CB::Skill_CB_3);
 			return true;
 		}
 		else {
@@ -555,4 +564,27 @@ void CMonster2_CrossBow::Update_DelayHpDec(float fTimeDelta) {
 			m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp;
 	}
 	return;
+}
+
+void CMonster2_CrossBow::Create_ArrowShot(_vec3 _vPos, float fTimeDelta)
+{
+	CUnit* pUnit;
+	Engine::CGameObject* pGameObject = pUnit = CMonster2_Arrow::Create(m_pGraphicDev);
+	dynamic_cast<CMonster2_Arrow*>(pUnit)->Create_Coll();
+	_vec3 playerPos, monsterPos, monsterDir;
+	CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &playerPos);
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &monsterPos);
+	/*_vec3 dir = playerPos - monsterPos;
+	D3DXVec3Normalize(&dir, &dir);
+	pUnit->Get_sStat()->m_vDir = dir;*/
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_LOOK, &monsterDir);
+	monsterDir *= -1.f;
+	pUnit->Get_sComponent()->m_pTransformCom->m_vInfo[Engine::INFO_POS] = _vPos + monsterDir * 100.f;
+	pUnit->Get_sComponent()->m_pTransformCom->m_vInfo[Engine::INFO_POS].y += 2.1f;
+	pUnit->Get_sStat()->m_vDir = monsterDir;
+
+	dynamic_cast<CMonster2_Arrow*>(pUnit)->Update_Object(0.f);
+	pUnit->Get_sStat()->m_fAttack = m_sStat.m_fAttack;
+	Engine::CLayer* pLayer = Engine::CManagement::GetInstance()->m_pScene->Get_Layer(Engine::CLayer::LayerName::Layer_Static);
+	pLayer->Add_GameObject(L"Monster2_Arrow", pGameObject);
 }

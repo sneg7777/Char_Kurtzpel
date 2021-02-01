@@ -180,24 +180,39 @@ void CDynamicCamera::Free(void)
 
 Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 {
-	if (CPlayer::GetInstance()->m_State == CPlayer::State::State_Dash) {
+	CPlayer* pPlayer = CPlayer::GetInstance();
+	if (pPlayer->Get_Weapon_Equip() == CPlayer::Weapon_LongBow && pPlayer->m_Attack_State == CPlayer::StateA_SkillF) {
+		if (m_FovYAccel > 45.f)
+			m_FovYAccel -= fTimeDelta * 40.f;
+		m_fFovY = D3DXToRadian(m_FovYAccel);
+	}
+	else  if (pPlayer->m_State == CPlayer::State::State_Dash || (pPlayer->Get_Weapon_Equip() == CPlayer::Weapon_Equip::Weapon_Hammer && pPlayer->m_Attack_State == CPlayer::StateA_SkillQ)) {
 		// m_fFovY = D3DXToRadian(50.f);
 		if (m_FovYAccel > 50.f)
-			m_FovYAccel -= fTimeDelta * 20.f;
+			m_FovYAccel -= fTimeDelta * 40.f;
 		m_fFovY = D3DXToRadian(m_FovYAccel);
 	}
 	else {
 		// m_fFovY = D3DXToRadian(60.f);
 		if (m_FovYAccel < 60.f)
-			m_FovYAccel += fTimeDelta * 20.f;
+			m_FovYAccel += fTimeDelta * 40.f;
 		m_fFovY = D3DXToRadian(m_FovYAccel);
 	}
-	CPlayer* pPlayer = CPlayer::GetInstance();
-	if (pPlayer->Get_Weapon_Equip() == CPlayer::Weapon_Equip::Weapon_LongBow && pPlayer->m_Attack_State == CPlayer::Attack_State::StateA_SkillZ) {
-		LB_SkillZScene(fTimeDelta);
+
+	if (pPlayer->m_Attack_State == CPlayer::Attack_State::StateA_SkillZ) {
+		if(pPlayer->Get_Weapon_Equip() == CPlayer::Weapon_Equip::Weapon_LongBow)
+			LB_SkillZScene(fTimeDelta);
+		if (pPlayer->Get_Weapon_Equip() == CPlayer::Weapon_Equip::Weapon_Hammer) {
+			if(pPlayer->Get_sComponent()->m_pMeshCom->Is_AnimationSetEnd(0.3f)) {
+				Move_NpcCamera_No(fTimeDelta);
+			}
+		}
+		Key_Input(fTimeDelta);
+		
 		if (m_bFix)
 			Mouse_Fix();
 		
+		Shake_CameraMove(fTimeDelta);
 		_int iExit = Engine::CCamera::Update_Object(fTimeDelta);
 		return iExit;
 	}

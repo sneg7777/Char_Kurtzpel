@@ -14,6 +14,7 @@ class CCollider;
 //class COptimization;
 class CNaviMesh;
 class CShader;
+class CTexture;
 
 END
 #include "SphereCollider.h"
@@ -28,6 +29,7 @@ struct sComponent {
 	Engine::CCalculator* m_pCalculatorCom = nullptr;
 	Engine::CCollider* m_pColliderCom = nullptr;
 	Engine::CShader* m_pShaderCom = nullptr;
+	Engine::CTexture* m_pTextureCom = nullptr;
 };
 struct sDelayHpDec {
 	_float		m_fDelayTime;

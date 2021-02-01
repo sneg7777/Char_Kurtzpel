@@ -58,7 +58,8 @@ protected:
 	_matrix						m_matProj;
 	_float						m_fX, m_fY;
 	_float						m_fSizeX, m_fSizeY;
-
+	_float						m_fAlpha = 0.f;
+	bool						m_ShaderCheck = false;
 public:
 	static CUI*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

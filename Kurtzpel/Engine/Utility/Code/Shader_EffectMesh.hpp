@@ -8,6 +8,11 @@ vector			g_vColor;
 
 bool			g_bIsDissolve = false;
 
+float			g_uOffset;
+float			g_vOffset;
+float			g_uStep;
+float			g_vStep;
+
 texture			g_BaseTexture;
 sampler BaseSampler = sampler_state
 {
@@ -56,7 +61,12 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	Out.vNormal = normalize(mul(vector(In.vNormal.xyz, 0.f), g_matWorld));
 
-	Out.vTexUV = In.vTexUV;
+	float2 texUV = In.vTexUV;
+	texUV.x = (g_uOffset * texUV.x) + g_uStep * g_uOffset;
+	texUV.y = (g_vOffset * texUV.y) + g_vStep * g_vOffset;
+	Out.vTexUV = texUV;
+
+	//Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
 
 	return Out;
@@ -103,7 +113,6 @@ PS_OUT		PS_MAIN(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	Out.vColor = tex2D(BaseSampler, In.vTexUV);
-	
 	vector vDissolve = tex2D(DissolveSampler, In.vTexUV);
 	
 	if (g_bIsDissolve)

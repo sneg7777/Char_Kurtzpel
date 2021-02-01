@@ -38,6 +38,8 @@ public:
 		bool	m_TalkEnd = false; // 카메라이동쪽
 		bool	m_PortalColl = false;
 		bool	m_MapMove = false;
+
+		float	m_fTimeDelta = 0.f;
 	};
 public:
 	static CNpcQuest_Manager* Get_Instance() {
@@ -57,6 +59,7 @@ public:
 	void Render_Object(void);
 	void QusetProgress(const _float& fTimeDelta);
 	void Portal_MapMove();
+	static float Get_TimeDelta();
 	static NpcQuestInfo* Get_NpcQuestInfo() { return &m_pInstance->m_NpcQuestInfo; }
 	
 private:

@@ -1,5 +1,5 @@
 #include "StaticMesh.h"
-
+#include "Texture.h"
 USING(Engine)
 
 Engine::CStaticMesh::CStaticMesh(LPDIRECT3DDEVICE9 pGraphicDev)
@@ -132,7 +132,7 @@ void Engine::CStaticMesh::Render_Meshes(void)
 	}
 }
 
-void CStaticMesh::Render_Meshes(LPD3DXEFFECT & pEffect)
+void CStaticMesh::Render_Meshes(LPD3DXEFFECT& pEffect)
 {
 	for (_ulong i = 0; i < m_dwSubsetCnt; ++i)
 	{
@@ -144,7 +144,29 @@ void CStaticMesh::Render_Meshes(LPD3DXEFFECT & pEffect)
 
 		pEffect->SetTexture("g_BaseTexture", m_ppTextures[i]);
 		pEffect->CommitChanges();	// 텍스쳐 출력 이후에 쉐이더 객체가 참고 있는 텍스쳐 정보를 갱신시켜주는 함수
-		
+
+		pEffect->BeginPass(iPassNum);
+
+		m_pMesh->DrawSubset(i);
+
+		pEffect->EndPass();
+	}
+}
+
+void CStaticMesh::Render_MeshesEffect(LPD3DXEFFECT& pEffect, Engine::CTexture* pTexture)
+{
+	for (_ulong i = 0; i < m_dwSubsetCnt; ++i)
+	{
+		_bool	bAlpha = false;
+		_uint	iPassNum = 0;
+
+		if (bAlpha = Find_Alpha(m_pMtrl[i].pTextureFilename))
+			iPassNum = 1;
+
+		//pEffect->SetTexture("g_BaseTexture", m_ppTextures[i]);
+		pTexture->Set_Texture(pEffect, "g_BaseTexture");
+		pEffect->CommitChanges();	// 텍스쳐 출력 이후에 쉐이더 객체가 참고 있는 텍스쳐 정보를 갱신시켜주는 함수
+
 		pEffect->BeginPass(iPassNum);
 
 		m_pMesh->DrawSubset(i);

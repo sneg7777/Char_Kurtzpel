@@ -36,25 +36,40 @@ HRESULT Client::CGH_RockIn::Add_Component(bool _inCheck)
 	m_sComponent.m_pTransformCom->Set_Pos(&vPos);
 	Engine::CGameObject::Update_Object(0.f);
 	
-
-	//Load_ColliderFile(L"../Bin/Resource/Mesh/DynamicMesh/Save/Monster1_TwoHand.dat");
-	//for (auto& sphere : m_VecSphereCollider)
-	//{
-	//	sphere->m_pDynamicThis = this;
-	//	if (!sphere->m_FrameName.compare("Bip001")) {
-	//		sphere->m_BonePart = CSphereCollider::BonePart_CollBody;
-	//	}
-	//	else if (!sphere->m_FrameName.compare("Point_Weapon_R_Hand")) {
-	//		sphere->m_BonePart = CSphereCollider::BonePart_Weapon;
-	//	}
-	//	sphere->m_BoneTeam = CSphereCollider::BoneTeam_Enemy;
-	//}
+	pComponent = m_sComponent.m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_DissolveTex"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Texture", pComponent);
+	
 	return S_OK;
 }
 
 HRESULT CGH_RockIn::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
-	CUnit::SetUp_ConstantTable(pEffect);
+	_matrix		matWorld, matView, matProj;
+
+	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+
+	pEffect->SetMatrix("g_matWorld", &matWorld);
+	pEffect->SetMatrix("g_matView", &matView);
+	pEffect->SetMatrix("g_matProj", &matProj);
+
+	_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
+	pEffect->SetVector("g_vColor", &vColor);
+	pEffect->SetFloat("g_fBoldSize", 0.01f);
+
+	if (m_Dissolve != 0.f) {
+		pEffect->SetFloat("g_fTimeDelta", m_Dissolve);
+		pEffect->SetBool("g_bIsDissolve", true);
+		m_sComponent.m_pTextureCom->Set_Texture(pEffect, "g_DissolveTexture");
+	}
+	else {
+		pEffect->SetFloat("g_fTimeDelta", 0.f);
+		pEffect->SetBool("g_bIsDissolve", false);
+	}
+	
+	
 
 	return S_OK;
 }
@@ -94,7 +109,7 @@ HRESULT Client::CGH_RockIn::Ready_Object(bool _inCheck)
 
 Client::_int Client::CGH_RockIn::Update_Object(const _float& fTimeDelta)
 {
-	if (m_sStat.m_IsDead || m_sStat.m_IsDeadTime > 1.5f) {
+	if (m_sStat.m_IsDead || m_sStat.m_IsDeadTime > 1.4f) {
 		return 1;
 	}
 
@@ -128,19 +143,20 @@ void Client::CGH_RockIn::Render_Object(void)
 	Engine::Safe_AddRef(pEffect);
 
 	_uint	iMaxPass = 0;
-
 	pEffect->Begin(&iMaxPass, 0);	// 현재 쉐이더 파일이 갖고 있는 최대 패스의 개수를 리턴, 사용하는 방식
-	pEffect->BeginPass(0);
+	for (_int i = 0; i < iMaxPass; i++)
+	{
+		pEffect->BeginPass(i);
 
-	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
+		FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-	m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
+		m_sComponent.m_pMeshCom->Render_Meshes(pEffect);
 
-	pEffect->EndPass();
+		pEffect->EndPass();
+	}
 	pEffect->End();
 
 	Engine::Safe_Release(pEffect);
-	
 }
 
 void Client::CGH_RockIn::SetUp_OnTerrain(void)
@@ -160,6 +176,9 @@ void Client::CGH_RockIn::SetUp_OnTerrain(void)
 void Client::CGH_RockIn::Calc_Time(_float fTimeDelta)
 {
 	m_sStat.m_IsDeadTime += fTimeDelta;
+	if (m_sStat.m_IsDeadTime > 0.9f) {
+		m_Dissolve += fTimeDelta * 2.f;
+	}
 }
 
 void Client::CGH_RockIn::Pattern(_float fTimeDelta)

@@ -291,6 +291,9 @@
     <ClInclude Include="..\Code\Monster2_CrossBow.h">
       <Filter>02. GameObject\01. Stage\20. Monster\03. Monster2_CrossBow</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\Monster2_Arrow.h">
+      <Filter>02. GameObject\01. Stage\20. Monster\03. Monster2_CrossBow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -441,6 +444,9 @@
       <Filter>02. GameObject\01. Stage\10.Equip\Hammer</Filter>
     </ClCompile>
     <ClCompile Include="..\Code\Monster2_CrossBow.cpp">
+      <Filter>02. GameObject\01. Stage\20. Monster\03. Monster2_CrossBow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Monster2_Arrow.cpp">
       <Filter>02. GameObject\01. Stage\20. Monster\03. Monster2_CrossBow</Filter>
     </ClCompile>
   </ItemGroup>
