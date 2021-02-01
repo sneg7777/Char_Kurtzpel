@@ -145,7 +145,10 @@ void Client::CSkillCollider::Set_Collider(_vec3 _pos, float _scale, CSphereColli
 	CSphereCollider* sphereCol = CSphereCollider::Create(m_pGraphicDev);
 	sphereCol->Set_Transform(_scale);
 	sphereCol->m_pStaticThis = this;
-	sphereCol->m_WeaponAttack = false;
+	if(_interval != 0.f)
+		sphereCol->m_WeaponAttack = false;
+	else
+		sphereCol->m_WeaponAttack = true;
 	sphereCol->m_BoneTeam = _team;
 	sphereCol->m_BonePart = CSphereCollider::BonePart::BonePart_Static;
 	m_sStat.m_fAttack = _attack;

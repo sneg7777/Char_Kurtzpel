@@ -4,7 +4,7 @@
 #include "Mesh.h"
 
 BEGIN(Engine)
-
+class CTexture;
 class ENGINE_DLL CStaticMesh : public CMesh
 {
 private:
@@ -21,6 +21,8 @@ public:
 	HRESULT		Ready_Meshes(const _tchar* pFilePath, const _tchar* pFileName);
 	void		Render_Meshes(void);
 	void		Render_Meshes(LPD3DXEFFECT& pEffect);
+	void		Render_MeshesEffect(LPD3DXEFFECT& pEffect, Engine::CTexture* pTexture);
+
 
 private:
 	_bool		Find_Alpha(const char* pFileName);

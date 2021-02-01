@@ -189,6 +189,7 @@
     <ClInclude Include="..\Code\MainApp.h" />
     <ClInclude Include="..\Code\Monster.h" />
     <ClInclude Include="..\Code\Monster1_TwoHand.h" />
+    <ClInclude Include="..\Code\Monster2_Arrow.h" />
     <ClInclude Include="..\Code\Monster2_CrossBow.h" />
     <ClInclude Include="..\Code\MonsterTemp.h" />
     <ClInclude Include="..\Code\NaviTerrain.h" />
@@ -247,6 +248,7 @@
     <ClCompile Include="..\Code\MainApp.cpp" />
     <ClCompile Include="..\Code\Monster.cpp" />
     <ClCompile Include="..\Code\Monster1_TwoHand.cpp" />
+    <ClCompile Include="..\Code\Monster2_Arrow.cpp" />
     <ClCompile Include="..\Code\Monster2_CrossBow.cpp" />
     <ClCompile Include="..\Code\MonsterTemp.cpp" />
     <ClCompile Include="..\Code\NaviTerrain.cpp" />

@@ -33,7 +33,7 @@ HRESULT Client::CHammer::Add_Component(void)
 	CPlayer::GetInstance()->m_Hammer = this;
 	CPlayer::Set_Weapon_Equip(CPlayer::Weapon_Hammer);
 
-	pComponent = m_pTexture = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_DissolveTex"));
+	pComponent = m_sComponent.m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_DissolveTex"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Texture", pComponent);
 	return S_OK;
@@ -186,10 +186,17 @@ HRESULT Client::CHammer::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	pEffect->SetVector("g_vColor", &vColor);
 	pEffect->SetFloat("g_fBoldSize", 0.01f);
 
-	pEffect->SetFloat("g_fTimeDelta", m_fDeltaTime);
-	pEffect->SetBool("g_bIsDissolve", m_IsTest);
-	// 디졸브 텍스쳐
-	m_pTexture->Set_Texture(pEffect, "g_DissolveTexture");
+	pEffect->SetFloat("g_fTimeDelta", CPlayer::GetInstance()->m_WeaponDissolve);
+	bool	weaponChange = CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck_State_WeaponChange];
+	if (!weaponChange) {
+		if (CPlayer::GetInstance()->m_WeaponDissolve != 0.f)
+			weaponChange = true;
+	}
+	pEffect->SetBool("g_bIsDissolve", weaponChange);
+	if (weaponChange) {
+		// 디졸브 텍스쳐
+		m_sComponent.m_pTextureCom->Set_Texture(pEffect, "g_DissolveTexture");
+	}
 
 	return S_OK;
 }

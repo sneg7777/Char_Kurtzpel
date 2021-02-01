@@ -32,6 +32,10 @@ HRESULT Client::CLongBow::Add_Component(void)
 
 	CPlayer::GetInstance()->m_LongBow = this;
 	CPlayer::Set_Weapon_Equip(CPlayer::Weapon_LongBow);
+
+	pComponent = m_sComponent.m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_DissolveTex"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Texture", pComponent);
 	return S_OK;
 }
 
@@ -183,7 +187,31 @@ void CLongBow::BoneAttach(string _frame)
 
 HRESULT Client::CLongBow::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
-	CUnit::SetUp_ConstantTable(pEffect);
+	_matrix		matWorld, matView, matProj;
+
+	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+
+	pEffect->SetMatrix("g_matWorld", &matWorld);
+	pEffect->SetMatrix("g_matView", &matView);
+	pEffect->SetMatrix("g_matProj", &matProj);
+
+	_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
+	pEffect->SetVector("g_vColor", &vColor);
+	pEffect->SetFloat("g_fBoldSize", 0.01f);
+
+	pEffect->SetFloat("g_fTimeDelta", CPlayer::GetInstance()->m_WeaponDissolve);
+	bool	weaponChange = CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck_State_WeaponChange];
+	if (!weaponChange) {
+		if (CPlayer::GetInstance()->m_WeaponDissolve != 0.f)
+			weaponChange = true;
+	}
+	pEffect->SetBool("g_bIsDissolve", weaponChange);
+	if (weaponChange) {
+		// 디졸브 텍스쳐
+		m_sComponent.m_pTextureCom->Set_Texture(pEffect, "g_DissolveTexture");
+	}
 
 	return S_OK;
 }

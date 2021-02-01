@@ -43,6 +43,7 @@ public:
 private:
 	virtual void Free(void) override;
 	int			m_PortalMapNumber = 0;
+	float		m_EffectTime = 0;
 
 };
 

@@ -85,6 +85,7 @@ HRESULT CNpc_01::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 		pEffect->SetVector("g_vColor", &vColor);
 		pEffect->SetFloat("g_fBoldSize", 0.01f);
 	}
+	pEffect->SetBool("g_bIsDissolve", false);
 
 	return S_OK;
 }

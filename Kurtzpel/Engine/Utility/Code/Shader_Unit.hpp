@@ -154,8 +154,8 @@ technique Default_Device
 	pass Outline
 	{
 		alphatestenable = true;
-	alpharef = 0xc0;
-	alphafunc = greater;
+		alpharef = 0xc0;
+		alphafunc = greater;
 		cullmode = cw;
 
 		vertexshader = compile vs_3_0 VS_OUTLINE();

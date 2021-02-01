@@ -57,7 +57,7 @@ private:
 	//_bool						m_bColl = false;
 	const	_matrix*			m_pParentBoneMatrix = nullptr;
 	const	_matrix*			m_pParentWorldMatrix = nullptr;
-	Engine::CTexture*			m_pTexture = nullptr;
+	
 	float	m_RocationX = 0.f;
 	float	m_RocationZ = 0.f;
 	bool	m_IsTest = false;

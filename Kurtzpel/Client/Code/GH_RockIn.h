@@ -33,7 +33,7 @@ public:
 
 private:
 	virtual void Free(void) override;
-
+	float		m_Dissolve = 0.f;
 };
 
 END

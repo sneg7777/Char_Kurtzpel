@@ -39,7 +39,7 @@ HRESULT Client::CNpcQuest_Manager::Ready_Object(LPDIRECT3DDEVICE9 pGraphicDev)
 Client::_int Client::CNpcQuest_Manager::Update_Object(const _float& fTimeDelta)
 {
 	QusetProgress(fTimeDelta);
-
+	m_NpcQuestInfo.m_fTimeDelta = fTimeDelta;
 	return 0;
 }
 
@@ -105,4 +105,8 @@ void Client::CNpcQuest_Manager::Portal_MapMove() {
 
 		FAILED_CHECK_RETURN(Engine::SetUp_Scene(pScene), );
 	}
+}
+
+float Client::CNpcQuest_Manager::Get_TimeDelta() {
+	return m_pInstance->m_NpcQuestInfo.m_fTimeDelta;
 }

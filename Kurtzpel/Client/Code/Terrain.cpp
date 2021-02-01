@@ -196,7 +196,7 @@ HRESULT CTerrain::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 		pEffect->SetVector("g_vPlayerPos", &_vec4(pPlayer->m_LB_SkillE_Pos, 1.f));
 	else
 		pEffect->SetVector("g_vPlayerPos", &_vec4(_vec3{0.f, 0.f, 0.f}, 1.f));
-	_float	fRange = 6.f;
+	_float	fRange = 8.f;
 	pEffect->SetFloat("g_fRange", fRange);
 	///////////////////////////////////////////////////////////////////////////////////////////
 	CPortal* pPortal = dynamic_cast<CPortal*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Static, Engine::CGameObject::UnitName::Portal));

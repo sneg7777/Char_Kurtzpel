@@ -36,6 +36,8 @@ struct sStat {
 	_float						m_fKnockBackHp = 0.f;
 	_float						m_fKnockBackPower = 1.f;
 	_vec3						m_fKnockBackDir;
+
+	_float						m_fDissolveTime = 0.f;
 };
 protected:
 	explicit CGameObject(LPDIRECT3DDEVICE9 pGraphicDev);

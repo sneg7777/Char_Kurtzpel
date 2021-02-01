@@ -42,7 +42,7 @@ HRESULT Client::CUI::Add_Component(void)
 	m_mapComponent[Engine::ID_DYNAMIC].emplace(L"Com_Transform", pComponent);
 
 	// Shader
-	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Mesh"));
+	pComponent = m_pShaderCom = dynamic_cast<Engine::CShader*>(Engine::Clone(L"Proto_Shader_Texture"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 	return S_OK;
@@ -72,7 +72,7 @@ HRESULT Client::CUI::Ready_Object(void)
 	m_fY = 510.f;
 	m_fSizeX = 81.6f;
 	m_fSizeY = 97.2f;*/
-
+	m_pTransformCom->Set_Scale(0.4f, 0.1f, 0.1f);
 	return S_OK;
 }
 Client::_int Client::CUI::Update_Object(const _float& fTimeDelta)
@@ -106,47 +106,36 @@ void Client::CUI::Render_Object(void)
 	m_pGraphicDev->SetTransform(D3DTS_WORLD, &matWorld);
 	m_pGraphicDev->SetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &m_matProj);
+	//m_pTextureCom->Render_Texture();
+	//m_pBufferCom->Render_Buffer();
 	////////////////
-	//LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
-	//NULL_CHECK(pEffect);
-	//Engine::Safe_AddRef(pEffect);
+	
+	if (m_ShaderCheck) {
+		LPD3DXEFFECT    pEffect = m_pShaderCom->Get_EffectHandle();
+		NULL_CHECK(pEffect);
+		Engine::Safe_AddRef(pEffect);
 
-	//_uint	iMaxPass = 0;
+		FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-	//pEffect->Begin(&iMaxPass, 0);	// 현재 쉐이더 파일이 갖고 있는 최대 패스의 개수를 리턴, 사용하는 방식
-	//pEffect->BeginPass(0);
+		pEffect->Begin(NULL, 0);
+		pEffect->BeginPass(1);
 
-	//FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
+		//m_pTextureCom->Render_Texture();
+		m_pBufferCom->Render_Buffer();
 
-	//m_pMeshCom->Render_Meshes(pEffect);
+		pEffect->EndPass();
+		pEffect->End();
 
-	//pEffect->EndPass();
-	//pEffect->End();
+		Engine::Safe_Release(pEffect);
+	}
+	else {
+		m_pTextureCom->Render_Texture();
+		m_pBufferCom->Render_Buffer();
+	}
 
-	////m_pNaviMeshCom->Render_NaviMeshes();
-
-
-	//Engine::Safe_Release(pEffect);
 	////////////////
-	/*LPD3DXEFFECT	 pEffect = m_pShaderCom->Get_EffectHandle();
-	NULL_CHECK(pEffect);
-	Engine::Safe_AddRef(pEffect);
-
-	_uint	iMaxPass = 0;
-
-	pEffect->Begin(&iMaxPass, 0);	// 현재 쉐이더 파일이 갖고 있는 최대 패스의 개수를 리턴, 사용하는 방식
-	pEffect->BeginPass(0);
-
-	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );*/
-	////////////////
-	m_pTextureCom->Render_Texture();
-	m_pBufferCom->Render_Buffer();
-
 	m_pGraphicDev->SetTransform(D3DTS_VIEW, &matOriginView);
 	m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &matOriginProj);
-
-	/*pEffect->EndPass();
-	pEffect->End();*/
 }
 
 HRESULT Client::CUI::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
@@ -161,17 +150,15 @@ HRESULT Client::CUI::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	pEffect->SetMatrix("g_matView", &matView);
 	pEffect->SetMatrix("g_matProj", &matProj);
 
-	//////////////////////////////////////
-	//const D3DLIGHT9* pLightInfo = Engine::Get_Light(0);
+	pEffect->SetFloat("fTexCX", 68.f);
+	pEffect->SetFloat("fTexCY", 81.f);
+	pEffect->SetFloat("fDrawX", 0.f);
+	pEffect->SetFloat("fDrawY", 0.f);
+	pEffect->SetFloat("fDrawCX", 34.f);
+	pEffect->SetFloat("fDrawCY", 40.5f);
+	pEffect->SetFloat("fAlpha", 1.f);
 
-	//pEffect->SetVector("g_vLightDir", &_vec4(pLightInfo->Direction, 0.f));
-	//D3DMATERIAL9			tMtrlInfo;
-	//ZeroMemory(&tMtrlInfo, sizeof(D3DMATERIAL9));
-
-	//tMtrlInfo.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	//tMtrlInfo.Power = 20.f;
-
-	//pEffect->SetVector("Color", (_vec4*)&tMtrlInfo.Diffuse);
+	m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture");
 
 	return S_OK;
 }

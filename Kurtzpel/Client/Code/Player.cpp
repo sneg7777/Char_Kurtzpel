@@ -156,6 +156,8 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			break;
 		}
 		case Client::CPlayer::State_Attack: {
+			m_WeaponDissolve = 0.f;
+			m_bCheck[bCheck::bCheck_WeaponChangeIdle] = true;
 			questInfo->m_AttackCount++;
 			m_Attack_State = (Attack_State)((int)m_Attack_State + 1);
 			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
@@ -188,6 +190,8 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			break;
 		}
 		case Client::CPlayer::State_Skill: {
+			m_WeaponDissolve = 0.f;
+			m_bCheck[bCheck::bCheck_WeaponChangeIdle] = true;
 			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 			m_sComponent.m_pMeshCom->Set_AniAngle(265.f);
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
@@ -217,7 +221,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_bCheck[bCheck::bCheck_Skill_F1] = false;
 				m_bCheck[bCheck::bCheck_Skill_F2] = false;
 				m_bCheck[bCheck::bCheck_Skill_F3] = false;
-				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+				//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
 				m_sStat.m_fMp -= MP_GH_F;
 				questInfo->m_SkillFCount++;
 				break;
@@ -327,6 +331,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			break;
 		}
 		case Client::CPlayer::State_Attack: {
+			m_WeaponDissolve = 0.f;
 			questInfo->m_AttackCount++;
 			Create_ArrowShot(_vPos, _vDir, fTimeDelta);
 			m_Attack_State = (Attack_State)((int)m_Attack_State + 1);
@@ -360,6 +365,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			break;
 		}
 		case Client::CPlayer::State_Skill: {
+			m_WeaponDissolve = 0.f;
 			//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 			m_sComponent.m_pMeshCom->Set_AniAngle(265.f);
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
@@ -640,190 +646,15 @@ void Client::CPlayer::Hammer_Key_Input(const _float& fTimeDelta)
 	}
 	//////////////////////////////////////////////////////////////////// 무기 체인지
 	else if (m_bCheck[bCheck::bCheck_WeaponChange] && (Engine::Get_DIKeyState(DIK_TAB) & 0x80) && m_TimeCheck[TimeCheck_Cool_Tab] <= 0.f) {
-		Change_Weapon();
+		m_bCheck[CPlayer::bCheck_State_WeaponChange] = true;
+		m_WeaponDissolve = 0.f;
 	}
 	//////////////////////////////////////////////////////////////////// 이동
-	else if (Engine::Get_DIKeyState(DIK_W) & 0x80)
+	else
 	{
-		if (m_bCheck[bCheck::bCheck_DBKeyW]) {
-			if (m_DashGauge < DashGauge) {
-				m_bCheck[bCheck::bCheck_DBKeyW] = false;
-				m_bCheck[bCheck::bCheck_DBKeyA] = false;
-				m_bCheck[bCheck::bCheck_DBKeyD] = false;
-			}
-			else {
-				if (m_bCheck[bCheck::bCheck_DBKeyA]) {
-					m_sStat.m_EnumDir = EnumDir::UpLeft;
-				}
-				else if (m_bCheck[bCheck::bCheck_DBKeyD]) {
-					m_sStat.m_EnumDir = EnumDir::UpRight;
-				}
-				else {
-					m_sStat.m_EnumDir = EnumDir::Up;
-				}
-				Set_StateToAnimation(State::State_Dash);
-				m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
-			}
-		}
-		else {
-			if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
-				vDir2 = { -vDir.z, 0.f, vDir.x };
-				vDir2 += vDir;
-				D3DXVec3Normalize(&vDir2, &vDir2);
-				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-				m_sComponent.m_pMeshCom->Set_AniAngle(220.f);
-				m_sStat.m_EnumDir = EnumDir::UpLeft;
-				Set_StateToAnimation(State::State_Move);
-			}
-			else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
-				vDir2 = { vDir.z, 0.f, -vDir.x };
-				vDir2 += vDir;
-				D3DXVec3Normalize(&vDir2, &vDir2);
-				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-				m_sComponent.m_pMeshCom->Set_AniAngle(310.f);
-				m_sStat.m_EnumDir = EnumDir::UpRight;
-				Set_StateToAnimation(State::State_Move);
-			}
-			else {
-				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-				m_sComponent.m_pMeshCom->Set_AniAngle(265.f);
-				m_sStat.m_EnumDir = EnumDir::Up;
-				Set_StateToAnimation(State::State_Move);
-			}
-		}
-	}
-	else if (Engine::Get_DIKeyState(DIK_S) & 0x80)
-	{
-		if (m_bCheck[bCheck::bCheck_DBKeyS]) {
-			if (m_DashGauge < DashGauge) {
-				m_bCheck[bCheck::bCheck_DBKeyS] = false;
-				m_bCheck[bCheck::bCheck_DBKeyA] = false;
-				m_bCheck[bCheck::bCheck_DBKeyD] = false;
-			}
-			else{
-				if (m_bCheck[bCheck::bCheck_DBKeyA]) {
-					m_sStat.m_EnumDir = EnumDir::DownLeft;
-				}
-				else if (m_bCheck[bCheck::bCheck_DBKeyD]) {
-					m_sStat.m_EnumDir = EnumDir::DownRight;
-				}
-				else {
-					m_sStat.m_EnumDir = EnumDir::Down;
-				}
-				Set_StateToAnimation(State::State_Dash);
-				m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
-			}
-		}
-		else if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
-			vDir2 = { vDir.z, 0.f, -vDir.x };
-			vDir2 += vDir;
-			D3DXVec3Normalize(&vDir2, &vDir2);
-			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-			m_sComponent.m_pMeshCom->Set_AniAngle(175.f);
-			m_sStat.m_EnumDir = EnumDir::DownLeft;
-			Set_StateToAnimation(State::State_MoveSA);
-		}
-		else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
-			vDir2 = { -vDir.z, 0.f, vDir.x };
-			vDir2 += vDir;
-			D3DXVec3Normalize(&vDir2, &vDir2);
-			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-			m_sComponent.m_pMeshCom->Set_AniAngle(355.f);
-			m_sStat.m_EnumDir = EnumDir::DownRight;
-			Set_StateToAnimation(State::State_MoveSD);
-		}
-		else {
-			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * -m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-			m_sComponent.m_pMeshCom->Set_AniAngle(85.f);
-			m_sStat.m_EnumDir = EnumDir::Down;
-			Set_StateToAnimation(State::State_Move);
-		}
-	}
-	else if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
-		m_State = State::State_Move;
-		if (m_bCheck[bCheck::bCheck_DBKeyA]) {
-			if (m_DashGauge < DashGauge) {
-				m_bCheck[bCheck::bCheck_DBKeyA] = false;
-				m_bCheck[bCheck::bCheck_DBKeyW] = false;
-				m_bCheck[bCheck::bCheck_DBKeyS] = false;
-			}
-			else {
-				if (m_bCheck[bCheck::bCheck_DBKeyW]) {
-					m_sStat.m_EnumDir = EnumDir::UpLeft;
-				}
-				else if (m_bCheck[bCheck::bCheck_DBKeyS]) {
-					m_sStat.m_EnumDir = EnumDir::DownLeft;
-				}
-				else {
-					m_sStat.m_EnumDir = EnumDir::Left;
-				}
-				Set_StateToAnimation(State::State_Dash);
-				m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
-			}
-		} 
-		else {
-			vDir2 = { -vDir.z, 0.f, vDir.x };
-			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-			m_sComponent.m_pMeshCom->Set_AniAngle(175.f);
-			m_sStat.m_EnumDir = EnumDir::Left;
-			Set_StateToAnimation(State::State_Move);
-		}
-	}
-	else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
-		m_State = State::State_Move;
-		if (m_bCheck[bCheck::bCheck_DBKeyD]) {
-			if (m_DashGauge < DashGauge) {
-				m_bCheck[bCheck::bCheck_DBKeyD] = false;
-				m_bCheck[bCheck::bCheck_DBKeyW] = false;
-				m_bCheck[bCheck::bCheck_DBKeyS] = false;
-			}
-			else {
-				if (m_bCheck[bCheck::bCheck_DBKeyW]) {
-					m_sStat.m_EnumDir = EnumDir::UpRight;
-				}
-				else if (m_bCheck[bCheck::bCheck_DBKeyS]) {
-					m_sStat.m_EnumDir = EnumDir::DownRight;
-				}
-				else {
-					m_sStat.m_EnumDir = EnumDir::Right;
-				}
-				Set_StateToAnimation(State::State_Dash);
-				m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
-			}
-		}
-		else {
-			vDir2 = { vDir.z, 0.f, -vDir.x };
-			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-			m_sComponent.m_pMeshCom->Set_AniAngle(355.f);
-			m_sStat.m_EnumDir = EnumDir::Right;
-			Set_StateToAnimation(State::State_Move);
-		}
+		Move_WASD(fTimeDelta, vPos, vDir, vDir2, pNaviMeshCom);
 	}
 
-	//if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
-	//{
-	//	_vec3	vPickPos = PickUp_OnTerrain();
-	//	m_pTransformCom->Pick_Pos(&vPickPos, m_sStat.m_fSpeed, fTimeDelta);
-	//	
-	//}
-	//if (Engine::Get_DIMouseState(Engine::DIM_RB) & 0x80)
-	//{
-	//	m_sComponent.m_pMeshCom->Set_AnimationSet(30);
-	//}
-	//if (!m_bCheck[bCheck::bCheck_MoveAni] && true == m_sComponent.m_pMeshCom->Is_AnimationSetEnd() && m_AniEnd) {
-	//	m_AniSpeed = 1.f;
-	//	//m_sComponent.m_pMeshCom->Set_AniAngle(265.f);
-	//	m_sComponent.m_pMeshCom->Set_AnimationSet(243);
-	//	m_AniEnd = false;
-	//}
 	if ((m_State == State::State_Move || m_State == State::State_MoveSA || m_State == State::State_MoveSD)
 		&& !(Engine::Get_DIKeyState(DIK_W) & 0x80) && !(Engine::Get_DIKeyState(DIK_S) & 0x80) && !(Engine::Get_DIKeyState(DIK_A) & 0x80) && !(Engine::Get_DIKeyState(DIK_D) & 0x80)) {
 		m_State = State::State_Idle;
@@ -936,11 +767,7 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 				m_bCheck[bCheck::bCheck_MouseL_Already] = true;
 			}
 		}
-		//공격모션 동안 움직임
-		//float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
-		//if (trackPos < 0.3f && trackPos > 0.1f) {
-		//	m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-		//}
+
 		Move_AccelSpeed(vPos, vDir, fTimeDelta, pNaviMeshCom);
 	}
 	else if (m_State == State::State_JumpComboEnd) { ////////////////////////////////////////////////////////////////////// JumpComboEnd
@@ -1064,162 +891,15 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 	}
 	//////////////////////////////////////////////////////////////////// 무기 체인지
 	else if ((Engine::Get_DIKeyState(DIK_TAB) & 0x80) && m_TimeCheck[TimeCheck_Cool_Tab] <= 0.f) {
-		Change_Weapon();
+		m_bCheck[CPlayer::bCheck_State_WeaponChange] = true;
+		m_WeaponDissolve = 0.f;
 	}
 	//////////////////////////////////////////////////////////////////// 이동
-	else if (Engine::Get_DIKeyState(DIK_W) & 0x80)
+	else 
 	{
-	if (m_bCheck[bCheck::bCheck_DBKeyW]) {
-		if (m_bCheck[bCheck::bCheck_DBKeyA]) {
-			m_sStat.m_EnumDir = EnumDir::UpLeft;
-		}
-		else if (m_bCheck[bCheck::bCheck_DBKeyD]) {
-			m_sStat.m_EnumDir = EnumDir::UpRight;
-		}
-		else {
-			m_sStat.m_EnumDir = EnumDir::Up;
-		}
-		Set_StateToAnimation(State::State_Dash);
-		m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
-	}
-	else {
-		if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
-			vDir2 = { -vDir.z, 0.f, vDir.x };
-			vDir2 += vDir;
-			D3DXVec3Normalize(&vDir2, &vDir2);
-			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-			m_sComponent.m_pMeshCom->Set_AniAngle(220.f);
-			m_sStat.m_EnumDir = EnumDir::UpLeft;
-			Set_StateToAnimation(State::State_Move);
-		}
-		else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
-			vDir2 = { vDir.z, 0.f, -vDir.x };
-			vDir2 += vDir;
-			D3DXVec3Normalize(&vDir2, &vDir2);
-			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-			m_sComponent.m_pMeshCom->Set_AniAngle(310.f);
-			m_sStat.m_EnumDir = EnumDir::UpRight;
-			Set_StateToAnimation(State::State_Move);
-		}
-		else {
-			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-			m_sComponent.m_pMeshCom->Set_AniAngle(265.f);
-			m_sStat.m_EnumDir = EnumDir::Up;
-			Set_StateToAnimation(State::State_Move);
-		}
-	}
-	}
-	else if (Engine::Get_DIKeyState(DIK_S) & 0x80)
-	{
-	if (m_bCheck[bCheck::bCheck_DBKeyS]) {
-		if (m_bCheck[bCheck::bCheck_DBKeyA]) {
-			m_sStat.m_EnumDir = EnumDir::DownLeft;
-		}
-		else if (m_bCheck[bCheck::bCheck_DBKeyD]) {
-			m_sStat.m_EnumDir = EnumDir::DownRight;
-		}
-		else {
-			m_sStat.m_EnumDir = EnumDir::Down;
-		}
-		Set_StateToAnimation(State::State_Dash);
-		m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
-	}
-	else if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
-		vDir2 = { vDir.z, 0.f, -vDir.x };
-		vDir2 += vDir;
-		D3DXVec3Normalize(&vDir2, &vDir2);
-		m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-		m_sComponent.m_pMeshCom->Set_AniAngle(175.f);
-		m_sStat.m_EnumDir = EnumDir::DownLeft;
-		Set_StateToAnimation(State::State_MoveSA);
-	}
-	else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
-		vDir2 = { -vDir.z, 0.f, vDir.x };
-		vDir2 += vDir;
-		D3DXVec3Normalize(&vDir2, &vDir2);
-		m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-		m_sComponent.m_pMeshCom->Set_AniAngle(355.f);
-		m_sStat.m_EnumDir = EnumDir::DownRight;
-		Set_StateToAnimation(State::State_MoveSD);
-	}
-	else {
-		m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * -m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-		m_sComponent.m_pMeshCom->Set_AniAngle(85.f);
-		m_sStat.m_EnumDir = EnumDir::Down;
-		Set_StateToAnimation(State::State_Move);
-	}
-	}
-	else if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
-	m_State = State::State_Move;
-	if (m_bCheck[bCheck::bCheck_DBKeyA]) {
-		if (m_bCheck[bCheck::bCheck_DBKeyW]) {
-			m_sStat.m_EnumDir = EnumDir::UpLeft;
-		}
-		else if (m_bCheck[bCheck::bCheck_DBKeyS]) {
-			m_sStat.m_EnumDir = EnumDir::DownLeft;
-		}
-		else {
-			m_sStat.m_EnumDir = EnumDir::Left;
-		}
-		Set_StateToAnimation(State::State_Dash);
-		m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
-	}
-	else {
-		vDir2 = { -vDir.z, 0.f, vDir.x };
-		m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-		m_sComponent.m_pMeshCom->Set_AniAngle(175.f);
-		m_sStat.m_EnumDir = EnumDir::Left;
-		Set_StateToAnimation(State::State_Move);
-	}
-	}
-	else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
-	m_State = State::State_Move;
-	if (m_bCheck[bCheck::bCheck_DBKeyD]) {
-		if (m_bCheck[bCheck::bCheck_DBKeyW]) {
-			m_sStat.m_EnumDir = EnumDir::UpRight;
-		}
-		else if (m_bCheck[bCheck::bCheck_DBKeyS]) {
-			m_sStat.m_EnumDir = EnumDir::DownRight;
-		}
-		else {
-			m_sStat.m_EnumDir = EnumDir::Right;
-		}
-		Set_StateToAnimation(State::State_Dash);
-		m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
-	}
-	else {
-		vDir2 = { vDir.z, 0.f, -vDir.x };
-		m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
-
-		m_sComponent.m_pMeshCom->Set_AniAngle(355.f);
-		m_sStat.m_EnumDir = EnumDir::Right;
-		Set_StateToAnimation(State::State_Move);
-	}
+		Move_WASD(fTimeDelta, vPos, vDir, vDir2, pNaviMeshCom);
 	}
 
-	//if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
-	//{
-	//	_vec3	vPickPos = PickUp_OnTerrain();
-	//	m_pTransformCom->Pick_Pos(&vPickPos, m_sStat.m_fSpeed, fTimeDelta);
-	//	
-	//}
-	//if (Engine::Get_DIMouseState(Engine::DIM_RB) & 0x80)
-	//{
-	//	m_sComponent.m_pMeshCom->Set_AnimationSet(30);
-	//}
-	//if (!m_bCheck[bCheck::bCheck_MoveAni] && true == m_sComponent.m_pMeshCom->Is_AnimationSetEnd() && m_AniEnd) {
-	//	m_AniSpeed = 1.f;
-	//	//m_sComponent.m_pMeshCom->Set_AniAngle(265.f);
-	//	m_sComponent.m_pMeshCom->Set_AnimationSet(243);
-	//	m_AniEnd = false;
-	//}
 	if (m_bCheck[bCheck_LB_SkillE]) {
 		m_LB_SkillE_Pos = vPos + (vDir * (13.5f + m_LookAtY * 4.5f));
 	}
@@ -1252,6 +932,341 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 	}
 
 
+}
+
+void Client::CPlayer::WeaponChangeState_Key_Input(const _float& fTimeDelta)
+{
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Engine::CNaviMesh* pNaviMeshCom = dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->m_NaviTerrain->m_pNaviMeshCom;
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_LOOK, &m_sStat.m_vDir);
+	D3DXVec3Normalize(&m_sStat.m_vDir, &m_sStat.m_vDir);
+	_vec3	vPos, vDir, vDir2;
+	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	vDir = m_sStat.m_vDir;
+	Key_DoubleInput(fTimeDelta);
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// 피격 당할때
+	if (m_State == State::State_Damaged) { ////////////////////////////////////////////////////////////////////////////// 피격
+		if (m_bCheck[bCheck_JumpToDamagedUp] || m_sStat.m_fKnockBackPower > COLLDOWNPOWER) {		//강한 공격을 맞고 다운
+			if (!m_bCheck[bCheck::bCheck_DamagedUp]) {
+				if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.4f)) {
+					m_bCheck[bCheck::bCheck_DamagedUp] = true;
+					m_sComponent.m_pMeshCom->Set_AnimationSet(245);
+				}
+				else {
+					if (m_sComponent.m_pMeshCom->Get_AnimationTrackPos() < 0.68f) {
+						m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_sStat.m_fKnockBackDir * fTimeDelta * m_sStat.m_fSpeed * 1.5f * m_sStat.m_fKnockBackPower), &m_sStat.m_dwNaviIndex));
+					}
+					m_sStat.m_fSpeed -= m_sStat.m_fInitSpeed * fTimeDelta * 2.5f;
+					return;
+				}
+			}
+			else {
+				if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.9f)) {
+					m_AniSpeed;
+					Set_StateToAnimation(State::State_Idle);
+					m_bCheck[bCheck_JumpToDamagedUp] = false;
+				}
+				return;
+			}
+		}
+		else {											//약한 공격을 맞고 약간 넉백
+			if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd()) {
+				Set_StateToAnimation(State::State_Idle);
+			}
+			else {
+				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(m_sStat.m_fKnockBackDir * fTimeDelta * m_sStat.m_fSpeed * 1.5f * m_sStat.m_fKnockBackPower), &m_sStat.m_dwNaviIndex));
+				m_sStat.m_fSpeed -= m_sStat.m_fInitSpeed * fTimeDelta * 2.5f;
+				return;
+			}
+		}
+	}
+	else if (m_State == State::State_Dash || m_State == State::State_Rolling) { ///////////////////////////////////////////////////////////////////////////// Dash
+		if ((m_State == State::State_Dash && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.7f))
+			|| (m_State == State::State_Rolling && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(1.1f)))//m_TimeCheck[TimeCheck::TimeCheck_Dash] < 0.f)
+		{
+			Set_StateToAnimation(State::State_Idle);
+			m_bCheck[bCheck::bCheck_KeyW] = false;
+			m_bCheck[bCheck::bCheck_KeyA] = false;
+			m_bCheck[bCheck::bCheck_KeyS] = false;
+			m_bCheck[bCheck::bCheck_KeyD] = false;
+			m_bCheck[bCheck::bCheck_DBKeyW] = false;
+			m_bCheck[bCheck::bCheck_DBKeyA] = false;
+			m_bCheck[bCheck::bCheck_DBKeyS] = false;
+			m_bCheck[bCheck::bCheck_DBKeyD] = false;
+			return;
+		}
+		else if (m_State == State::State_Rolling && m_sComponent.m_pMeshCom->Get_AnimationTrackPos() > 1.2f) {
+
+		}
+		else if (m_sStat.m_EnumDir == EnumDir::Up) {
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+			m_sComponent.m_pMeshCom->Set_AniAngle(265.f);
+		}
+		else if (m_sStat.m_EnumDir == EnumDir::UpLeft) {
+			vDir2 = { -vDir.z, 0.f, vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+			m_sComponent.m_pMeshCom->Set_AniAngle(220.f);
+		}
+		else if (m_sStat.m_EnumDir == EnumDir::UpRight) {
+			vDir2 = { vDir.z, 0.f, -vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+			m_sComponent.m_pMeshCom->Set_AniAngle(310.f);
+		}
+		else if (m_sStat.m_EnumDir == EnumDir::Down) {
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * -m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+			m_sComponent.m_pMeshCom->Set_AniAngle(85.f);
+		}
+		else if (m_sStat.m_EnumDir == EnumDir::DownLeft) {
+			vDir2 = { vDir.z, 0.f, -vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+			m_sComponent.m_pMeshCom->Set_AniAngle(130.f);
+		}
+		else if (m_sStat.m_EnumDir == EnumDir::DownRight) {
+			vDir2 = { -vDir.z, 0.f, vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+			m_sComponent.m_pMeshCom->Set_AniAngle(40.f);
+		}
+		else if (m_sStat.m_EnumDir == EnumDir::Left) {
+			vDir2 = { -vDir.z, 0.f, vDir.x };
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+			m_sComponent.m_pMeshCom->Set_AniAngle(175.f);
+		}
+		else if (m_sStat.m_EnumDir == EnumDir::Right) {
+			vDir2 = { vDir.z, 0.f, -vDir.x };
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+			m_sComponent.m_pMeshCom->Set_AniAngle(355.f);
+		}
+
+	}
+	//////////////////////////////////////////////////////////////////// 실제 키 입력부분
+	else if ((Engine::Get_DIKeyState(DIK_LSHIFT) & 0x80) && m_DashGauge > RollGauge) {
+		Set_StateToAnimation(State::State_Rolling);
+	}
+	//////////////////////////////////////////////////////////////////// 좌클릭공격
+	else if ((Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80) && !m_bCheck[bCheck::bCheck_MouseL])
+	{
+		m_bCheck[bCheck::bCheck_MouseL] = true;
+		m_bCheck[bCheck::bCheck_MouseL_Already] = false;
+
+	}
+	//////////////////////////////////////////////////////////////////// 이동
+	else
+	{
+		Move_WASD(fTimeDelta, vPos, vDir, vDir2, pNaviMeshCom);
+	}
+
+	if ((m_State == State::State_Move || m_State == State::State_MoveSA || m_State == State::State_MoveSD)
+		&& !(Engine::Get_DIKeyState(DIK_W) & 0x80) && !(Engine::Get_DIKeyState(DIK_S) & 0x80) && !(Engine::Get_DIKeyState(DIK_A) & 0x80) && !(Engine::Get_DIKeyState(DIK_D) & 0x80)) {
+		m_State = State::State_Idle;
+	}
+
+	/*if ((m_State == State::State_Idle || m_State == State::State_Move || m_State == State::State_MoveSA || m_State == State::State_MoveSD)
+		&& Engine::Get_DIKeyState(DIK_SPACE) & 0x80) {
+		m_JumpIdleState = JumpIdleAni::JumpIdle_JumpStart;
+	}*/
+	// Jump 가 끝났을때 모션
+	if (m_State == State::State_JumpEnd) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.3f)) {
+			Set_StateToAnimation(State::State_Idle);
+		}
+		return;
+	}
+	// Idle 모션
+	else if (m_State == State::State_Idle) {
+		Set_StateToAnimation(State::State_Idle);
+	}
+	if (!m_bCheck[bCheck::bCheck_State_WeaponChangeHalf]) {
+		m_WeaponDissolve += fTimeDelta * 1.5f;
+		if (m_WeaponDissolve >= 1.f) {
+			m_bCheck[bCheck::bCheck_State_WeaponChangeHalf] = true;
+			Change_Weapon();
+		}
+	}
+	else {
+		m_WeaponDissolve -= fTimeDelta * 1.5f;
+		if (m_WeaponDissolve <= 0.f) {
+			m_bCheck[bCheck::bCheck_State_WeaponChangeHalf] = false;
+			m_bCheck[bCheck::bCheck_State_WeaponChange] = false;
+		}
+	}
+	
+}
+
+void Client::CPlayer::Move_WASD(_float fTimeDelta, _vec3& vPos, _vec3& vDir, _vec3& vDir2, Engine::CNaviMesh* pNaviMeshCom) {
+	if (Engine::Get_DIKeyState(DIK_W) & 0x80)
+	{
+		if (m_bCheck[bCheck::bCheck_DBKeyW]) {
+			if (m_DashGauge < DashGauge) {
+				m_bCheck[bCheck::bCheck_DBKeyW] = false;
+				m_bCheck[bCheck::bCheck_DBKeyA] = false;
+				m_bCheck[bCheck::bCheck_DBKeyD] = false;
+			}
+			else {
+				if (m_bCheck[bCheck::bCheck_DBKeyA]) {
+					m_sStat.m_EnumDir = EnumDir::UpLeft;
+				}
+				else if (m_bCheck[bCheck::bCheck_DBKeyD]) {
+					m_sStat.m_EnumDir = EnumDir::UpRight;
+				}
+				else {
+					m_sStat.m_EnumDir = EnumDir::Up;
+				}
+				Set_StateToAnimation(State::State_Dash);
+				m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
+			}
+		}
+		else {
+			if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
+				vDir2 = { -vDir.z, 0.f, vDir.x };
+				vDir2 += vDir;
+				D3DXVec3Normalize(&vDir2, &vDir2);
+				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+
+				m_sComponent.m_pMeshCom->Set_AniAngle(220.f);
+				m_sStat.m_EnumDir = EnumDir::UpLeft;
+				Set_StateToAnimation(State::State_Move);
+			}
+			else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
+				vDir2 = { vDir.z, 0.f, -vDir.x };
+				vDir2 += vDir;
+				D3DXVec3Normalize(&vDir2, &vDir2);
+				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+
+				m_sComponent.m_pMeshCom->Set_AniAngle(310.f);
+				m_sStat.m_EnumDir = EnumDir::UpRight;
+				Set_StateToAnimation(State::State_Move);
+			}
+			else {
+				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+
+				m_sComponent.m_pMeshCom->Set_AniAngle(265.f);
+				m_sStat.m_EnumDir = EnumDir::Up;
+				Set_StateToAnimation(State::State_Move);
+			}
+		}
+	}
+	else if (Engine::Get_DIKeyState(DIK_S) & 0x80)
+	{
+		if (m_bCheck[bCheck::bCheck_DBKeyS]) {
+			if (m_DashGauge < DashGauge) {
+				m_bCheck[bCheck::bCheck_DBKeyS] = false;
+				m_bCheck[bCheck::bCheck_DBKeyA] = false;
+				m_bCheck[bCheck::bCheck_DBKeyD] = false;
+			}
+			else {
+				if (m_bCheck[bCheck::bCheck_DBKeyA]) {
+					m_sStat.m_EnumDir = EnumDir::DownLeft;
+				}
+				else if (m_bCheck[bCheck::bCheck_DBKeyD]) {
+					m_sStat.m_EnumDir = EnumDir::DownRight;
+				}
+				else {
+					m_sStat.m_EnumDir = EnumDir::Down;
+				}
+				Set_StateToAnimation(State::State_Dash);
+				m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
+			}
+		}
+		else if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
+			vDir2 = { vDir.z, 0.f, -vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+
+			m_sComponent.m_pMeshCom->Set_AniAngle(175.f);
+			m_sStat.m_EnumDir = EnumDir::DownLeft;
+			Set_StateToAnimation(State::State_MoveSA);
+		}
+		else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
+			vDir2 = { -vDir.z, 0.f, vDir.x };
+			vDir2 += vDir;
+			D3DXVec3Normalize(&vDir2, &vDir2);
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * -m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+
+			m_sComponent.m_pMeshCom->Set_AniAngle(355.f);
+			m_sStat.m_EnumDir = EnumDir::DownRight;
+			Set_StateToAnimation(State::State_MoveSD);
+		}
+		else {
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * -m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+
+			m_sComponent.m_pMeshCom->Set_AniAngle(85.f);
+			m_sStat.m_EnumDir = EnumDir::Down;
+			Set_StateToAnimation(State::State_Move);
+		}
+	}
+	else if (Engine::Get_DIKeyState(DIK_A) & 0x80) {
+		m_State = State::State_Move;
+		if (m_bCheck[bCheck::bCheck_DBKeyA]) {
+			if (m_DashGauge < DashGauge) {
+				m_bCheck[bCheck::bCheck_DBKeyA] = false;
+				m_bCheck[bCheck::bCheck_DBKeyW] = false;
+				m_bCheck[bCheck::bCheck_DBKeyS] = false;
+			}
+			else {
+				if (m_bCheck[bCheck::bCheck_DBKeyW]) {
+					m_sStat.m_EnumDir = EnumDir::UpLeft;
+				}
+				else if (m_bCheck[bCheck::bCheck_DBKeyS]) {
+					m_sStat.m_EnumDir = EnumDir::DownLeft;
+				}
+				else {
+					m_sStat.m_EnumDir = EnumDir::Left;
+				}
+				Set_StateToAnimation(State::State_Dash);
+				m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
+			}
+		}
+		else {
+			vDir2 = { -vDir.z, 0.f, vDir.x };
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+
+			m_sComponent.m_pMeshCom->Set_AniAngle(175.f);
+			m_sStat.m_EnumDir = EnumDir::Left;
+			Set_StateToAnimation(State::State_Move);
+		}
+	}
+	else if (Engine::Get_DIKeyState(DIK_D) & 0x80) {
+		m_State = State::State_Move;
+		if (m_bCheck[bCheck::bCheck_DBKeyD]) {
+			if (m_DashGauge < DashGauge) {
+				m_bCheck[bCheck::bCheck_DBKeyD] = false;
+				m_bCheck[bCheck::bCheck_DBKeyW] = false;
+				m_bCheck[bCheck::bCheck_DBKeyS] = false;
+			}
+			else {
+				if (m_bCheck[bCheck::bCheck_DBKeyW]) {
+					m_sStat.m_EnumDir = EnumDir::UpRight;
+				}
+				else if (m_bCheck[bCheck::bCheck_DBKeyS]) {
+					m_sStat.m_EnumDir = EnumDir::DownRight;
+				}
+				else {
+					m_sStat.m_EnumDir = EnumDir::Right;
+				}
+				Set_StateToAnimation(State::State_Dash);
+				m_TimeCheck[TimeCheck::TimeCheck_Dash] = 0.4f;
+			}
+		}
+		else {
+			vDir2 = { vDir.z, 0.f, -vDir.x };
+			m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir2 * fTimeDelta * m_sStat.m_fSpeed), &m_sStat.m_dwNaviIndex));
+
+			m_sComponent.m_pMeshCom->Set_AniAngle(355.f);
+			m_sStat.m_EnumDir = EnumDir::Right;
+			Set_StateToAnimation(State::State_Move);
+		}
+	}
 }
 
 void Client::CPlayer::Set_StateToAnimation_Jump(State _state, _vec3 _vPos, _vec3 _vDir, float fTimeDelta) {
@@ -1821,7 +1836,10 @@ Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 		}
 		else {
 			SetUp_OnTerrain();
-			if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
+			if (m_bCheck[bCheck::bCheck_State_WeaponChange]) {
+				WeaponChangeState_Key_Input(fTimeDelta);
+			}
+			else if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer)
 				Hammer_Key_Input(fTimeDelta);
 			else if (m_WeaponEquip == Weapon_Equip::Weapon_LongBow)
 				LongBow_Key_Input(fTimeDelta);
@@ -1891,6 +1909,7 @@ void Client::CPlayer::Calc_Time(_float fTimeDelta)
 		if (m_DashGauge > m_MaxDashGauge)
 			m_DashGauge = m_MaxDashGauge;
 	}
+	Dissolve_WeaponIdle(fTimeDelta);
 }
 
 void Client::CPlayer::Key_DoubleInput(const _float& fTimeDelta)
@@ -2017,18 +2036,21 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 			float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
 			if (!m_bCheck[bCheck::bCheck_Skill_F1] && trackPos > 0.3f) {
 				m_bCheck[bCheck::bCheck_Skill_F1] = true;
-				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 				CGH_RockIn::Create(m_pGraphicDev, true);
+				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.5f);
+				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 5.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 1.5f, 0.5f);
 			}
 			else if (!m_bCheck[bCheck::bCheck_Skill_F2] && trackPos > 0.9f) {
 				m_bCheck[bCheck::bCheck_Skill_F2] = true;
-				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 				CGH_RockIn::Create(m_pGraphicDev, true);
+				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.5f);
+				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 5.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 1.5f, 0.5f);
 			}
 			else if (!m_bCheck[bCheck::bCheck_Skill_F3] && trackPos > 2.3f) {
 				m_bCheck[bCheck::bCheck_Skill_F3] = true;
-				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 				CGH_RockIn::Create(m_pGraphicDev, false);
+				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(1.f);
+				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 6.5f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 2.f, 0.5f);
 			}
 			if (1.6f < trackPos && trackPos < 2.3f) {
 				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed * 0.5f), &m_sStat.m_dwNaviIndex));
@@ -2053,10 +2075,13 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 			else if (m_AniClip == AnimationClip::Ani_2) {
 				bool colCheck;
 				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed * 4.f), &m_sStat.m_dwNaviIndex, &colCheck));
+				Engine::CRenderer::GetInstance()->Set_MotionBlur(0.8f);
 				if (colCheck) {
 					m_AniClip = AnimationClip::Ani_3;
 					Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
 					m_sComponent.m_pMeshCom->Set_AnimationSet(125);
+					CGH_RockIn::Create(m_pGraphicDev, true);
+					dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.8f);
 				}
 			}
 			else if (m_AniClip == AnimationClip::Ani_3) {
@@ -2066,15 +2091,17 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 			}
 		}
 		else if (m_Attack_State == Attack_State::StateA_SkillZ) {
-			if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
+			if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.01f)) {
 				Set_StateToAnimation(State::State_Idle);
+				Set_StateToAnimation(State::State_Move);
 				m_TimeCheck[TimeCheck::TimeCheck_Invin] = 0.f;
+				return;
 			}
 			float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
-			if (trackPos > 0.7f) {
+			/*if (trackPos > 0.7f) {
 				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
 			}
-			if (trackPos > 1.6f && trackPos < 1.7f) {
+			else */if (trackPos > 1.6f && trackPos < 1.7f) {
 				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(1.2f);
 			}
 		}
@@ -2090,7 +2117,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 					m_TimeCheck[TimeCheck::TimeCheck_LB_SkillE_Attack_Arrow_Start_Total] = 2.5f;
 					m_sComponent.m_pMeshCom->Set_AnimationSet(32);
 					m_AniSpeed = 1.f;
-					CSkillCollider::Create(m_pGraphicDev)->Set_Collider(m_LB_SkillE_Pos, 5.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 0.4f, 3.f, 0.3f, 0.05f, 0.7f);
+					CSkillCollider::Create(m_pGraphicDev)->Set_Collider(m_LB_SkillE_Pos, 7.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 0.4f, 3.f, 0.3f, 0.05f, 0.7f);
 				}
 			}
 			else if (m_AniClip == AnimationClip::Ani_2) {
@@ -2162,6 +2189,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 					m_bCheck[bCheck::bCheck_MouseL_Already] = false;
 					m_AniClip = AnimationClip::Ani_3;
 					Create_ArrowShot_SkillF(vPos, vDir, fTimeDelta);
+					dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.1f);
 					m_LB_Arrow_Count--;
 				}
 			}
@@ -2258,7 +2286,7 @@ void CPlayer::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider
 					Set_StateToAnimation_Jump(State::State_Damaged);
 				m_LB_Arrow_Count = 0;
 				m_TimeCheck[TimeCheck_Invin] = 4.f;
-				m_sStat.m_fKnockBackDir = m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] - dynamic_cast<CUnit_D*>(_col)->Get_sComponent()->m_pTransformCom->m_vInfo[Engine::INFO_POS];
+				m_sStat.m_fKnockBackDir = m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] - dynamic_cast<CUnit*>(_col)->Get_sComponent()->m_pTransformCom->m_vInfo[Engine::INFO_POS];
 				D3DXVec3Normalize(&m_sStat.m_fKnockBackDir, &m_sStat.m_fKnockBackDir);
 			}
 		}
@@ -2357,7 +2385,7 @@ void CPlayer::Create_ArrowShot_SkillE_Ready(_vec3 _vPos, _vec3 _vDir)
 
 void CPlayer::Create_ArrowShot_SkillE_Start()
 {
-	int dist = CRandom_Manager::Random() % 6;
+	int dist = CRandom_Manager::Random() % 8;
 	
 	float degree = (float)(CRandom_Manager::Random() % 360);
 	float Radian = D3DXToRadian(degree);
@@ -2510,4 +2538,27 @@ void CPlayer::Talk_NpcToPortal()
 		//dynamic_cast<CNpc_01*>(Engine::CManagement::GetInstance()->m_pScene->Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Npc))->Talk_Rocate();
 	}
 	return;
+}
+
+void CPlayer::Dissolve_WeaponIdle(float fTimeDelta)
+{
+	if (m_bCheck[bCheck_State_WeaponChange])
+		return;
+	if (m_State != State::State_Attack && m_State != State::State_Skill) {
+		if (m_bCheck[bCheck::bCheck_WeaponChangeIdle]) {
+			m_WeaponDissolve = 1.f;
+			//m_WeaponDissolve += fTimeDelta * 10.f;
+			//if (m_WeaponDissolve > 1.f) {
+				//m_WeaponDissolve = 1.f;
+				m_bCheck[bCheck::bCheck_WeaponChangeIdle] = false;
+			//}
+		}
+		else {
+			if (m_WeaponDissolve > 0.f)
+				m_WeaponDissolve -= fTimeDelta * 0.2f;
+			if (m_WeaponDissolve < 0.f) {
+				m_WeaponDissolve = 0.f;
+			}
+		}
+	}
 }

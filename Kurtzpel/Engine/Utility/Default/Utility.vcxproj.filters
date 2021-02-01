@@ -221,6 +221,15 @@
     <ClInclude Include="..\Code\Shader_Unit.hpp">
       <Filter>09. Shader\hpp</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\Shader_Texture.hpp">
+      <Filter>09. Shader\hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Shader_Base.hpp">
+      <Filter>09. Shader\hpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Shader_EffectMesh.hpp">
+      <Filter>09. Shader\hpp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Header\Export_Utility.inl">

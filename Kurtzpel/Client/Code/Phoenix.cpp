@@ -11,7 +11,7 @@ CPhoenix::CPhoenix(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit_D(pGraphicDev)
 {
 	m_LifeTime = 15.f;
-	m_sStat.m_fInitSpeed = 25.f;
+	m_sStat.m_fInitSpeed = 35.f;
 	//m_LifeTime = 150.f;
 	//m_sStat.m_fInitSpeed = 0.5f;
 	m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
