@@ -4,15 +4,8 @@ texture		g_BaseTexture;
 
 Matrix		g_matInv;
 
-int		iCnt;
-int		iMaxCnt;
-float	fTexCX;
-float	fTexCY;
-float	fDrawX;
-float	fDrawY;
-float	fDrawCX;
-float	fDrawCY;
-float	fAlpha;
+float	g_fAlpha;
+float	g_fRatioY;
 
 sampler BaseSampler = sampler_state
 {
@@ -81,6 +74,15 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	Out.vColor = tex2D(BaseSampler, In.vTexUV);
 
+	if (Out.vColor.r != 0.f) {
+		Out.vColor.a *= g_fAlpha;
+	}
+	if (g_fRatioY != 1.f) {
+		if (In.vTexUV.y < g_fRatioY)
+			Out.vColor.a = 0.f;
+	}
+
+	
 	return Out;
 }
 

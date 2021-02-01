@@ -18,12 +18,6 @@
 #include "CameraScene_Manager.h"
 #include "GH_RockIn.h"
 
-#define COOLTIME_GH_Q 5.f
-#define COOLTIME_GH_E 5.f
-#define COOLTIME_GH_F 5.f
-#define COOLTIME_LB_Q 5.f
-#define COOLTIME_LB_E 5.f
-#define COOLTIME_LB_F 5.f
 #define MP_GH_Q 50.f
 #define MP_GH_E 50.f
 #define MP_GH_F 50.f
@@ -633,8 +627,9 @@ void Client::CPlayer::Hammer_Key_Input(const _float& fTimeDelta)
 		m_Attack_State = Attack_State::StateA_SkillZ;
 		Set_StateToAnimation(State::State_Skill);
 	}
-	else if ((Engine::Get_DIKeyState(DIK_LSHIFT) & 0x80) && m_DashGauge > RollGauge) {
+	else if ((Engine::Get_DIKeyState(DIK_LSHIFT) & 0x80) && m_DashGauge > RollGauge && m_TimeCheck[TimeCheck_Cool_LSHIFT] <= 0.f) {
 		Set_StateToAnimation(State::State_Rolling);
+		m_TimeCheck[TimeCheck_Cool_LSHIFT] = COOLTIME_LSHIFT;
 	}
 	//////////////////////////////////////////////////////////////////// 좌클릭공격
 	else if ((Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80) && !m_bCheck[bCheck::bCheck_MouseL])
@@ -648,6 +643,7 @@ void Client::CPlayer::Hammer_Key_Input(const _float& fTimeDelta)
 	else if (m_bCheck[bCheck::bCheck_WeaponChange] && (Engine::Get_DIKeyState(DIK_TAB) & 0x80) && m_TimeCheck[TimeCheck_Cool_Tab] <= 0.f) {
 		m_bCheck[CPlayer::bCheck_State_WeaponChange] = true;
 		m_WeaponDissolve = 0.f;
+		m_TimeCheck[TimeCheck_Cool_Tab] = COOLTIME_TAB;
 	}
 	//////////////////////////////////////////////////////////////////// 이동
 	else
@@ -893,6 +889,8 @@ void Client::CPlayer::LongBow_Key_Input(const _float& fTimeDelta)
 	else if ((Engine::Get_DIKeyState(DIK_TAB) & 0x80) && m_TimeCheck[TimeCheck_Cool_Tab] <= 0.f) {
 		m_bCheck[CPlayer::bCheck_State_WeaponChange] = true;
 		m_WeaponDissolve = 0.f;
+		m_TimeCheck[TimeCheck_Cool_Tab] = COOLTIME_TAB;
+
 	}
 	//////////////////////////////////////////////////////////////////// 이동
 	else 
@@ -1049,8 +1047,9 @@ void Client::CPlayer::WeaponChangeState_Key_Input(const _float& fTimeDelta)
 
 	}
 	//////////////////////////////////////////////////////////////////// 실제 키 입력부분
-	else if ((Engine::Get_DIKeyState(DIK_LSHIFT) & 0x80) && m_DashGauge > RollGauge) {
+	else if ((Engine::Get_DIKeyState(DIK_LSHIFT) & 0x80) && m_DashGauge > RollGauge && m_TimeCheck[TimeCheck_Cool_LSHIFT] <= 0.f) {
 		Set_StateToAnimation(State::State_Rolling);
+		m_TimeCheck[TimeCheck_Cool_LSHIFT] = COOLTIME_LSHIFT;
 	}
 	//////////////////////////////////////////////////////////////////// 좌클릭공격
 	else if ((Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80) && !m_bCheck[bCheck::bCheck_MouseL])
@@ -2310,7 +2309,7 @@ void CPlayer::Set_RenderCollSphere() {
 
 void CPlayer::Change_Weapon() {
 	Engine::CLayer* pLayer = Engine::CManagement::GetInstance()->m_pScene->Get_Layer(Engine::CLayer::LayerName::Layer_Static);
-	m_TimeCheck[TimeCheck_Cool_Tab] = 2.f;
+	
 	if (m_WeaponEquip == Weapon_Equip::Weapon_Hammer) {
 		m_Hammer->Get_sStat()->m_IsDead = true;
 		m_Hammer = nullptr;
@@ -2555,7 +2554,7 @@ void CPlayer::Dissolve_WeaponIdle(float fTimeDelta)
 		}
 		else {
 			if (m_WeaponDissolve > 0.f)
-				m_WeaponDissolve -= fTimeDelta * 0.2f;
+				m_WeaponDissolve -= fTimeDelta * 0.4f;
 			if (m_WeaponDissolve < 0.f) {
 				m_WeaponDissolve = 0.f;
 			}

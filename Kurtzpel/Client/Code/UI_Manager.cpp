@@ -136,13 +136,13 @@ void Client::CUI_Manager::Ready_CreateUI() {
 		Init_Skill_ICon(pUI, m_sListUI.m_ListUI_Skill_ICon.size());
 		m_sListUI.m_ListUI_Skill_ICon.emplace_back(pUI);
 	}
-	CUI_Manager::Get_Instance()->Create_Text(CUI::UIKind::UIK_TipText, L"Texture_Text_dncmrdp");
+	CUI_Manager::Get_Instance()->Create_Text(CUI::UIKind::UIK_TipText, L"Texture_Text_dncmrdp", true);
 	CUI_Manager::Get_Instance()->Create_Text(CUI::UIKind::UIK_TipNpcTalk, L"Texture_Text_npcdhk");
 	CUI_Manager::Get_Instance()->Create_Text(CUI::UIKind::UIK_TipPortal, L"Texture_Text_vhxkf");
 
 }
 
-void Client::CUI_Manager::Create_Text(CUI::UIKind _uiName, _tchar* _texTag) {
+void Client::CUI_Manager::Create_Text(CUI::UIKind _uiName, _tchar* _texTag, bool _alpha) {
 	CUI_Text* pUI = CUI_Text::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pUI, );
 	//
@@ -154,6 +154,10 @@ void Client::CUI_Manager::Create_Text(CUI::UIKind _uiName, _tchar* _texTag) {
 		pUI->Set_PosToSize(512.f, 150.f, 384.f, 76.8f);
 	else
 		pUI->Set_PosToSize(512.f, 500.f, 384.f, 76.8f);
+	if (!_alpha)
+		pUI->Set_Alpha(1.f);
+	else
+		pUI->Set_Alpha(0.f);
 	pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, _texTag));
 	pUI->m_UIKind = _uiName;
 	pUI->Emplace_mapComponent(Engine::ID_STATIC, L"Com_Texture", pComponent);
@@ -185,6 +189,7 @@ void Client::CUI_Manager::Create_QuestClear() {
 	pUI->Set_PosToSize(60.f, 310.f, 128.f, 256.f);
 	pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_LireArt"));
 	pUI->m_UIKind = CUI::UIKind::UIK_Art;
+	pUI->Set_Alpha(0.f);
 	pUI->Emplace_mapComponent(Engine::ID_STATIC, L"Com_Texture", pComponent);
 	m_sListUI.m_ListUI_Text.emplace_back(pUI);
 	//
@@ -195,6 +200,7 @@ void Client::CUI_Manager::Create_QuestClear() {
 	pUI->Set_PosToSize(256.f, 310.f, 384.f, 76.8f);
 	pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_Text_99wkfgotdj"));
 	pUI->m_UIKind = CUI::UIKind::UIK_Art;
+	pUI->Set_Alpha(0.f);
 	pUI->Emplace_mapComponent(Engine::ID_STATIC, L"Com_Texture", pComponent);
 	m_sListUI.m_ListUI_Text.emplace_back(pUI);
 

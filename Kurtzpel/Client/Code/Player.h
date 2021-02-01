@@ -4,6 +4,14 @@
 #include "Unit_D.h"
 #include "Define.h"
 
+#define COOLTIME_GH_Q 5.f
+#define COOLTIME_GH_E 5.f
+#define COOLTIME_GH_F 5.f
+#define COOLTIME_LB_Q 5.f
+#define COOLTIME_LB_E 5.f
+#define COOLTIME_LB_F 5.f
+#define COOLTIME_LSHIFT 2.f
+#define COOLTIME_TAB 5.f
 BEGIN(Engine)
 
 class CDynamicMesh;
@@ -60,7 +68,7 @@ public:
 	};
 	enum TimeCheck {
 		TimeCheck_Dash, TimeCheck_KeyW, TimeCheck_KeyA, TimeCheck_KeyS, TimeCheck_KeyD,
-		TimeCheck_Cool_Q, TimeCheck_Cool_E, TimeCheck_Cool_F, TimeCheck_Cool_Tab,
+		TimeCheck_Cool_Q, TimeCheck_Cool_E, TimeCheck_Cool_F, TimeCheck_Cool_Tab, TimeCheck_Cool_LSHIFT,
 		TimeCheck_LB_SkillE_Ready, TimeCheck_LB_SkillE_Attack/*마법진시전*/, TimeCheck_LB_SkillE_Attack_Arrow/*위로쏘는캐릭터모션*/, TimeCheck_LB_SkillE_Attack_Arrow_Start/*화살내려앉는*/, TimeCheck_LB_SkillE_Attack_Arrow_Start_Total,
 		TimeCheck_Invin,
 		TimeCheck_End

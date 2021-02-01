@@ -83,6 +83,12 @@ Client::_int Client::CUI_Text::Update_Object(const _float& fTimeDelta)
 		}
 	}
 
+	if (m_fAlpha < 1.f) {
+		m_fAlpha += fTimeDelta * 1.2f;
+		if (m_fAlpha > 1.f)
+			m_fAlpha = 1.f;
+	}
+
 	Engine::CGameObject::Update_Object(fTimeDelta);
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);

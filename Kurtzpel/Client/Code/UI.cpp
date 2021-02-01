@@ -73,6 +73,7 @@ HRESULT Client::CUI::Ready_Object(void)
 	m_fSizeX = 81.6f;
 	m_fSizeY = 97.2f;*/
 	m_pTransformCom->Set_Scale(0.4f, 0.1f, 0.1f);
+	m_fAlpha = 0.f;
 	return S_OK;
 }
 Client::_int Client::CUI::Update_Object(const _float& fTimeDelta)
@@ -83,6 +84,27 @@ Client::_int Client::CUI::Update_Object(const _float& fTimeDelta)
 		
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
 
+	if (m_fAlpha < 1.f) {
+		m_fAlpha += fTimeDelta * 0.5f;
+		if (m_fAlpha > 1.f)
+			m_fAlpha = 1.f;
+	}
+
+	if (m_UIKind == CUI::UIKind::UIK_SkillFrameQCool) {
+		m_RenderYPer = CPlayer::GetInstance()->m_TimeCheck[CPlayer::TimeCheck_Cool_Q] / COOLTIME_LB_Q;
+	}
+	else if (m_UIKind == CUI::UIKind::UIK_SkillFrameECool) {
+		m_RenderYPer = CPlayer::GetInstance()->m_TimeCheck[CPlayer::TimeCheck_Cool_E] / COOLTIME_LB_E;
+	}
+	else if (m_UIKind == CUI::UIKind::UIK_SkillFrameFCool) {
+		m_RenderYPer = CPlayer::GetInstance()->m_TimeCheck[CPlayer::TimeCheck_Cool_F] / COOLTIME_LB_F;
+	}
+	else if (m_UIKind == CUI::UIKind::UIK_FrameLShiftCool) {
+		m_RenderYPer = CPlayer::GetInstance()->m_TimeCheck[CPlayer::TimeCheck_Cool_LSHIFT] / COOLTIME_LSHIFT;
+	}
+	else if (m_UIKind == CUI::UIKind::UIK_FrameTabCool) {
+		m_RenderYPer = CPlayer::GetInstance()->m_TimeCheck[CPlayer::TimeCheck_Cool_Tab] / COOLTIME_TAB;
+	}
 	//D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 	return 0;
@@ -147,7 +169,7 @@ void Client::CUI::Render_Object(void)
 	Engine::Safe_AddRef(pEffect);
 
 	pEffect->Begin(NULL, 0);
-	pEffect->BeginPass(1);
+	pEffect->BeginPass(0);
 	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
 	pEffect->CommitChanges();
@@ -171,8 +193,7 @@ HRESULT Client::CUI::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	D3DXMatrixIdentity(&matView);
 
 	_matrix matScale, matRotZ, matTrans;
-	//D3DXMatrixScaling(&matScale, m_vScale.x, m_vScale.y, 1.f);
-	D3DXMatrixScaling(&matScale, 10.f, 10.f, 1.f);
+	D3DXMatrixScaling(&matScale, m_fSizeX, m_fSizeY, 1.f);
 	//D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_fAngle));
 	D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(0.f));
 	D3DXMatrixTranslation(&matTrans, vPos.x - WINCX * 0.5f, -vPos.y + WINCY * 0.5f, 0.f);
@@ -182,17 +203,15 @@ HRESULT Client::CUI::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	pEffect->SetMatrix("g_matWorld", &matWorld);
 	pEffect->SetMatrix("g_matView", &matView);
 	pEffect->SetMatrix("g_matProj", &m_matProj);
-	//
-	/*_matrix		matWorld, matView, matProj;
 
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
-	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
-	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+	pEffect->SetFloat("g_fAlpha", m_fAlpha);
+	if (m_RenderYPer != 1.f) {
+		pEffect->SetFloat("g_fRatioY", m_RenderYPer);
+	}
+	else {
+		pEffect->SetFloat("g_fRatioY", 1.f);
+	}
 
-	pEffect->SetMatrix("g_matWorld", &matWorld);
-	pEffect->SetMatrix("g_matView", &matView);
-	pEffect->SetMatrix("g_matProj", &matProj);
-	*/
 
 	m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture");
 
