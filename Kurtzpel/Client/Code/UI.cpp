@@ -73,6 +73,7 @@ HRESULT Client::CUI::Ready_Object(void)
 	m_fSizeX = 81.6f;
 	m_fSizeY = 97.2f;*/
 	m_pTransformCom->Set_Scale(0.4f, 0.1f, 0.1f);
+	m_fAlpha = 0.f;
 	return S_OK;
 }
 Client::_int Client::CUI::Update_Object(const _float& fTimeDelta)
@@ -83,80 +84,134 @@ Client::_int Client::CUI::Update_Object(const _float& fTimeDelta)
 		
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
 
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+	if (m_fAlpha < 1.f) {
+		m_fAlpha += fTimeDelta * 0.5f;
+		if (m_fAlpha > 1.f)
+			m_fAlpha = 1.f;
+	}
+
+	if (m_UIKind == CUI::UIKind::UIK_SkillFrameQCool) {
+		m_RenderYPer = CPlayer::GetInstance()->m_TimeCheck[CPlayer::TimeCheck_Cool_Q] / COOLTIME_LB_Q;
+	}
+	else if (m_UIKind == CUI::UIKind::UIK_SkillFrameECool) {
+		m_RenderYPer = CPlayer::GetInstance()->m_TimeCheck[CPlayer::TimeCheck_Cool_E] / COOLTIME_LB_E;
+	}
+	else if (m_UIKind == CUI::UIKind::UIK_SkillFrameFCool) {
+		m_RenderYPer = CPlayer::GetInstance()->m_TimeCheck[CPlayer::TimeCheck_Cool_F] / COOLTIME_LB_F;
+	}
+	else if (m_UIKind == CUI::UIKind::UIK_FrameLShiftCool) {
+		m_RenderYPer = CPlayer::GetInstance()->m_TimeCheck[CPlayer::TimeCheck_Cool_LSHIFT] / COOLTIME_LSHIFT;
+	}
+	else if (m_UIKind == CUI::UIKind::UIK_FrameTabCool) {
+		m_RenderYPer = CPlayer::GetInstance()->m_TimeCheck[CPlayer::TimeCheck_Cool_Tab] / COOLTIME_TAB;
+	}
+	//D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 	return 0;
 }
 void Client::CUI::Render_Object(void)
 {
-	_matrix		matWorld, matView, matOriginView, matOriginProj;
 
-	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matOriginView);
-	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matOriginProj);
 
-	D3DXMatrixIdentity(&matWorld);
-	D3DXMatrixIdentity(&matView);
+	//_matrix		matWorld, matView, matOriginView, matOriginProj;
 
-	matWorld._11 = m_fSizeX;
-	matWorld._22 = m_fSizeY;
-	matWorld._33 = 1.f;
-	matWorld._41 = m_fX - WINCX * 0.5f;
-	matWorld._42 = -m_fY + WINCY * 0.5f;
+	//m_pGraphicDev->GetTransform(D3DTS_VIEW, &matOriginView);
+	//m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matOriginProj);
 
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, &matWorld);
-	m_pGraphicDev->SetTransform(D3DTS_VIEW, &matView);
-	m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &m_matProj);
-	//m_pTextureCom->Render_Texture();
-	//m_pBufferCom->Render_Buffer();
-	////////////////
-	
-	if (m_ShaderCheck) {
-		LPD3DXEFFECT    pEffect = m_pShaderCom->Get_EffectHandle();
-		NULL_CHECK(pEffect);
-		Engine::Safe_AddRef(pEffect);
+	//D3DXMatrixIdentity(&matWorld);
+	//D3DXMatrixIdentity(&matView);
 
-		FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
+	//matWorld._11 = m_fSizeX;
+	//matWorld._22 = m_fSizeY;
+	//matWorld._33 = 1.f;
+	//matWorld._41 = m_fX - WINCX * 0.5f;
+	//matWorld._42 = -m_fY + WINCY * 0.5f;
 
-		pEffect->Begin(NULL, 0);
-		pEffect->BeginPass(1);
+	//m_pGraphicDev->SetTransform(D3DTS_WORLD, &matWorld);
+	//m_pGraphicDev->SetTransform(D3DTS_VIEW, &matView);
+	//m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &m_matProj);
+	////m_pTextureCom->Render_Texture();
+	////m_pBufferCom->Render_Buffer();
+	//////////////////
+	//
+	//if (m_ShaderCheck) {
+	//	LPD3DXEFFECT    pEffect = m_pShaderCom->Get_EffectHandle();
+	//	NULL_CHECK(pEffect);
+	//	Engine::Safe_AddRef(pEffect);
 
-		//m_pTextureCom->Render_Texture();
-		m_pBufferCom->Render_Buffer();
+	//	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
-		pEffect->EndPass();
-		pEffect->End();
+	//	pEffect->Begin(NULL, 0);
+	//	pEffect->BeginPass(1);
 
-		Engine::Safe_Release(pEffect);
-	}
-	else {
-		m_pTextureCom->Render_Texture();
-		m_pBufferCom->Render_Buffer();
-	}
+	//	//m_pTextureCom->Render_Texture();
+	//	m_pBufferCom->Render_Buffer();
 
-	////////////////
-	m_pGraphicDev->SetTransform(D3DTS_VIEW, &matOriginView);
-	m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &matOriginProj);
+	//	pEffect->EndPass();
+	//	pEffect->End();
+
+	//	Engine::Safe_Release(pEffect);
+	//}
+	//else {
+	//	m_pTextureCom->Render_Texture();
+	//	m_pBufferCom->Render_Buffer();
+	//}
+
+	//////////////////
+	//m_pGraphicDev->SetTransform(D3DTS_VIEW, &matOriginView);
+	//m_pGraphicDev->SetTransform(D3DTS_PROJECTION, &matOriginProj);
+
+	//m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+	LPD3DXEFFECT    pEffect = m_pShaderCom->Get_EffectHandle();
+	NULL_CHECK(pEffect);
+	Engine::Safe_AddRef(pEffect);
+
+	pEffect->Begin(NULL, 0);
+	pEffect->BeginPass(0);
+	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
+
+	pEffect->CommitChanges();
+
+	m_pBufferCom->Render_Buffer();
+
+	pEffect->EndPass();
+	pEffect->End();
+
+	Engine::Safe_Release(pEffect);
+	//m_pGraphicDev->set
+
 }
 
 HRESULT Client::CUI::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 {
-	_matrix		matWorld, matView, matProj;
+	_vec3 vPos = { m_fX, m_fY, 0.f };
+	_matrix matWorld, matView;
 
-	m_pTransformCom->Get_WorldMatrix(&matWorld);
-	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
-	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+	D3DXMatrixIdentity(&matWorld);
+	D3DXMatrixIdentity(&matView);
+
+	_matrix matScale, matRotZ, matTrans;
+	D3DXMatrixScaling(&matScale, m_fSizeX, m_fSizeY, 1.f);
+	//D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_fAngle));
+	D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(0.f));
+	D3DXMatrixTranslation(&matTrans, vPos.x - WINCX * 0.5f, -vPos.y + WINCY * 0.5f, 0.f);
+
+	matWorld = matScale * matRotZ * matTrans;
 
 	pEffect->SetMatrix("g_matWorld", &matWorld);
 	pEffect->SetMatrix("g_matView", &matView);
-	pEffect->SetMatrix("g_matProj", &matProj);
+	pEffect->SetMatrix("g_matProj", &m_matProj);
 
-	pEffect->SetFloat("fTexCX", 68.f);
-	pEffect->SetFloat("fTexCY", 81.f);
-	pEffect->SetFloat("fDrawX", 0.f);
-	pEffect->SetFloat("fDrawY", 0.f);
-	pEffect->SetFloat("fDrawCX", 34.f);
-	pEffect->SetFloat("fDrawCY", 40.5f);
-	pEffect->SetFloat("fAlpha", 1.f);
+	pEffect->SetFloat("g_fAlpha", m_fAlpha);
+	if (m_RenderYPer != 1.f) {
+		pEffect->SetFloat("g_fRatioY", m_RenderYPer);
+	}
+	else {
+		pEffect->SetFloat("g_fRatioY", 1.f);
+	}
+
 
 	m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture");
 

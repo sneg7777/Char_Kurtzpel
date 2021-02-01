@@ -140,7 +140,7 @@ Client::_int Client::CMonster1_TwoHand::LateUpdate_Object(const _float& fTimeDel
 
 void Client::CMonster1_TwoHand::Render_Object(void)
 {	
-	m_sComponent.m_pMeshCom->Play_Animation(0.f);
+	//m_sComponent.m_pMeshCom->Play_Animation(0.f);
 	CMonster::Render_Object();
 }
 

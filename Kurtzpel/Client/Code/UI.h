@@ -42,6 +42,7 @@ public:
 	void Set_PosToSize(float fX, float fY, float fSizeX, float fSizeY) {
 		m_fX = fX, m_fY = fY, m_fSizeX = fSizeX, m_fSizeY = fSizeY;
 	}
+	void Set_Alpha(float _alpha) { m_fAlpha = _alpha; }
 protected:
 	HRESULT		Add_Component(void);
 
@@ -58,8 +59,9 @@ protected:
 	_matrix						m_matProj;
 	_float						m_fX, m_fY;
 	_float						m_fSizeX, m_fSizeY;
-	_float						m_fAlpha = 0.f;
+	_float						m_fAlpha = 1.f;
 	bool						m_ShaderCheck = false;
+	_float						m_RenderYPer = 1.f;
 public:
 	static CUI*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

@@ -103,6 +103,7 @@ PS_OUT		PS_MAIN(PS_IN In)
 	PS_OUT		Out = (PS_OUT)0;
 
 	Out.vColor = tex2D(BaseSampler, In.vTexUV);
+	
 	vector vDissolve = tex2D(DissolveSampler, In.vTexUV);
 	
 	if (g_bIsDissolve)

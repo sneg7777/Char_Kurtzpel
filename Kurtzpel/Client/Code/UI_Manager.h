@@ -54,7 +54,7 @@ public:
 	void Set_DamagedEnemy(CUnit* _unit) { m_pDamagedEnemy = _unit; }
 	float Get_DamagedTime() { return m_DamagedInitTime; }
 	void Set_DamagedTime(float _time) { m_DamagedInitTime = _time; }
-	void Create_Text(CUI::UIKind _uiName, _tchar* _texTag);
+	void Create_Text(CUI::UIKind _uiName, _tchar* _texTag, bool _alpha = false);
 	void Create_Art(CUI::UIKind _uiName, _tchar* _texTag);
 	void Create_QuestClear();
 	CUI* Get_UI(CUI::UIKind _uiKind);
