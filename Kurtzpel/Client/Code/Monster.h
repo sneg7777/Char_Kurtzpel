@@ -37,6 +37,7 @@ protected:
 	float		PlayerSearchDistance();
 	void		Set_PlayerTowardAngle();
 	void		Rocate_PlayerToWardAngle(float fTimeDelta, float _speed = 120.f);
+	void		Effect_Damaged(CUnit* _col, CSphereCollider* _colSphere);
 	virtual HRESULT SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
 public:
 

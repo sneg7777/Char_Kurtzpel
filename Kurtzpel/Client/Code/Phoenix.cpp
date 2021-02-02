@@ -83,6 +83,7 @@ HRESULT Client::CPhoenix::Ready_Object(void)
 	m_sComponent.m_pTransformCom->Set_Scale(0.018f, 0.018f, 0.018f);
 	m_sComponent.m_pMeshCom->Set_AnimationSet(0);
 	m_AniSpeed = 1.5f;
+	m_UnitName = UnitName::Phoenix;
 	//m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(0.f), true);
 	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(CPlayer::GetInstance()->Get_AngleY()), true);
 	//m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(0.f), true);

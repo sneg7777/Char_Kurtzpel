@@ -51,6 +51,8 @@ private:
 	void		Update_DelayHpDec(float fTimeDelta);
 	void		Create_ArrowShot(_vec3 _vPos, float fTimeDelta);
 
+	void		Sound_RandomPlayer_Arrow();
+
 
 
 	//float						m_TimeCheck[TimeCheck::TimeCheck_End];

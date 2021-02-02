@@ -31,6 +31,10 @@ struct sComponent {
 	Engine::CShader* m_pShaderCom = nullptr;
 	Engine::CTexture* m_pTextureCom = nullptr;
 };
+enum RandomSound {
+	Sound_AttackVoice, Sound_DamagedVoice, Sound_SkillVoice, Sound_Arrow_Hit, Sound_Arrow, Sound_BowTwang, Sound_Dash,
+	Sound_GHAttack, Sound_GHHit, Sound_Jump, Sound_Phoenix, Sound_Run, Sound_MonDamaged, Sound_End
+};
 struct sDelayHpDec {
 	_float		m_fDelayTime;
 	_float		m_fHpDec;
@@ -57,6 +61,7 @@ protected:
 	void		SetUp_OnTerrain(void);
 	_bool		Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
+	void		Sound_RandomPlay(RandomSound _voice);
 protected:
 	sComponent					m_sComponent;
 

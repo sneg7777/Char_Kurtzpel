@@ -11,6 +11,7 @@
 #include "NpcQuest_Manager.h"
 #include "Monster1_TwoHand.h"
 #include "CameraScene_Manager.h"
+#include "SoundManager.h"
 
 CNpc_01::CNpc_01(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit_D(pGraphicDev)
@@ -305,6 +306,7 @@ void CNpc_01::NpcQuest()
 	CUI_Manager* uiMgr = CUI_Manager::Get_Instance();
 	uiMgr->Delete_QuestClearText();
 	questMgr->Get_NpcQuestInfo()->m_TalkNumber = 0;
+	SoundManager::PlayOverlapSound(L"Talk.ogg", SoundChannel::EFFECT, 0.4f);
 	switch (questMgr->Get_NpcQuestInfo()->m_QuestNumber)
 	{
 		case 0: {

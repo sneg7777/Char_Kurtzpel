@@ -195,11 +195,11 @@ HRESULT CStage_2::Ready_GameLogic_Static_Layer(const _tchar* pLayerTag)
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CPortal", pGameObject), E_FAIL);
 
-	CEffectRcTex* pEffect;
-	pGameObject = pEffect = CEffectRcTex::Create(m_pGraphicDev);
-	pEffect->Set_Collider(_vec3{ 65.f, 0.f, 81.f }, 7.f, CSphereCollider::BoneTeam::BoneTeam_Effect, 1);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CPortal2", pGameObject), E_FAIL);
+	//CEffectRcTex* pEffect;
+	//pGameObject = pEffect = CEffectRcTex::Create(m_pGraphicDev);
+	//pEffect->Set_Collider(_vec3{ 65.f, 0.f, 81.f }, 7.f, CSphereCollider::BoneTeam::BoneTeam_Effect, 1);
+	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CPortal2", pGameObject), E_FAIL);
 
 	/*pGameObject = CLongBow::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);

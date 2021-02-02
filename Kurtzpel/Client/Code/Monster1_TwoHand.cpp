@@ -9,6 +9,7 @@
 #include "Random_Manager.h"
 #include "UI_Manager.h"
 #include "NpcQuest_Manager.h"
+#include "EffectRcTex.h"
 
 #define PLAYER_SEARCH_DISTANCE 14.f
 #define PLAYER_ATTACK_DISTANCE 6.f
@@ -404,6 +405,7 @@ void CMonster1_TwoHand::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphe
 					Set_StateToAnimation(State::State_Damaged);
 				_colSphere->m_VecDamagedObject.emplace_back(this);
 				m_sStat.m_fHp -= _col->Get_sStat()->m_fAttack;
+				Sound_RandomPlay(RandomSound::Sound_MonDamaged);
 				Emplace_DelayHpDec(_col->Get_sStat()->m_fAttack);
 				if (m_sStat.m_fKnockBackHp >= 0.f) {
 					m_sStat.m_fKnockBackHp -= _col->Get_sStat()->m_fAttack;
@@ -419,6 +421,7 @@ void CMonster1_TwoHand::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphe
 					CUI_Manager::Get_Instance()->Set_DamagedEnemy(nullptr);
 					Set_StateToAnimation(State::State_Dead);
 				}
+				Effect_Damaged(_col, _colSphere);
 			}
 		}
 	}

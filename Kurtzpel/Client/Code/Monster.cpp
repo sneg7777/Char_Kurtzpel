@@ -5,6 +5,7 @@
 #include "NpcQuest_Manager.h"
 #include "Player.h"
 #include "Unit_D.h"
+#include "EffectRcTex.h"
 
 CMonster::CMonster(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit_D(pGraphicDev)
@@ -211,4 +212,22 @@ HRESULT Client::CMonster::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	}
 \
 	return S_OK;
+}
+
+void CMonster::Effect_Damaged(CUnit* _col, CSphereCollider* _colSphere) {
+	_matrix colSphere_worldM = *_colSphere->m_pTransformCom->Get_WorldMatrix();
+	_vec3 colSphere_Pos = { colSphere_worldM._41, colSphere_worldM._42, colSphere_worldM._43 };
+	
+	if (_col->m_UnitName == UnitName::PlayerBullet)
+		CEffectRcTex::Create(m_pGraphicDev)->Set_Effect(true, colSphere_Pos, 3.5f, L"Texture_Effect_LBHit01", 3, 3, 30.f);
+	else if (_col->m_UnitName == UnitName::Phoenix)
+		CEffectRcTex::Create(m_pGraphicDev)->Set_Effect(true, colSphere_Pos, 5.f, L"Texture_Effect_PhoenixHit01", 3, 3, 20.f);
+	else if (_col->m_UnitName == UnitName::PlayerGH) {
+		_vec3 vPos, vPosMiddle;
+		m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+		vPosMiddle = (vPos + colSphere_Pos) * 0.5f;
+		CEffectRcTex::Create(m_pGraphicDev)->Set_Effect(true, vPosMiddle, 5.f, L"Texture_Effect_GHHit01", 2, 2, 10.f);
+	}
+	else
+		CEffectRcTex::Create(m_pGraphicDev)->Set_Effect(true, colSphere_Pos, 3.f, L"Texture_Effect_GHHit01", 2, 2, 10.f);
 }

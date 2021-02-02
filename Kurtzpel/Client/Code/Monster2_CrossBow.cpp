@@ -10,6 +10,7 @@
 #include "UI_Manager.h"
 #include "NpcQuest_Manager.h"
 #include "Monster2_Arrow.h"
+#include "SoundManager.h"
 
 #define PLAYER_SEARCH_DISTANCE 16.f
 #define PLAYER_ATTACK_DISTANCE 14.f
@@ -407,6 +408,7 @@ void CMonster2_CrossBow::Collision(CSphereCollider* _mySphere, CUnit* _col, CSph
 					Set_StateToAnimation(State::State_Damaged);
 				_colSphere->m_VecDamagedObject.emplace_back(this);
 				m_sStat.m_fHp -= _col->Get_sStat()->m_fAttack;
+				Sound_RandomPlay(RandomSound::Sound_MonDamaged);
 				Emplace_DelayHpDec(_col->Get_sStat()->m_fAttack);
 				if (m_sStat.m_fKnockBackHp >= 0.f) {
 					m_sStat.m_fKnockBackHp -= _col->Get_sStat()->m_fAttack;
@@ -422,6 +424,7 @@ void CMonster2_CrossBow::Collision(CSphereCollider* _mySphere, CUnit* _col, CSph
 					CUI_Manager::Get_Instance()->Set_DamagedEnemy(nullptr);
 					Set_StateToAnimation(State::State_Dead);
 				}
+				Effect_Damaged(_col, _colSphere);
 			}
 		}
 	}
@@ -568,6 +571,7 @@ void CMonster2_CrossBow::Update_DelayHpDec(float fTimeDelta) {
 
 void CMonster2_CrossBow::Create_ArrowShot(_vec3 _vPos, float fTimeDelta)
 {
+	Sound_RandomPlayer_Arrow();
 	CUnit* pUnit;
 	Engine::CGameObject* pGameObject = pUnit = CMonster2_Arrow::Create(m_pGraphicDev);
 	dynamic_cast<CMonster2_Arrow*>(pUnit)->Create_Coll();
@@ -587,4 +591,12 @@ void CMonster2_CrossBow::Create_ArrowShot(_vec3 _vPos, float fTimeDelta)
 	pUnit->Get_sStat()->m_fAttack = m_sStat.m_fAttack;
 	Engine::CLayer* pLayer = Engine::CManagement::GetInstance()->m_pScene->Get_Layer(Engine::CLayer::LayerName::Layer_Static);
 	pLayer->Add_GameObject(L"Monster2_Arrow", pGameObject);
+}
+
+void CMonster2_CrossBow::Sound_RandomPlayer_Arrow() {
+	int voiceNumber = CRandom_Manager::Random() % 3 + 1;
+	_tchar		szFileName[256] = L"";
+
+	wsprintf(szFileName, L"MonArrowShot%d.ogg", voiceNumber);
+	SoundManager::PlayOverlapSound(szFileName, SoundChannel::MONSTER, 0.1f);
 }

@@ -150,6 +150,8 @@ void Client::CSkillCollider::Set_Collider(_vec3 _pos, float _scale, CSphereColli
 	else
 		sphereCol->m_WeaponAttack = true;
 	sphereCol->m_BoneTeam = _team;
+	if (_team == CSphereCollider::BoneTeam::BoneTeam_Player && CPlayer::GetInstance()->Get_Weapon_Equip() == CPlayer::Weapon_Equip::Weapon_Hammer)
+		m_UnitName = UnitName::PlayerGH;
 	sphereCol->m_BonePart = CSphereCollider::BonePart::BonePart_Static;
 	m_sStat.m_fAttack = _attack;
 	m_Interval = _interval;

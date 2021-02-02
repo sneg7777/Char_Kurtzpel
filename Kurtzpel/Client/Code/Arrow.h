@@ -30,13 +30,15 @@ public:
 	virtual void Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
 	void Create_Coll();
 	void Set_SpeedToLife(float _speed, float _life = -1.f);
+	void Set_EffectCheck(bool _effect) { m_Effect = _effect; }
+	void Set_LifeTime(float _lifeTime) { m_LifeTime = _lifeTime; }
 	//
 private:
 	HRESULT		Add_Component(void);
 
 private:
 	float		m_LifeTime = 0.f;
-
+	bool		m_Effect = false;
 public:
 	static CArrow*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

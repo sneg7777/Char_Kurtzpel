@@ -194,7 +194,7 @@ Client::_int Client::CDynamicCamera::Update_Object(const _float& fTimeDelta)
 	}
 	else {
 		// m_fFovY = D3DXToRadian(60.f);
-		if (m_FovYAccel < 60.f)
+		if (m_FovYAccel < 65.f)
 			m_FovYAccel += fTimeDelta * 40.f;
 		m_fFovY = D3DXToRadian(m_FovYAccel);
 	}

@@ -4,7 +4,7 @@
 #include "Player.h"
 #include "Stage.h"
 #include "ArrowNaviTerrain.h"
-
+#include "SoundManager.h"
 
 CArrow_SkillQ::CArrow_SkillQ(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit(pGraphicDev)
@@ -77,7 +77,7 @@ void CArrow_SkillQ::Free(void)
 HRESULT Client::CArrow_SkillQ::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
-
+	m_UnitName = UnitName::PlayerBullet;
 	return S_OK;
 }
 Client::_int Client::CArrow_SkillQ::Update_Object(const _float& fTimeDelta)
@@ -130,6 +130,11 @@ Client::_int Client::CArrow_SkillQ::Update_Object(const _float& fTimeDelta)
 			copyArrow->m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] = vPos + vReverseDir * 2.f;
 			copyArrow->Engine::CGameObject::Update_Object(0.f);
 		}
+		int voiceNumber = CRandom_Manager::Random() % 5 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Arrow%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, 0.1f);
 	}
 
 	return 0;
@@ -180,9 +185,10 @@ void Client::CArrow_SkillQ::Collision(CSphereCollider* _mySphere, CUnit* _col, C
 {
 	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
 		return;
-	if(_colSphere->m_BonePart == CSphereCollider::BonePart::BonePart_CollBody)
+	if (_colSphere->m_BonePart == CSphereCollider::BonePart::BonePart_CollBody) {
 		m_sStat.m_IsDead = true;
-	
+		Sound_RandomPlay(RandomSound::Sound_Arrow_Hit);
+	}
 }
 
 void Client::CArrow_SkillQ::Create_Coll()

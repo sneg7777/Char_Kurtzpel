@@ -33,9 +33,9 @@ HRESULT Client::CEffectRcTex::Add_Component(void)
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Buffer", pComponent);
 
 	//Texture
-	pComponent = m_sComponent.m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_Effect_Portal"));
-	NULL_CHECK_RETURN(pComponent, E_FAIL);
-	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Texture", pComponent);
+	//pComponent = m_sComponent.m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_Effect_Portal"));
+	//NULL_CHECK_RETURN(pComponent, E_FAIL);
+	//m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Texture", pComponent);
 
 	// Transform
 	pComponent = m_sComponent.m_pTransformCom = dynamic_cast<Engine::CTransform*>(Engine::Clone(L"Proto_Transform"));
@@ -54,7 +54,6 @@ HRESULT Client::CEffectRcTex::Add_Component(void)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
-	m_sComponent.m_pTransformCom->m_vScale = { 0.1f, 0.1f, 0.1f };
 	Engine::CGameObject::Update_Object(0.f);
 	return S_OK;
 }
@@ -79,7 +78,7 @@ void CEffectRcTex::Free(void)
 HRESULT Client::CEffectRcTex::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
-	m_UnitName = UnitName::Portal;
+	m_UnitName = UnitName::Effect;
 	//
 	//_vec3 TempPos;
 	//m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &TempPos);
@@ -93,18 +92,18 @@ Client::_int Client::CEffectRcTex::Update_Object(const _float& fTimeDelta)
 	if (m_sStat.m_IsDead) {
 		return 1;
 	}
-	m_sComponent.m_pTransformCom->Set_Pos(&Engine::_vec3{ 54.f, 2.f, 54.f }, true);
-
 
 	//m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(1.f));
-	m_EffectTime += fTimeDelta * 40.f;
-	if (m_EffectTime > 16)
-		m_EffectTime -= 16.f;
+	m_EffectTime += fTimeDelta * m_EffectSpeed;
+	if (m_EffectTime > m_uOffset * m_vOffset) {
+		//m_EffectTime -= 16.f;
+		m_sStat.m_IsDead = true;
+	}
 	//float effectSize =  0.01f + m_EffectTime * 0.001f;
 	//m_sComponent.m_pTransformCom->m_vScale = { effectSize, effectSize, effectSize };
-	m_sComponent.m_pTransformCom->m_vScale = { 20.f, 20.f, 20.f };
-	SetUp_OnTerrain();
-	CUnit::Update_Object(fTimeDelta);
+	
+	//SetUp_OnTerrain();
+	CUnit::Update_Object(0.f);
 	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_ALPHA, this);
 
 	return 0;
@@ -142,31 +141,34 @@ HRESULT Client::CEffectRcTex::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	_matrix		matWorld, matView, matProj;
 
 	//
-	_vec3 vPos;
-	m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
-	CGameObject::Compute_ViewZ(&vPos);
+	if (m_bill) {
+		_vec3 vPos;
+		m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+		CGameObject::Compute_ViewZ(&vPos);
 
-	_matrix		/*matWorld, matView,*/ matBill;
+		_matrix		/*matWorld, matView,*/ matBill;
 
-	D3DXMatrixIdentity(&matBill);
-	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
-	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+		D3DXMatrixIdentity(&matBill);
 
-	matBill._11 = matView._11;
-	matBill._13 = matView._13;
-	matBill._31 = matView._31;
-	matBill._33 = matView._33;
+		m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
+		m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 
-	D3DXMatrixInverse(&matBill, NULL, &matBill);
+		matBill._11 = matView._11;
+		matBill._13 = matView._13;
+		matBill._31 = matView._31;
+		matBill._33 = matView._33;
 
-	// 행렬의 곱셈순서를 주의할 것
-	m_sComponent.m_pTransformCom->Set_WorldMatrix(&(matBill * matWorld));
+		D3DXMatrixInverse(&matBill, NULL, &matBill);
+
+		// 행렬의 곱셈순서를 주의할 것
+
+		m_sComponent.m_pTransformCom->Set_WorldMatrix(&(matBill * matWorld));
+	}
 	//
 
 	m_sComponent.m_pTransformCom->Get_WorldMatrix(&matWorld);
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
-
 	
 
 	pEffect->SetMatrix("g_matWorld", &matWorld);
@@ -174,10 +176,10 @@ HRESULT Client::CEffectRcTex::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	pEffect->SetMatrix("g_matProj", &matProj);
 
 	pEffect->SetFloat("g_bIsDissolve", false);
-	pEffect->SetFloat("g_uOffset", 0.25f);
-	pEffect->SetFloat("g_vOffset", 0.25f);
-	pEffect->SetFloat("g_uStep", (int)m_EffectTime % 4);
-	pEffect->SetFloat("g_vStep", (int)m_EffectTime / 4);
+	pEffect->SetFloat("g_uOffset", 1.f / m_uOffset);
+	pEffect->SetFloat("g_vOffset", 1.f / m_vOffset);
+	pEffect->SetFloat("g_uStep", (int)m_EffectTime % m_uOffset);
+	pEffect->SetFloat("g_vStep", (int)m_EffectTime / m_vOffset);
 	
 	m_sComponent.m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture");
 
@@ -196,21 +198,23 @@ void Client::CEffectRcTex::Collision(CSphereCollider* _mySphere, CUnit* _col, CS
 
 }
 
-void Client::CEffectRcTex::Set_Collider(_vec3 _pos, float _scale, CSphereCollider::BoneTeam _team, int _portalMapNumber) {
+void CEffectRcTex::Set_Effect(bool _bill, _vec3 _pos, float _scale, const _tchar* _pResourcesTag, int _uOffset, int _vOffset, float _speed, float _rotateX, float _rotateY, float _rotateZ)
+{
+	m_bill = _bill;
 	m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] = _pos;
-	m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS].y += 2.f;
+	m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS].y += 0.2f;
+	m_sComponent.m_pTransformCom->m_vScale = { _scale, _scale, _scale };
 	CUnit::Update_Object(0.f);
-	CSphereCollider* sphereCol = CSphereCollider::Create(m_pGraphicDev);
-	sphereCol->Set_Transform(_scale);
-	sphereCol->m_pStaticThis = this;
-	sphereCol->m_WeaponAttack = false;
-	sphereCol->m_BoneTeam = _team;
-	sphereCol->m_BonePart = CSphereCollider::BonePart::BonePart_Portal;
-	
-	sphereCol->Engine::CGameObject::Update_Object(0.f);
-	m_VecSphereCollider.emplace_back(sphereCol);
 
-	//Engine::CGameObject* pGameObject = this;
-	//Engine::CLayer* pLayer = Engine::CManagement::GetInstance()->m_pScene->Get_Layer(Engine::CLayer::LayerName::Layer_Static);
-	//pLayer->Add_GameObject(L"PortalCollider", pGameObject);
+	Engine::CComponent* pComponent = m_sComponent.m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, _pResourcesTag));
+	NULL_CHECK_RETURN(pComponent);
+	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Texture", pComponent);
+	m_uOffset = _uOffset;
+	m_vOffset = _vOffset;
+	m_EffectSpeed = _speed;
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(_rotateX));
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(_rotateY));
+	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(_rotateZ));
+
+	dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_Layer(Engine::CLayer::LayerName::Layer_StaticNoColl)->Add_GameObject(L"EffectRcTex", this);
 }

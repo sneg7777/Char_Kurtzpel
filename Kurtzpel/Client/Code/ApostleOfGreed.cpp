@@ -366,6 +366,7 @@ void CApostleOfGreed::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphere
 			if (!_colSphere->Check_DamagedObject(this)) {
 				_colSphere->m_VecDamagedObject.emplace_back(this);
 				m_sStat.m_fHp -= _col->Get_sStat()->m_fAttack;
+				Sound_RandomPlay(RandomSound::Sound_MonDamaged);
 				Emplace_DelayHpDec(_col->Get_sStat()->m_fAttack);
 				if (m_sStat.m_fKnockBackHp >= 0.f) {
 					m_sStat.m_fKnockBackHp -= _col->Get_sStat()->m_fAttack;
@@ -379,6 +380,7 @@ void CApostleOfGreed::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphere
 					CUI_Manager::Get_Instance()->Set_DamagedEnemy(this);
 				else
 					CUI_Manager::Get_Instance()->Set_DamagedEnemy(nullptr);
+				Effect_Damaged(_col, _colSphere);
 			}
 		}
 	}

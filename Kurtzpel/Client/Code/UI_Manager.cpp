@@ -5,6 +5,7 @@
 #include "UI_PlayerHp.h"
 #include "UI_Skill.h"
 #include "UI_Text.h"
+#include "SoundManager.h"
 //#include "UI.h"
 
 CUI_Manager* CUI_Manager::m_pInstance = nullptr;
@@ -180,8 +181,9 @@ void Client::CUI_Manager::Create_Art(CUI::UIKind _uiName, _tchar* _texTag) {
 }
 
 void Client::CUI_Manager::Create_QuestClear() {
-	Engine::CComponent* pComponent = nullptr;
+	SoundManager::PlayOverlapSound(L"QuestClear.ogg", SoundChannel::EFFECT, 0.4f);
 
+	Engine::CComponent* pComponent = nullptr;
 	CUI_Text* pUI = CUI_Text::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pUI, );
 	Engine::CTexture** pTextureCom = &pUI->m_pTextureCom;

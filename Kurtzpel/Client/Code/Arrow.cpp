@@ -2,7 +2,8 @@
 #include "Arrow.h"
 #include "Export_Function.h"
 #include "Player.h"
-
+#include "EffectRcTex.h"
+#include "SoundManager.h"
 
 CArrow::CArrow(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CUnit(pGraphicDev)
@@ -19,7 +20,6 @@ CArrow::~CArrow(void)
 HRESULT Client::CArrow::Add_Component(void)
 {
 	Engine::CComponent*		pComponent = nullptr;
-	
 	CUnit::Add_Component();
 	// Mesh
 	pComponent = m_sComponent.m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_Arrow"));
@@ -29,6 +29,7 @@ HRESULT Client::CArrow::Add_Component(void)
 
 	//m_pTransformCom->m_vInfo[Engine::INFO_POS] = { 5.f, -15.f, 10.f };
 	m_sComponent.m_pTransformCom->m_vScale = { 0.015f, 0.015f, 0.015f };
+	
 
 	return S_OK;
 }
@@ -53,13 +54,26 @@ void CArrow::Free(void)
 HRESULT Client::CArrow::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
-
+	m_UnitName = UnitName::PlayerBullet;
 	return S_OK;
 }
 Client::_int Client::CArrow::Update_Object(const _float& fTimeDelta)
 {
 	if (m_sStat.m_IsDead || m_LifeTime < 0.f) {
 		return 1;
+	}
+	if (m_Effect) {
+		_vec3	vPos;
+		m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+		if (vPos.y < 1.5f) {
+			CEffectRcTex::Create(m_pGraphicDev)->Set_Effect(true, vPos, 3.5f, L"Texture_Effect_LBHit01", 3, 3, 30.f);
+			int voiceNumber = CRandom_Manager::Random() % 5 + 1;
+			_tchar		szFileName[256] = L"";
+
+			wsprintf(szFileName, L"Arrow%d.ogg", voiceNumber);
+			SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, 0.1f);
+			return 1;
+		}
 	}
 	m_LifeTime -= fTimeDelta;
 	//
@@ -147,9 +161,10 @@ void Client::CArrow::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereC
 {
 	if (_mySphere->m_BoneTeam == _colSphere->m_BoneTeam)
 		return;
-	if(_colSphere->m_BonePart == CSphereCollider::BonePart::BonePart_CollBody)
+	if (_colSphere->m_BonePart == CSphereCollider::BonePart::BonePart_CollBody) {
 		m_sStat.m_IsDead = true;
-	
+		Sound_RandomPlay(RandomSound::Sound_Arrow_Hit);
+	}
 }
 
 void Client::CArrow::Create_Coll()

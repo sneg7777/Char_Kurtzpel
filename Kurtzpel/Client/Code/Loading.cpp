@@ -196,6 +196,10 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_Test2", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/Test2.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_Portal", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/Portal2.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_BasicAttack01", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/BasicAttack01.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_GHHit01", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/GH_Hit01.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_LBHit01", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/LB_Hit01.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_PhoenixHit01", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/PhoenixHit01.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_GH_RockHit", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/GH_RockHit.tga"), E_FAIL);
 	
 	
 	lstrcpy(m_szLoading, L"Mesh Loading.............................");

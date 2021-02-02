@@ -70,7 +70,7 @@ public:
 		TimeCheck_Dash, TimeCheck_KeyW, TimeCheck_KeyA, TimeCheck_KeyS, TimeCheck_KeyD,
 		TimeCheck_Cool_Q, TimeCheck_Cool_E, TimeCheck_Cool_F, TimeCheck_Cool_Tab, TimeCheck_Cool_LSHIFT,
 		TimeCheck_LB_SkillE_Ready, TimeCheck_LB_SkillE_Attack/*마법진시전*/, TimeCheck_LB_SkillE_Attack_Arrow/*위로쏘는캐릭터모션*/, TimeCheck_LB_SkillE_Attack_Arrow_Start/*화살내려앉는*/, TimeCheck_LB_SkillE_Attack_Arrow_Start_Total,
-		TimeCheck_Invin, TimeCheck_Effect_GHSKillE,
+		TimeCheck_Invin, TimeCheck_Effect_GHSKillE, TimeCheck_Sound_Run,
 		TimeCheck_End
 	};
 	enum Weapon_Equip {
@@ -79,9 +79,7 @@ public:
 	enum AnimationClip {
 		Ani_1, Ani_2, Ani_3, Ani_4, Ani_5, Ani_End
 	};
-	enum RandomSound {
-		Sound_AttackVoice, Sound_DamagedVoice, Sound_SkillVoice, Sound_Arrow_Hit, Sound_Arrow, Sound_BowTwang, Sound_Dash, Sound_GHAttack, Sound_GHHit, Sound_Jump, Sound_Phoenix, Sound_Run, Sound_End
-	};
+
 private:
 	explicit CPlayer(LPDIRECT3DDEVICE9 pGraphicDev);
 	virtual ~CPlayer(void);
@@ -122,7 +120,7 @@ private:
 
 	void		Talk_NpcToPortal();
 	void		Dissolve_WeaponIdle(float fTimeDelta);
-	void		Voice_Random(RandomSound _voice);
+	void		Sound_Random(RandomSound _voice);
 private:
 	//점프
 	_float						m_fJumpPower = 0.12f;

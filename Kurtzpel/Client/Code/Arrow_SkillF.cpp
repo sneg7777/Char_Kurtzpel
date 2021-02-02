@@ -53,7 +53,7 @@ void CArrow_SkillF::Free(void)
 HRESULT Client::CArrow_SkillF::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
-
+	m_UnitName = UnitName::PlayerBullet;
 	return S_OK;
 }
 Client::_int Client::CArrow_SkillF::Update_Object(const _float& fTimeDelta)
