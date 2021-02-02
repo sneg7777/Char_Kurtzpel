@@ -149,11 +149,11 @@ void Client::CUI_Manager::Create_Text(CUI::UIKind _uiName, _tchar* _texTag, bool
 	Engine::CComponent* pComponent = nullptr;
 	Engine::CTexture** pTextureCom = &pUI->m_pTextureCom;
 	if (_uiName == CUI::UIKind::UIK_TipText)
-		pUI->Set_PosToSize(512.f, 120.f, 384.f, 76.8f);
+		pUI->Set_PosToSize(WINCXHALF, 120.f, 384.f, 76.8f);
 	else if (_uiName == CUI::UIKind::UIK_TipNpcTalk || _uiName == CUI::UIKind::UIK_TipPortal)
-		pUI->Set_PosToSize(512.f, 150.f, 384.f, 76.8f);
+		pUI->Set_PosToSize(WINCXHALF, 150.f, 384.f, 76.8f);
 	else
-		pUI->Set_PosToSize(512.f, 500.f, 384.f, 76.8f);
+		pUI->Set_PosToSize(WINCXHALF, 500.f, 384.f, 76.8f);
 	if (!_alpha)
 		pUI->Set_Alpha(1.f);
 	else
@@ -212,25 +212,25 @@ void Client::CUI_Manager::Init_MonsterHpBar(CUI_MonsterHp* pUI, int number) {
 
 	switch (number) {
 		case 0: {
-			pUI->Set_PosToSize(512.f, 95.f, 350.f, 24.5f);
+			pUI->Set_PosToSize(WINCXHALF, 95.f, 350.f, 24.5f);
 			pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp0"));
 			pUI->m_UIKind = CUI::UIKind::UIK_Monster_Hp0;
 			break;
 		}
 		case 1: {
-			pUI->Set_PosToSize(512.f, 90.f, 343.f, 9.1f);
+			pUI->Set_PosToSize(WINCXHALF, 90.f, 343.f, 9.1f);
 			pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp2"));
 			pUI->m_UIKind = CUI::UIKind::UIK_Monster_Hp2;
 			break;
 		}
 		case 2: {
-			pUI->Set_PosToSize(512.f, 90.f, 343.f, 9.1f);
+			pUI->Set_PosToSize(WINCXHALF, 90.f, 343.f, 9.1f);
 			pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp1"));
 			pUI->m_UIKind = CUI::UIKind::UIK_Monster_Hp1;
 			break;
 		}
 		case 3: {
-			pUI->Set_PosToSize(512.f, 102.f, 343.f, 4.9f);
+			pUI->Set_PosToSize(WINCXHALF, 102.f, 343.f, 4.9f);
 			pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Monster_Hp3"));
 			pUI->m_UIKind = CUI::UIKind::UIK_Monster_Hp3;
 			break;
@@ -244,25 +244,25 @@ void Client::CUI_Manager::Init_PlayerHpBar(CUI_PlayerHp* pUI, int number) {
 	Engine::CTexture** pTextureCom = &pUI->m_pTextureCom;
 	switch (number) {
 		case 0: {
-			pUI->Set_PosToSize(512.f, 565.f, 248.8f, 33.6f);
+			pUI->Set_PosToSize(WINCXHALF, 565.f, 248.8f, 33.6f);
 			pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp0"));
 			pUI->m_UIKind = CUI::UIKind::UIK_Player_Hp0;
 			break;
 		}
 		case 1: {
-			pUI->Set_PosToSize(512.f, 555.6f, 242.4f, 8.f);
+			pUI->Set_PosToSize(WINCXHALF, 555.6f, 242.4f, 8.f);
 			pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp1"));
 			pUI->m_UIKind = CUI::UIKind::UIK_Player_Hp1;
 			break;
 		}
 		case 2: {
-			pUI->Set_PosToSize(512.f, 569.f, 242.4f, 4.8f);
+			pUI->Set_PosToSize(WINCXHALF, 569.f, 242.4f, 4.8f);
 			pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp2"));
 			pUI->m_UIKind = CUI::UIKind::UIK_Player_Hp2;
 			break;
 		}
 		case 3: {
-			pUI->Set_PosToSize(512.f, 577.f, 242.4f, 4.8f);
+			pUI->Set_PosToSize(WINCXHALF, 577.f, 242.4f, 4.8f);
 			pComponent = *pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_UI_Player_Hp3"));
 			pUI->m_UIKind = CUI::UIKind::UIK_Player_Hp3;
 			break;

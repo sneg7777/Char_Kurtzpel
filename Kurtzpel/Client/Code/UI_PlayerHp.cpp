@@ -55,17 +55,17 @@ Client::_int Client::CUI_PlayerHp::Update_Object(const _float& fTimeDelta)
 	CPlayer* pPlayer = CPlayer::GetInstance();
 	if (m_UIKind == UIKind::UIK_Player_Hp1) {
 		float hpPer = (pPlayer->Get_sStat()->m_fHp / pPlayer->Get_sStat()->m_fMaxHp);
-		m_fX = 390.8f + 121.2f * hpPer;
+		m_fX = 518.5f + 121.2f * hpPer;
 		m_fSizeX = (pPlayer->Get_sStat()->m_fHp / pPlayer->Get_sStat()->m_fMaxHp) * 242.4f;
 	}
 	else if (m_UIKind == UIKind::UIK_Player_Hp2) {
 		float dashPer = (pPlayer->m_DashGauge / pPlayer->m_MaxDashGauge);
-		m_fX = 390.8f + 121.2f * dashPer;
+		m_fX = 518.5f + 121.2f * dashPer;
 		m_fSizeX = (pPlayer->m_DashGauge / pPlayer->m_MaxDashGauge) * 242.4f;
 	}
 	else if (m_UIKind == UIKind::UIK_Player_Hp3) {
 		float mpPer = (pPlayer->Get_sStat()->m_fMp / pPlayer->Get_sStat()->m_fMaxMp);
-		m_fX = 390.8f + 121.2f * mpPer;
+		m_fX = 518.5f + 121.2f * mpPer;
 		m_fSizeX = (pPlayer->Get_sStat()->m_fMp / pPlayer->Get_sStat()->m_fMaxMp) * 242.4f;
 	}
 

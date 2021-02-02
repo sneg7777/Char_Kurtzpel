@@ -28,7 +28,7 @@ public:
 		BonePart_End
 	};
 	enum BoneTeam {
-		BoneTeam_Player, BoneTeam_Npc, BoneTeam_Portal, BoneTeam_Enemy, BoneTeam_Etc, BoneTeam_End
+		BoneTeam_Player, BoneTeam_Npc, BoneTeam_Portal, BoneTeam_Enemy, BoneTeam_Effect, BoneTeam_Etc, BoneTeam_End
 	};
 private:
 	explicit CSphereCollider(LPDIRECT3DDEVICE9 pGraphicDev);

@@ -230,6 +230,9 @@
     <ClInclude Include="..\Code\Shader_EffectMesh.hpp">
       <Filter>09. Shader\hpp</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\Shader_EffectRcTex.hpp">
+      <Filter>09. Shader\hpp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Header\Export_Utility.inl">

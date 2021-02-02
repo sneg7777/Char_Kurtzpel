@@ -124,6 +124,9 @@
     <Filter Include="02. GameObject\01. Stage\23. EffectMesh">
       <UniqueIdentifier>{3e28d65c-927c-4874-99e8-c85c0012fb21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Stage\24. EffectRcTex">
+      <UniqueIdentifier>{eee39f06-6f85-4617-a989-4dd8bb396a6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -306,6 +309,9 @@
     <ClInclude Include="..\Code\EffectMesh_GHSkillE.h">
       <Filter>02. GameObject\01. Stage\23. EffectMesh</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\EffectRcTex.h">
+      <Filter>02. GameObject\01. Stage\24. EffectRcTex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -469,6 +475,9 @@
     </ClCompile>
     <ClCompile Include="..\Code\EffectMesh_GHSkillE.cpp">
       <Filter>02. GameObject\01. Stage\23. EffectMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\EffectRcTex.cpp">
+      <Filter>02. GameObject\01. Stage\24. EffectRcTex</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

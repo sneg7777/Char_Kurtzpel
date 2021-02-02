@@ -62,20 +62,20 @@ _int CUI_MonsterHp::Update_Object(const _float & fTimeDelta)
 
 	if (m_UIKind == UIKind::UIK_Monster_Hp1) {
 		float hpPer = (pEnemy->Get_sStat()->m_fHp / pEnemy->Get_sStat()->m_fMaxHp);
-		m_fX = 340.5f + 171.5f * hpPer;
+		m_fX = 468.5f + 171.5f * hpPer;
 		m_fSizeX = (pEnemy->Get_sStat()->m_fHp / pEnemy->Get_sStat()->m_fMaxHp) * 343.f;
 	}
 	else if (m_UIKind == UIKind::UIK_Monster_Hp2) {
 		float hpPer = (pEnemy->Get_sStat()->m_fDelayHp / pEnemy->Get_sStat()->m_fMaxHp);
-		m_fX = 340.5f + 171.5f * hpPer;
+		m_fX = 468.5f + 171.5f * hpPer;
 		m_fSizeX = (pEnemy->Get_sStat()->m_fDelayHp / pEnemy->Get_sStat()->m_fMaxHp) * 343.f;
 	}
 	else if (m_UIKind == UIKind::UIK_Monster_Hp3) {
 		float knockPer = (pEnemy->Get_sStat()->m_fKnockBackHp / pEnemy->Get_sStat()->m_fMaxKnockBackHp);
-		m_fX = 340.5f + 171.5f * knockPer;
+		m_fX = 468.5f + 171.5f * knockPer;
 		m_fSizeX = (pEnemy->Get_sStat()->m_fKnockBackHp / pEnemy->Get_sStat()->m_fMaxKnockBackHp) * 343.f;
 	}
-
+	
 	CUI::Update_Object(fTimeDelta);
 
 	return 0;
