@@ -150,7 +150,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			m_AniSpeed = 1.8f;
 			m_DashGauge -= RollGauge;
 			questInfo->m_RollingCount++;
-			Voice_Random(Voice::Voice_Attack);
+			Voice_Random(RandomSound::Sound_AttackVoice);
 			break;
 		}
 		case Client::CPlayer::State_Attack: {
@@ -164,7 +164,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			//	m_Attack_State = Attack_State::StateA_Basic1;
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.4f;
-			Voice_Random(Voice::Voice_Attack);
+			Voice_Random(RandomSound::Sound_AttackVoice);
 			switch (m_Attack_State)
 			{
 			case Client::CPlayer::StateA_Basic1:
@@ -208,7 +208,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 				m_sStat.m_fMp -= MP_GH_Q;
 				questInfo->m_SkillQCount++;
-				Voice_Random(Voice::Voice_Skill);
+				Voice_Random(RandomSound::Sound_SkillVoice);
 				break;
 			case Client::CPlayer::StateA_SkillE: {
 				//m_sStat.m_fAttack = ATTACK_INIT * 3.5f;
@@ -217,7 +217,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_bCheck[bCheck::bCheck_Skill_F1] = false;
 				m_sStat.m_fMp -= MP_GH_E;
 				questInfo->m_SkillECount++;
-				Voice_Random(Voice::Voice_Skill);
+				Voice_Random(RandomSound::Sound_SkillVoice);
 				break;
 			}
 			case Client::CPlayer::StateA_SkillF: {
@@ -240,7 +240,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
 				m_TimeCheck[TimeCheck::TimeCheck_Invin] = 10.f;
 				CCameraScene_Manager::Get_Instance()->Set_CameraScene(2);
-				Voice_Random(Voice::Voice_Skill);
+				Voice_Random(RandomSound::Sound_SkillVoice);
 				break;
 			}
 			default:
@@ -283,7 +283,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_AniSpeed = 1.4f;
 			}
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
-			Voice_Random(Voice::Voice_Damaged);
+			Voice_Random(RandomSound::Sound_DamagedVoice);
 			break;
 		}
 		case Client::CPlayer::State_End: {
@@ -338,7 +338,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			m_AniSpeed = 1.8f;
 			m_DashGauge -= RollGauge;
 			questInfo->m_RollingCount++;
-			Voice_Random(Voice::Voice_Attack);
+			Voice_Random(RandomSound::Sound_AttackVoice);
 			break;
 		}
 		case Client::CPlayer::State_Attack: {
@@ -352,7 +352,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			//	m_Attack_State = Attack_State::StateA_Basic1;
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 2.7f;
-			Voice_Random(Voice::Voice_Attack);
+			Voice_Random(RandomSound::Sound_AttackVoice);
 			switch (m_Attack_State)
 			{
 			case Client::CPlayer::StateA_Basic1:
@@ -389,7 +389,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_AniClip = AnimationClip::Ani_1;
 				m_sStat.m_fMp -= MP_LB_Q;
 				questInfo->m_SkillQCount++;
-				Voice_Random(Voice::Voice_Skill);
+				Voice_Random(RandomSound::Sound_SkillVoice);
 				break;
 			case Client::CPlayer::StateA_SkillE: {
 				m_AniClip = AnimationClip::Ani_1;
@@ -405,7 +405,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_AniClip = AnimationClip::Ani_1;
 				m_sStat.m_fMp -= MP_LB_F;
 				questInfo->m_SkillFCount++;
-				Voice_Random(Voice::Voice_Skill);
+				Voice_Random(RandomSound::Sound_SkillVoice);
 				break;
 			}
 			case Client::CPlayer::StateA_SkillZ: {
@@ -456,7 +456,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_AniSpeed = 1.4f;
 			}
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
-			Voice_Random(Voice::Voice_Damaged);
+			Voice_Random(RandomSound::Sound_DamagedVoice);
 			break;
 		}
 		case Client::CPlayer::State_End: {
@@ -1337,7 +1337,7 @@ void Client::CPlayer::Set_StateToAnimation_Jump(State _state, _vec3 _vPos, _vec3
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.1f;
 			m_fJumpAccel = ATTACK_JUMPACCEL;
-			Voice_Random(Voice::Voice_Attack);
+			Voice_Random(RandomSound::Sound_AttackVoice);
 			switch (m_Attack_State)
 			{
 			case Client::CPlayer::StateA_Basic1:
@@ -1377,7 +1377,7 @@ void Client::CPlayer::Set_StateToAnimation_Jump(State _state, _vec3 _vPos, _vec3
 			}
 			m_bCheck[bCheck::bCheck_DamagedUp] = false;
 			m_bCheck[bCheck_JumpToDamagedUp] = true;
-			Voice_Random(Voice::Voice_Damaged);
+			Voice_Random(RandomSound::Sound_DamagedVoice);
 			break;
 		}
 		case Client::CPlayer::State_End: {
@@ -1433,7 +1433,7 @@ void Client::CPlayer::Set_StateToAnimation_Jump(State _state, _vec3 _vPos, _vec3
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 3.f;
 			m_fJumpAccel = ATTACK_JUMPACCEL;
-			Voice_Random(Voice::Voice_Attack);
+			Voice_Random(RandomSound::Sound_AttackVoice);
 			switch (m_Attack_State)
 			{
 			case Client::CPlayer::StateA_Basic1:
@@ -1468,7 +1468,7 @@ void Client::CPlayer::Set_StateToAnimation_Jump(State _state, _vec3 _vPos, _vec3
 			}
 			m_bCheck[bCheck::bCheck_DamagedUp] = false;
 			m_bCheck[bCheck_JumpToDamagedUp] = true;
-			Voice_Random(Voice::Voice_Damaged);
+			Voice_Random(RandomSound::Sound_DamagedVoice);
 			break;
 		}
 		case Client::CPlayer::State_End: {
@@ -2063,21 +2063,21 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 				CGH_RockIn::Create(m_pGraphicDev, true);
 				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.5f);
 				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 5.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 1.5f, 0.5f);
-				Voice_Random(Voice::Voice_Attack);
+				Voice_Random(RandomSound::Sound_AttackVoice);
 			}
 			else if (!m_bCheck[bCheck::bCheck_Skill_F2] && trackPos > 0.9f) {
 				m_bCheck[bCheck::bCheck_Skill_F2] = true;
 				CGH_RockIn::Create(m_pGraphicDev, true);
 				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.5f);
 				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 5.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 1.5f, 0.5f);
-				Voice_Random(Voice::Voice_Attack);
+				Voice_Random(RandomSound::Sound_AttackVoice);
 			}
 			else if (!m_bCheck[bCheck::bCheck_Skill_F3] && trackPos > 2.3f) {
 				m_bCheck[bCheck::bCheck_Skill_F3] = true;
 				CGH_RockIn::Create(m_pGraphicDev, false);
 				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(1.f);
 				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 6.5f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 2.f, 0.5f);
-				Voice_Random(Voice::Voice_Skill);
+				Voice_Random(RandomSound::Sound_SkillVoice);
 			}
 			if (1.6f < trackPos && trackPos < 2.3f) {
 				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed * 0.5f), &m_sStat.m_dwNaviIndex));
@@ -2227,7 +2227,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 					Create_ArrowShot_SkillF(vPos, vDir, fTimeDelta);
 					dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.1f);
 					m_LB_Arrow_Count--;
-					Voice_Random(Voice::Voice_Attack);
+					Voice_Random(RandomSound::Sound_AttackVoice);
 				}
 			}
 			else if (m_AniClip == AnimationClip::Ani_3) { // Shot
@@ -2262,7 +2262,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 				if (!m_bCheck[bCheck::bCheck_LB_Phoenix_SkillZ] && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(1.1f)) {
 					m_bCheck[bCheck::bCheck_LB_Phoenix_SkillZ] = true;
 					Create_Phoenix_SkillZ(vPos, vDir);
-					Voice_Random(Voice::Voice_Attack);
+					Voice_Random(RandomSound::Sound_AttackVoice);
 					dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.8f);
 				}
 			}
@@ -2386,7 +2386,8 @@ void CPlayer::Create_ArrowShot(_vec3 _vPos, _vec3 _vDir, float fTimeDelta)
 	if (m_JumpIdleState == JumpIdleAni::JumpIdle_None)
 		_vDir.y = -0.4f + m_LookAtY * 0.25f;
 	else
-		_vDir.y = -0.7f + m_LookAtY * 0.15f;
+		_vDir.y = -0.4f + m_LookAtY * 0.25f;
+
 	D3DXVec3Normalize(&_vDir, &_vDir);
 	pUnit->Get_sStat()->m_vDir = _vDir;
 
@@ -2608,27 +2609,92 @@ void CPlayer::Dissolve_WeaponIdle(float fTimeDelta)
 	}
 }
 
-void CPlayer::Voice_Random(Voice _voice)
+void CPlayer::Voice_Random(RandomSound _voice)
 {
-	if (_voice == Voice::Voice_Attack) {
+	//Sound_Arrow_Hit, Sound_Arrow, Sound_BowTwang, Sound_Dash, Sound_GHAttack, Sound_GHHit, Sound_Jump, Sound_Phoenix, Sound_Run
+	if (_voice == RandomSound::Sound_Run) {
+		int voiceNumber = CRandom_Manager::Random() % 6 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Run%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
+	}
+	else if (_voice == RandomSound::Sound_AttackVoice) {
 		int voiceNumber = CRandom_Manager::Random() % 14 + 1;
 		_tchar		szFileName[256] = L"";
 
 		wsprintf(szFileName, L"AttackVoice%d.ogg", voiceNumber);
 		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
 	}
-	else if (_voice == Voice::Voice_Damaged) {
+	else if (_voice == RandomSound::Sound_DamagedVoice) {
 		int voiceNumber = CRandom_Manager::Random() % 4 + 1;
 		_tchar		szFileName[256] = L"";
 
 		wsprintf(szFileName, L"Damaged%d.ogg", voiceNumber);
 		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
 	}
-	else if (_voice == Voice::Voice_Skill) {
+	else if (_voice == RandomSound::Sound_SkillVoice) {
 		int voiceNumber = CRandom_Manager::Random() % 8 + 1;
 		_tchar		szFileName[256] = L"";
 
 		wsprintf(szFileName, L"SkillVoice%d.ogg", voiceNumber);
 		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
 	}
+	else if (_voice == RandomSound::Sound_Arrow_Hit) {
+		int voiceNumber = CRandom_Manager::Random() % 6 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Arrow_Hit%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
+	}
+	else if (_voice == RandomSound::Sound_Arrow) {
+		int voiceNumber = CRandom_Manager::Random() % 5 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Arrow%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
+	}
+	else if (_voice == RandomSound::Sound_BowTwang) {
+		int voiceNumber = CRandom_Manager::Random() % 2 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Bow_Twang%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
+	}
+	else if (_voice == RandomSound::Sound_Dash) {
+		int voiceNumber = CRandom_Manager::Random() % 4 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Dash%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
+	}
+	else if (_voice == RandomSound::Sound_GHAttack) {
+		int voiceNumber = CRandom_Manager::Random() % 7 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"GH_Attack%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
+	}
+	else if (_voice == RandomSound::Sound_GHHit) {
+		int voiceNumber = CRandom_Manager::Random() % 7 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"GH_Hit%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
+	}
+	else if (_voice == RandomSound::Sound_Jump) {
+		int voiceNumber = CRandom_Manager::Random() % 4 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Jump%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
+	}
+	else if (_voice == RandomSound::Sound_Phoenix) {
+		int voiceNumber = CRandom_Manager::Random() % 3 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Phoenix%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
+	}
+
 }

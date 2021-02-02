@@ -79,8 +79,8 @@ public:
 	enum AnimationClip {
 		Ani_1, Ani_2, Ani_3, Ani_4, Ani_5, Ani_End
 	};
-	enum Voice {
-		Voice_Attack, Voice_Damaged, Voice_Skill, Voice_End
+	enum RandomSound {
+		Sound_AttackVoice, Sound_DamagedVoice, Sound_SkillVoice, Sound_Arrow_Hit, Sound_Arrow, Sound_BowTwang, Sound_Dash, Sound_GHAttack, Sound_GHHit, Sound_Jump, Sound_Phoenix, Sound_Run, Sound_End
 	};
 private:
 	explicit CPlayer(LPDIRECT3DDEVICE9 pGraphicDev);
@@ -122,7 +122,7 @@ private:
 
 	void		Talk_NpcToPortal();
 	void		Dissolve_WeaponIdle(float fTimeDelta);
-	void		Voice_Random(Voice _voice);
+	void		Voice_Random(RandomSound _voice);
 private:
 	//มกวม
 	_float						m_fJumpPower = 0.12f;
