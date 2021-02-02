@@ -17,6 +17,8 @@
 #include "Portal.h"
 #include "CameraScene_Manager.h"
 #include "GH_RockIn.h"
+#include "SoundManager.h"
+#include "EffectMesh_GHSkillE.h"
 
 #define MP_GH_Q 50.f
 #define MP_GH_E 50.f
@@ -107,6 +109,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 		switch (_state)
 		{
 		case Client::CPlayer::State_Idle: {
+			m_State = _state;
 			m_sStat.m_fAttack = ATTACK_INIT;
 			m_sComponent.m_pMeshCom->Set_AnimationSet(243);
 			m_AniSpeed = 1.f;
@@ -138,7 +141,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			m_sStat.m_fSpeed = 2.4f * m_sStat.m_fInitSpeed;
 			m_AniSpeed = 2.1f;
 			m_DashGauge -= DashGauge;
-			Engine::CRenderer::GetInstance()->Set_MotionBlur(0.8f);
+			Engine::CRenderer::GetInstance()->Set_MotionBlur(1.f);
 			break;
 		}
 		case Client::CPlayer::State_Rolling: {
@@ -147,6 +150,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			m_AniSpeed = 1.8f;
 			m_DashGauge -= RollGauge;
 			questInfo->m_RollingCount++;
+			Voice_Random(Voice::Voice_Attack);
 			break;
 		}
 		case Client::CPlayer::State_Attack: {
@@ -160,10 +164,12 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			//	m_Attack_State = Attack_State::StateA_Basic1;
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.4f;
+			Voice_Random(Voice::Voice_Attack);
 			switch (m_Attack_State)
 			{
 			case Client::CPlayer::StateA_Basic1:
 				m_sComponent.m_pMeshCom->Set_AnimationSet(146);
+				//SoundManager::PlayOverlapSound(L"AttackVoice01.ogg", SoundChannel::PLAYER, VOLUME);
 				break;
 			case Client::CPlayer::StateA_Basic2:
 				m_sComponent.m_pMeshCom->Set_AnimationSet(144);
@@ -186,26 +192,32 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 		case Client::CPlayer::State_Skill: {
 			m_WeaponDissolve = 0.f;
 			m_bCheck[bCheck::bCheck_WeaponChangeIdle] = true;
-			Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+			//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 			m_sComponent.m_pMeshCom->Set_AniAngle(265.f);
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			switch (m_Attack_State)
 			{
 			case Client::CPlayer::StateA_SkillQ:
-				m_sStat.m_fAttack = ATTACK_INIT * 5.f;
+
+				SoundManager::PlayOverlapSound(L"SkillVoice01.ogg", SoundChannel::PLAYER , 0.1f);
+
+				//m_sStat.m_fAttack = ATTACK_INIT * 5.f;
 				m_sComponent.m_pMeshCom->Set_AnimationSet(123);
 				m_AniSpeed = 1.2f;
 				m_AniClip = AnimationClip::Ani_1;
-				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
+				//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_VecDamagedObject.clear();
 				m_sStat.m_fMp -= MP_GH_Q;
 				questInfo->m_SkillQCount++;
+				Voice_Random(Voice::Voice_Skill);
 				break;
 			case Client::CPlayer::StateA_SkillE: {
-				m_sStat.m_fAttack = ATTACK_INIT * 3.5f;
+				//m_sStat.m_fAttack = ATTACK_INIT * 3.5f;
 				m_sComponent.m_pMeshCom->Set_AnimationSet(134);
 				m_AniSpeed = 1.2f;
+				m_bCheck[bCheck::bCheck_Skill_F1] = false;
 				m_sStat.m_fMp -= MP_GH_E;
 				questInfo->m_SkillECount++;
+				Voice_Random(Voice::Voice_Skill);
 				break;
 			}
 			case Client::CPlayer::StateA_SkillF: {
@@ -218,6 +230,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				//Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
 				m_sStat.m_fMp -= MP_GH_F;
 				questInfo->m_SkillFCount++;
+				//Voice_Random(Voice::Voice_Attack);
 				break;
 			}
 			case Client::CPlayer::StateA_SkillZ: {
@@ -227,6 +240,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
 				m_TimeCheck[TimeCheck::TimeCheck_Invin] = 10.f;
 				CCameraScene_Manager::Get_Instance()->Set_CameraScene(2);
+				Voice_Random(Voice::Voice_Skill);
 				break;
 			}
 			default:
@@ -269,6 +283,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_AniSpeed = 1.4f;
 			}
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
+			Voice_Random(Voice::Voice_Damaged);
 			break;
 		}
 		case Client::CPlayer::State_End: {
@@ -314,6 +329,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			m_sStat.m_fSpeed = 2.4f * m_sStat.m_fInitSpeed;
 			m_AniSpeed = 2.1f;
 			m_DashGauge -= DashGauge;
+			Engine::CRenderer::GetInstance()->Set_MotionBlur(1.f);
 			break;
 		}
 		case Client::CPlayer::State_Rolling: {
@@ -322,6 +338,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			m_AniSpeed = 1.8f;
 			m_DashGauge -= RollGauge;
 			questInfo->m_RollingCount++;
+			Voice_Random(Voice::Voice_Attack);
 			break;
 		}
 		case Client::CPlayer::State_Attack: {
@@ -335,6 +352,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 			//	m_Attack_State = Attack_State::StateA_Basic1;
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 2.7f;
+			Voice_Random(Voice::Voice_Attack);
 			switch (m_Attack_State)
 			{
 			case Client::CPlayer::StateA_Basic1:
@@ -371,6 +389,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_AniClip = AnimationClip::Ani_1;
 				m_sStat.m_fMp -= MP_LB_Q;
 				questInfo->m_SkillQCount++;
+				Voice_Random(Voice::Voice_Skill);
 				break;
 			case Client::CPlayer::StateA_SkillE: {
 				m_AniClip = AnimationClip::Ani_1;
@@ -386,6 +405,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_AniClip = AnimationClip::Ani_1;
 				m_sStat.m_fMp -= MP_LB_F;
 				questInfo->m_SkillFCount++;
+				Voice_Random(Voice::Voice_Skill);
 				break;
 			}
 			case Client::CPlayer::StateA_SkillZ: {
@@ -436,6 +456,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_AniSpeed = 1.4f;
 			}
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
+			Voice_Random(Voice::Voice_Damaged);
 			break;
 		}
 		case Client::CPlayer::State_End: {
@@ -1316,6 +1337,7 @@ void Client::CPlayer::Set_StateToAnimation_Jump(State _state, _vec3 _vPos, _vec3
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 1.1f;
 			m_fJumpAccel = ATTACK_JUMPACCEL;
+			Voice_Random(Voice::Voice_Attack);
 			switch (m_Attack_State)
 			{
 			case Client::CPlayer::StateA_Basic1:
@@ -1355,6 +1377,7 @@ void Client::CPlayer::Set_StateToAnimation_Jump(State _state, _vec3 _vPos, _vec3
 			}
 			m_bCheck[bCheck::bCheck_DamagedUp] = false;
 			m_bCheck[bCheck_JumpToDamagedUp] = true;
+			Voice_Random(Voice::Voice_Damaged);
 			break;
 		}
 		case Client::CPlayer::State_End: {
@@ -1410,6 +1433,7 @@ void Client::CPlayer::Set_StateToAnimation_Jump(State _state, _vec3 _vPos, _vec3
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 3.f;
 			m_fJumpAccel = ATTACK_JUMPACCEL;
+			Voice_Random(Voice::Voice_Attack);
 			switch (m_Attack_State)
 			{
 			case Client::CPlayer::StateA_Basic1:
@@ -1444,6 +1468,7 @@ void Client::CPlayer::Set_StateToAnimation_Jump(State _state, _vec3 _vPos, _vec3
 			}
 			m_bCheck[bCheck::bCheck_DamagedUp] = false;
 			m_bCheck[bCheck_JumpToDamagedUp] = true;
+			Voice_Random(Voice::Voice_Damaged);
 			break;
 		}
 		case Client::CPlayer::State_End: {
@@ -2038,18 +2063,21 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 				CGH_RockIn::Create(m_pGraphicDev, true);
 				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.5f);
 				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 5.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 1.5f, 0.5f);
+				Voice_Random(Voice::Voice_Attack);
 			}
 			else if (!m_bCheck[bCheck::bCheck_Skill_F2] && trackPos > 0.9f) {
 				m_bCheck[bCheck::bCheck_Skill_F2] = true;
 				CGH_RockIn::Create(m_pGraphicDev, true);
 				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.5f);
 				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 5.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 1.5f, 0.5f);
+				Voice_Random(Voice::Voice_Attack);
 			}
 			else if (!m_bCheck[bCheck::bCheck_Skill_F3] && trackPos > 2.3f) {
 				m_bCheck[bCheck::bCheck_Skill_F3] = true;
 				CGH_RockIn::Create(m_pGraphicDev, false);
 				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(1.f);
 				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 6.5f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 2.f, 0.5f);
+				Voice_Random(Voice::Voice_Skill);
 			}
 			if (1.6f < trackPos && trackPos < 2.3f) {
 				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_sStat.m_fSpeed * 0.5f), &m_sStat.m_dwNaviIndex));
@@ -2060,8 +2088,14 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 				Set_StateToAnimation(State::State_Idle);
 			}
 			float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
-			if (trackPos > 0.7f) {
-				Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+			if (!m_bCheck[bCheck::bCheck_Skill_F1] &&  trackPos > 0.7f) {
+				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 7.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 3.f, 0.5f);
+				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.5f);
+				m_bCheck[bCheck::bCheck_Skill_F1] = true;
+			}
+			if (0.7f < trackPos && trackPos < 0.8f && m_TimeCheck[TimeCheck_Effect_GHSKillE] <= 0.f) {
+				m_TimeCheck[TimeCheck_Effect_GHSKillE] = 0.05f;
+				CEffectMesh_GHSkillE::Create(m_pGraphicDev);
 			}
 		}
 		else if (m_Attack_State == Attack_State::StateA_SkillQ) {
@@ -2077,10 +2111,11 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 				Engine::CRenderer::GetInstance()->Set_MotionBlur(0.8f);
 				if (colCheck) {
 					m_AniClip = AnimationClip::Ani_3;
-					Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+					
 					m_sComponent.m_pMeshCom->Set_AnimationSet(125);
 					CGH_RockIn::Create(m_pGraphicDev, true);
 					dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.8f);
+					CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 5.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 5.f, 0.5f);
 				}
 			}
 			else if (m_AniClip == AnimationClip::Ani_3) {
@@ -2117,6 +2152,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 					m_sComponent.m_pMeshCom->Set_AnimationSet(32);
 					m_AniSpeed = 1.f;
 					CSkillCollider::Create(m_pGraphicDev)->Set_Collider(m_LB_SkillE_Pos, 7.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 0.4f, 3.f, 0.3f, 0.05f, 0.7f);
+					SoundManager::PlayOverlapSound(L"LB_SkillE.ogg", SoundChannel::PLAYER, VOLUME);
 				}
 			}
 			else if (m_AniClip == AnimationClip::Ani_2) {
@@ -2128,6 +2164,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 				if (m_TimeCheck[TimeCheck_LB_SkillE_Attack_Arrow] <= 0.f) {
 					m_TimeCheck[TimeCheck_LB_SkillE_Attack_Arrow] = 0.2f;
 					Create_ArrowShot_SkillE_Ready(vPos, _vec3{ 0.f, 1.f, 0.f });
+					dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.2f);
 				}
 			}
 			else if (m_AniClip == AnimationClip::Ani_3) {
@@ -2190,6 +2227,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 					Create_ArrowShot_SkillF(vPos, vDir, fTimeDelta);
 					dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.1f);
 					m_LB_Arrow_Count--;
+					Voice_Random(Voice::Voice_Attack);
 				}
 			}
 			else if (m_AniClip == AnimationClip::Ani_3) { // Shot
@@ -2213,6 +2251,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 				if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(4.f)) {
 					m_AniClip = AnimationClip::Ani_2;
 					m_sComponent.m_pMeshCom->Set_AnimationSet(8);
+					SoundManager::PlayOverlapSound(L"LB_SkillZ01.ogg", SoundChannel::PLAYER, VOLUME);
 				}
 			}
 			else if (m_AniClip == AnimationClip::Ani_2) { //¼¦
@@ -2223,6 +2262,8 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 				if (!m_bCheck[bCheck::bCheck_LB_Phoenix_SkillZ] && m_sComponent.m_pMeshCom->Is_AnimationSetEnd(1.1f)) {
 					m_bCheck[bCheck::bCheck_LB_Phoenix_SkillZ] = true;
 					Create_Phoenix_SkillZ(vPos, vDir);
+					Voice_Random(Voice::Voice_Attack);
+					dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.8f);
 				}
 			}
 			else if (m_AniClip == AnimationClip::Ani_3) { //End
@@ -2270,8 +2311,13 @@ void CPlayer::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider
 			if (m_AniClip == AnimationClip::Ani_2) {
 				if (_colSphere->m_BonePart == CSphereCollider::BonePart_CollBody) {
 					m_AniClip = AnimationClip::Ani_3;
-					Get_BonePartCollider(CSphereCollider::BonePart_PlayerHammer)->m_WeaponAttack = true;
+					
 					m_sComponent.m_pMeshCom->Set_AnimationSet(125);
+					CGH_RockIn::Create(m_pGraphicDev, true);
+					dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.8f);
+					_vec3 vPos;
+					m_sComponent.m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+					CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 5.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 5.f, 0.5f);
 				}
 			}
 		}
@@ -2559,5 +2605,30 @@ void CPlayer::Dissolve_WeaponIdle(float fTimeDelta)
 				m_WeaponDissolve = 0.f;
 			}
 		}
+	}
+}
+
+void CPlayer::Voice_Random(Voice _voice)
+{
+	if (_voice == Voice::Voice_Attack) {
+		int voiceNumber = CRandom_Manager::Random() % 14 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"AttackVoice%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
+	}
+	else if (_voice == Voice::Voice_Damaged) {
+		int voiceNumber = CRandom_Manager::Random() % 4 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Damaged%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
+	}
+	else if (_voice == Voice::Voice_Skill) {
+		int voiceNumber = CRandom_Manager::Random() % 8 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"SkillVoice%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME);
 	}
 }

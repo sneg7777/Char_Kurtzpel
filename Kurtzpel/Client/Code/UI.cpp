@@ -72,8 +72,8 @@ HRESULT Client::CUI::Ready_Object(void)
 	m_fY = 510.f;
 	m_fSizeX = 81.6f;
 	m_fSizeY = 97.2f;*/
-	m_pTransformCom->Set_Scale(0.4f, 0.1f, 0.1f);
-	m_fAlpha = 0.f;
+	//m_pTransformCom->Set_Scale(0.4f, 0.1f, 0.1f);
+	//m_fAlpha = 0.f;
 	return S_OK;
 }
 Client::_int Client::CUI::Update_Object(const _float& fTimeDelta)

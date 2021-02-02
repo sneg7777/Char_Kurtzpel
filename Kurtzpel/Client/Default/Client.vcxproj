@@ -86,6 +86,7 @@
     <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)lib\x86;$(LibraryPath)</LibraryPath>
     <OutDir>../Bin\</OutDir>
+    <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -100,14 +101,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../Code;../Header;../../Base;../../Reference/Header;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Code;../Header;./FMOD;../../Base;../../Reference/Header;../FMOD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;System.lib;Resources.lib;Utility.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;fmodex_vc.lib;System.lib;Resources.lib;Utility.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>../../Reference/Library;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../FMOD;../../Reference/Library;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -117,13 +118,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../Code;../Header;../../Base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Code;../Header;./FMOD;../../Base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LargeAddressAware>true</LargeAddressAware>
+      <AdditionalLibraryDirectories>../FMOD;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -135,16 +137,16 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../Code;../Header;../../Base;../../Reference/Header;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Code;../Header;./FMOD;../../Base;../../Reference/Header;../FMOD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;System.lib;Resources.lib;Utility.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;fmodex_vc.lib;System.lib;Resources.lib;Utility.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>../../Reference/Library;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../FMOD;../../Reference/Library;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -156,15 +158,16 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../Code;../Header;../../Base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Code;../Header;./FMOD;../../Base;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LargeAddressAware>true</LargeAddressAware>
+      <AdditionalLibraryDirectories>../FMOD;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -180,6 +183,8 @@
     <ClInclude Include="..\Code\CameraScene_Manager.h" />
     <ClInclude Include="..\Code\DynamicCamera.h" />
     <ClInclude Include="..\Code\Effect.h" />
+    <ClInclude Include="..\Code\EffectMesh.h" />
+    <ClInclude Include="..\Code\EffectMesh_GHSkillE.h" />
     <ClInclude Include="..\Code\Equip_Top_01.h" />
     <ClInclude Include="..\Code\GH_RockIn.h" />
     <ClInclude Include="..\Code\Hammer.h" />
@@ -201,6 +206,7 @@
     <ClInclude Include="..\Code\Random_Manager.h" />
     <ClInclude Include="..\Code\SkillCollider.h" />
     <ClInclude Include="..\Code\SkyBox.h" />
+    <ClInclude Include="..\Code\SoundManager.h" />
     <ClInclude Include="..\Code\SphereCollider.h" />
     <ClInclude Include="..\Code\Stage.h" />
     <ClInclude Include="..\Code\Stage_1.h" />
@@ -239,6 +245,8 @@
     <ClCompile Include="..\Code\CameraScene_Manager.cpp" />
     <ClCompile Include="..\Code\DynamicCamera.cpp" />
     <ClCompile Include="..\Code\Effect.cpp" />
+    <ClCompile Include="..\Code\EffectMesh.cpp" />
+    <ClCompile Include="..\Code\EffectMesh_GHSkillE.cpp" />
     <ClCompile Include="..\Code\Equip_Top_01.cpp" />
     <ClCompile Include="..\Code\GH_RockIn.cpp" />
     <ClCompile Include="..\Code\Hammer.cpp" />
@@ -260,6 +268,7 @@
     <ClCompile Include="..\Code\Random_Manager.cpp" />
     <ClCompile Include="..\Code\SkillCollider.cpp" />
     <ClCompile Include="..\Code\SkyBox.cpp" />
+    <ClCompile Include="..\Code\SoundManager.cpp" />
     <ClCompile Include="..\Code\SphereCollider.cpp" />
     <ClCompile Include="..\Code\Stage.cpp" />
     <ClCompile Include="..\Code\Stage_1.cpp" />

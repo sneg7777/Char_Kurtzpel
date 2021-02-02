@@ -181,7 +181,7 @@ HRESULT Client::CUnit::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 
 	_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
 	pEffect->SetVector("g_vColor", &vColor);
-	pEffect->SetFloat("g_fBoldSize", 0.01f);
+	pEffect->SetFloat("g_fBoldSize", 0.005f);
 
 	//////////////////////////////////////
 	//const D3DLIGHT9* pLightInfo = Engine::Get_Light(0);

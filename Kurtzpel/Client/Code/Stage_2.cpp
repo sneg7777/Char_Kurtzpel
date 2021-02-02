@@ -14,6 +14,8 @@
 #include "LongBow.h"
 #include "Npc_01.h"
 #include "Portal.h"
+#include "EffectMesh.h"
+#include "EffectMesh_GHSkillE.h"
 
 CStage_2::CStage_2(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CStage(pGraphicDev)
@@ -188,9 +190,16 @@ HRESULT CStage_2::Ready_GameLogic_Static_Layer(const _tchar* pLayerTag)
 
 	CPortal* pPortal;
 	pGameObject = pPortal = CPortal::Create(m_pGraphicDev);
-	pPortal->Set_Collider(_vec3{ 60.f, 0.f, 91.f }, 7.f, CSphereCollider::BoneTeam::BoneTeam_Portal, 1);
+	pPortal->Set_Collider(_vec3{ 60.f, 1.f, 91.f }, 7.f, CSphereCollider::BoneTeam::BoneTeam_Portal, 1);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CPortal", pGameObject), E_FAIL);
+
+	/*CEffectMesh* pEffect;
+	pGameObject = pEffect = CEffectMesh_GHSkillE::Create(m_pGraphicDev);
+	pEffect->Set_Collider(_vec3{ 65.f, 0.f, 81.f }, 7.f, CSphereCollider::BoneTeam::BoneTeam_Portal, 1);
+	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CPortal2", pGameObject), E_FAIL);*/
+
 	/*pGameObject = CLongBow::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"CLongBow", pGameObject), E_FAIL);*/

@@ -15,8 +15,9 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <memory.h>
+#include <io.h>
+#include "fmod.h"
 #include <tchar.h>
-
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 #include <d3d9.h>
@@ -49,3 +50,5 @@ using namespace std;
 
 #include "Random_Manager.h"
 #include "NpcQuest_Manager.h"
+
+#include "SoundManager.h"

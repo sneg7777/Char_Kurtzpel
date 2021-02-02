@@ -121,6 +121,9 @@
     <Filter Include="02. GameObject\01. Stage\20. Monster\03. Monster2_CrossBow">
       <UniqueIdentifier>{6a61d0c3-9546-42f4-8d2f-4d4efd30dfa4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Stage\23. EffectMesh">
+      <UniqueIdentifier>{3e28d65c-927c-4874-99e8-c85c0012fb21}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -294,6 +297,15 @@
     <ClInclude Include="..\Code\Monster2_Arrow.h">
       <Filter>02. GameObject\01. Stage\20. Monster\03. Monster2_CrossBow</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\SoundManager.h">
+      <Filter>97. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\EffectMesh.h">
+      <Filter>02. GameObject\01. Stage\23. EffectMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\EffectMesh_GHSkillE.h">
+      <Filter>02. GameObject\01. Stage\23. EffectMesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -448,6 +460,15 @@
     </ClCompile>
     <ClCompile Include="..\Code\Monster2_Arrow.cpp">
       <Filter>02. GameObject\01. Stage\20. Monster\03. Monster2_CrossBow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\SoundManager.cpp">
+      <Filter>97. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\EffectMesh.cpp">
+      <Filter>02. GameObject\01. Stage\23. EffectMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\EffectMesh_GHSkillE.cpp">
+      <Filter>02. GameObject\01. Stage\23. EffectMesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

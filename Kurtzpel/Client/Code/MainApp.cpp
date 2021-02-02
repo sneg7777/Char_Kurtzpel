@@ -4,6 +4,7 @@
 #include "UI_Manager.h"
 #include "Random_Manager.h"
 #include "CameraScene_Manager.h"
+#include "SoundManager.h"
 
 CMainApp::CMainApp(void)
 {
@@ -34,6 +35,7 @@ HRESULT CMainApp::Ready_MainApp(void)
 	CUI_Manager::Get_Instance()->Ready_Object(m_pGraphicDev);
 	CNpcQuest_Manager::Get_Instance()->Ready_Object(m_pGraphicDev);
 	CCameraScene_Manager::Get_Instance()->Ready_Object(m_pGraphicDev);
+	SoundManager::GetInstance()->Initialize();
 	return S_OK;
 }
 
@@ -55,9 +57,9 @@ _int CMainApp::Update_MainApp(const _float& fTimeDelta)
 		int a = 0;
 	}*/
 
-
 	m_pManagementClass->Update_Scene(fTimeDelta);
 	m_pManagementClass->LateUpdate_Scene(fTimeDelta);
+	SoundManager::Update();
 
 	return 0;
 }
@@ -137,6 +139,7 @@ void CMainApp::Free(void)
 	CUI_Manager::Destroy_Instance();
 	CNpcQuest_Manager::Destroy_Instance();
 	CCameraScene_Manager::Destroy_Instance();
+	SoundManager::Destroy();
 
 	Engine::Release_Utility();
 	Engine::Release_Resoures();

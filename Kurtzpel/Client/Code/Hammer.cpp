@@ -184,7 +184,7 @@ HRESULT Client::CHammer::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 
 	_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
 	pEffect->SetVector("g_vColor", &vColor);
-	pEffect->SetFloat("g_fBoldSize", 0.01f);
+	pEffect->SetFloat("g_fBoldSize", 0.005f);
 
 	pEffect->SetFloat("g_fTimeDelta", CPlayer::GetInstance()->m_WeaponDissolve);
 	bool	weaponChange = CPlayer::GetInstance()->m_bCheck[CPlayer::bCheck_State_WeaponChange];

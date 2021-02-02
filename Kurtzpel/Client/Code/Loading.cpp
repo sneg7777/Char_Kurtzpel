@@ -194,7 +194,9 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_DissolveTex", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/DissolveTex.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_Test", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/Test.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_Test2", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/Test2.tga"), E_FAIL);
-
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_Portal", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/Portal2.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_BasicAttack01", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/BasicAttack01.tga"), E_FAIL);
+	
 	
 	lstrcpy(m_szLoading, L"Mesh Loading.............................");
 	///////////////////////////////////////////////// Static Mesh
@@ -439,12 +441,61 @@ _uint CLoading::Loading_ForStage(void)
 													L"../Bin/Resource/Mesh/StaticMesh/GH_Trace01/",
 													L"GH_Trace02.X"),
 													E_FAIL);
+		FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+													Engine::RESOURCE_STAGE,
+													L"Mesh_GH_Trace03",
+													Engine::TYPE_STATIC,
+													L"../Bin/Resource/Mesh/StaticMesh/GH_Trace01/",
+													L"GH_Trace03.X"),
+													E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 													Engine::RESOURCE_STAGE,
-													L"Mesh_TestTest",
+													L"Mesh_Effect01",
 													Engine::TYPE_STATIC,
-													L"../Bin/Resource/Mesh/StaticMesh/TestTest/",
-													L"TestTest.X"),
+													L"../Bin/Resource/Mesh/StaticMesh/Effect/",
+													L"Effect01.X"),
+													E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+													Engine::RESOURCE_STAGE,
+													L"Mesh_Effect02",
+													Engine::TYPE_STATIC,
+													L"../Bin/Resource/Mesh/StaticMesh/Effect/",
+													L"Effect02.X"),
+													E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+													Engine::RESOURCE_STAGE,
+													L"Mesh_Effect03",
+													Engine::TYPE_STATIC,
+													L"../Bin/Resource/Mesh/StaticMesh/Effect/",
+													L"Effect03.X"),
+													E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+													Engine::RESOURCE_STAGE,
+													L"Mesh_Effect04",
+													Engine::TYPE_STATIC,
+													L"../Bin/Resource/Mesh/StaticMesh/Effect/",
+													L"Effect04.X"),
+													E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+													Engine::RESOURCE_STAGE,
+													L"Mesh_Effect05",
+													Engine::TYPE_STATIC,
+													L"../Bin/Resource/Mesh/StaticMesh/Effect/",
+													L"Effect05.X"),
+													E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+													Engine::RESOURCE_STAGE,
+													L"Mesh_Effect06",
+													Engine::TYPE_STATIC,
+													L"../Bin/Resource/Mesh/StaticMesh/Effect/",
+													L"Effect06.X"),
+													E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+													Engine::RESOURCE_STAGE,
+													L"Mesh_Effect07",
+													Engine::TYPE_STATIC,
+													L"../Bin/Resource/Mesh/StaticMesh/Effect/",
+													L"Effect07.X"),
 													E_FAIL);
 	/*FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 		Engine::RESOURCE_STAGE,

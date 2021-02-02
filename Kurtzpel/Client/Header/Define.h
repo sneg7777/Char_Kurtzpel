@@ -13,4 +13,5 @@ using namespace Client;
 #define GRAVITY 0.22f
 #define GROGGY 5.f;
 #define TIME_ENEMYHPBAR 5.f
+#define VOLUME 0.2f
 #endif // Define_h__

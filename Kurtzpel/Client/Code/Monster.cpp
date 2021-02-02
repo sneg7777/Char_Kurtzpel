@@ -196,7 +196,7 @@ HRESULT Client::CMonster::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	pEffect->SetMatrix("g_matProj", &matProj);
 	_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
 	pEffect->SetVector("g_vColor", &vColor);
-	pEffect->SetFloat("g_fBoldSize", 0.01f);
+	pEffect->SetFloat("g_fBoldSize", 0.005f);
 	bool dead = (m_sStat.m_fHp <= 0.f);
 	pEffect->SetBool("g_bIsDissolve", dead);
 	if (dead) {

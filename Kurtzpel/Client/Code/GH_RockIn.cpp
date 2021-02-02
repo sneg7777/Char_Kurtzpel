@@ -57,7 +57,7 @@ HRESULT CGH_RockIn::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 
 	_vec4 vColor = { 0.f, 0.f, 0.f, 1.f };
 	pEffect->SetVector("g_vColor", &vColor);
-	pEffect->SetFloat("g_fBoldSize", 0.01f);
+	pEffect->SetFloat("g_fBoldSize", 0.005f);
 
 	if (m_Dissolve != 0.f) {
 		pEffect->SetFloat("g_fTimeDelta", m_Dissolve);

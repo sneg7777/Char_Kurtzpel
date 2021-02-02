@@ -24,12 +24,12 @@ HRESULT Client::CPortal::Add_Component(void)
 	//CUnit::Add_Component();
 
 	//Mesh
-	pComponent = m_sComponent.m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_GH_Trace02"));
+	pComponent = m_sComponent.m_pStaticMeshCom = dynamic_cast<Engine::CStaticMesh*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Mesh_GH_Trace01"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
 
 	//Texture
-	pComponent = m_sComponent.m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_Effect_Test"));
+	pComponent = m_sComponent.m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_STAGE, L"Texture_Effect_Portal"));
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Texture", pComponent);
 
@@ -51,7 +51,7 @@ HRESULT Client::CPortal::Add_Component(void)
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Shader", pComponent);
 
 	m_sComponent.m_pTransformCom->m_vScale = { 0.015f, 0.015f, 0.015f };
-
+	Engine::CGameObject::Update_Object(0.f);
 	return S_OK;
 }
 
@@ -90,9 +90,9 @@ Client::_int Client::CPortal::Update_Object(const _float& fTimeDelta)
 		return 1;
 	}
 
-	m_EffectTime += fTimeDelta * 10.f;
-	if (m_EffectTime > 6)
-		m_EffectTime -= 6.f;
+	m_EffectTime += fTimeDelta * 20.f;
+	if (m_EffectTime > 16)
+		m_EffectTime -= 16.f;
 	//SetUp_OnTerrain();
 	CUnit::Update_Object(fTimeDelta);
 	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
@@ -113,7 +113,7 @@ void Client::CPortal::Render_Object(void)
 	FAILED_CHECK_RETURN(SetUp_ConstantTable(pEffect), );
 
 	//m_sComponent.m_pStaticMeshCom->Render_Meshes(pEffect);
-	m_sComponent.m_pStaticMeshCom->Render_MeshesEffect(pEffect, m_sComponent.m_pTextureCom);
+	//m_sComponent.m_pStaticMeshCom->Render_MeshesEffect(pEffect, m_sComponent.m_pTextureCom);
 
 	pEffect->EndPass();
 	pEffect->End();
@@ -139,10 +139,10 @@ HRESULT Client::CPortal::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 	pEffect->SetMatrix("g_matProj", &matProj);
 
 	pEffect->SetFloat("g_bIsDissolve", false);
-	pEffect->SetFloat("g_uOffset", 0.5f);
-	pEffect->SetFloat("g_vOffset", 0.33f);
-	pEffect->SetFloat("g_uStep", (int)m_EffectTime % 2);
-	pEffect->SetFloat("g_vStep", (int)m_EffectTime / 2);
+	pEffect->SetFloat("g_uOffset", 0.25f);
+	pEffect->SetFloat("g_vOffset", 0.25f);
+	pEffect->SetFloat("g_uStep", (int)m_EffectTime % 4);
+	pEffect->SetFloat("g_vStep", (int)m_EffectTime / 4);
 	
 	return S_OK;
 }
