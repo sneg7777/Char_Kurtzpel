@@ -15,16 +15,20 @@ public:
 		State_End
 	};
 	enum bCheck {
-		bCheck_Start, bCheck_End
+		bCheck_Start, bCheck_Sound1, bCheck_End
 	};
 	enum TimeCheck {
 		TimeCheck_Dash, TimeCheck_End
 	};
 	enum Skill_Ap {
-		Skill_Ap_None, Skill_Ap_1, Skill_Ap_3, Skill_Ap_7, Skill_Ap_End
+		Skill_Ap_None, Skill_Ap_1, Skill_Ap_3, Skill_Ap_7, Skill_Ap_10, Skill_Ap_End
 	};
 	enum SKill_Cool_Ap {
-		SCool_Ap_1, SCool_Ap_3, SCool_Ap_7, SCool_Ap_Total, SCool_Ap_End
+		SCool_Ap_1, SCool_Ap_3, SCool_Ap_7, SCool_Ap_10, SCool_Ap_10_2, SCool_Ap_Total, SCool_Ap_End
+	};
+	enum ApSound {
+		ApSound_AttackVoice, ApSound_Dead, ApSound_Groggy, ApSound_GroggyUp, ApSound_Skill01, ApSound_Skill03, ApSound_Skill07,
+		ApSound_Start, ApSound_Circle, ApSound_Thunder, ApSound_End
 	};
 private:
 	explicit CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev);
@@ -51,7 +55,7 @@ private:
 	bool		Random_Skill(float playerTodisTance);
 	void		Emplace_DelayHpDec(float _attack);
 	void		Update_DelayHpDec(float fTimeDelta);
-
+	void		ApSound_RandomPlay(ApSound _voice, float _addVolume = 1.f);
 
 	float						m_TimeCheck[TimeCheck::TimeCheck_End];
 	
@@ -63,6 +67,7 @@ public:
 	float						m_SkillCool[SCool_Ap_End];
 	_vec3						m_PlayerPosSave;
 	_vec3						m_PlayerDistanceSave;
+	_vec3						m_SkillPosSave;
 public:
 	static CApostleOfGreed*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

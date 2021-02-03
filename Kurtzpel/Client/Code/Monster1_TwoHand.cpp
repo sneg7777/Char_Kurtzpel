@@ -28,7 +28,7 @@ CMonster1_TwoHand::CMonster1_TwoHand(LPDIRECT3DDEVICE9 pGraphicDev)
 	}
 	m_sStat.m_fInitSpeed = 9.f;
 	m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
-	m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp = m_sStat.m_fHp = m_sStat.m_fMaxHp = 5000.f;
+	m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp = m_sStat.m_fHp = m_sStat.m_fMaxHp = 7200.f;
 	m_sStat.m_fKnockBackHp =  m_sStat.m_fMaxKnockBackHp = 3000.f;
 	m_sStat.m_fAttack = 50.f;
 	m_sStat.m_dwNaviIndex = 0;
@@ -405,7 +405,7 @@ void CMonster1_TwoHand::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphe
 					Set_StateToAnimation(State::State_Damaged);
 				_colSphere->m_VecDamagedObject.emplace_back(this);
 				m_sStat.m_fHp -= _col->Get_sStat()->m_fAttack;
-				Sound_RandomPlay(RandomSound::Sound_MonDamaged);
+				Sound_RandomPlay(UnitSound::Sound_MonDamaged);
 				Emplace_DelayHpDec(_col->Get_sStat()->m_fAttack);
 				if (m_sStat.m_fKnockBackHp >= 0.f) {
 					m_sStat.m_fKnockBackHp -= _col->Get_sStat()->m_fAttack;

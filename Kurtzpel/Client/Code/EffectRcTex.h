@@ -35,7 +35,7 @@ public:
 	//_vOffset : 세로 이미지 수
 	//_speed : 20.f 이미지 돌리는 스피드
 	//_rotateX,Y,Z = 0.f 회전
-	void		Set_Effect(bool _bill, _vec3 _pos, float _scale, const _tchar* _pResourcesTag, int _uOffset, int _vOffset, float _speed = 20.f
+	CEffectRcTex*	Set_Effect(bool _bill, _vec3 _pos, float _scale, const _tchar* _pResourcesTag, int _uOffset, int _vOffset, float _speed = 20.f
 		, float _rotateX = 0.f, float _rotateY = 0.f, float _rotateZ = 0.f);
 	
 	//

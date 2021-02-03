@@ -9,15 +9,19 @@
 #include "Random_Manager.h"
 #include "UI_Manager.h"
 #include "NpcQuest_Manager.h"
+#include "SkillCollider.h"
+#include "EffectRcTex.h"
+#include "SoundManager.h"
 
 #define PLAYER_SEARCH_DISTANCE 20.f
 #define PLAYER_ATTACK_DISTANCE 10.f
 #define ApSkill_CoolTotal 3.f
-#define ApSkill_Cool1 5.f
-#define ApSkill_Cool3 5.f
+#define ApSkill_Cool1 12.f
+#define ApSkill_Cool3 12.f
 #define ApSkill_Cool3_DisTance 15.f
-#define ApSkill_Cool7 5.f
+#define ApSkill_Cool7 12.f
 #define ApSkill_Cool7_DisTance 30.f
+#define ApSkill_Cool10 12.f
 CApostleOfGreed::CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CMonster(pGraphicDev)
 {
@@ -35,8 +39,8 @@ CApostleOfGreed::CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev)
 	}
 	m_sStat.m_fInitSpeed = 9.f;
 	m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
-	m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp = m_sStat.m_fHp = m_sStat.m_fMaxHp = 16000.f;
-	m_sStat.m_fKnockBackHp =  m_sStat.m_fMaxKnockBackHp = 3200.f;
+	m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp = m_sStat.m_fHp = m_sStat.m_fMaxHp = 20000.f;
+	m_sStat.m_fKnockBackHp =  m_sStat.m_fMaxKnockBackHp = 4000.f;
 	m_sStat.m_fAttack = 100.f;
 	m_sStat.m_dwNaviIndex = 0;
 }
@@ -63,7 +67,7 @@ HRESULT Client::CApostleOfGreed::Add_Component(void)
 	Engine::CGameObject::Update_Object(0.f);
 	
 	//m_pMeshCom->Play_Animation(1.f);
-
+	m_UnitName = UnitName::Monster;
 	Load_ColliderFile(L"../Bin/Resource/Mesh/DynamicMesh/Save/ApostleOfGreed.dat");
 	for (auto& sphere : m_VecSphereCollider)
 	{
@@ -221,6 +225,8 @@ void Client::CApostleOfGreed::Set_StateToAnimation(State _state, Skill_Ap _skill
 		break;
 	case Client::CApostleOfGreed::State_Skill: {
 		m_SkillState = _skill;
+		m_bCheck[bCheck_Sound1] = false;
+		ApSound_RandomPlay(ApSound::ApSound_AttackVoice);
 		if (m_SkillState == Skill_Ap_1) {
 			m_SkillCool[SKill_Cool_Ap::SCool_Ap_1] = ApSkill_Cool1;
 			m_sComponent.m_pMeshCom->Set_AnimationSet(17);
@@ -242,12 +248,20 @@ void Client::CApostleOfGreed::Set_StateToAnimation(State _state, Skill_Ap _skill
 			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
 			m_AniSpeed = 0.8f;
 		}
+		else if (m_SkillState == Skill_Ap_10) {
+			m_SkillCool[SKill_Cool_Ap::SCool_Ap_10] = ApSkill_Cool10;
+			m_sComponent.m_pMeshCom->Set_AnimationSet(0);
+			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
+			m_AniSpeed = 1.f;
+			m_SkillPosSave = { 0.f, 0.f, 0.f };
+		}
 	}
 		break;
 	case Client::CApostleOfGreed::State_JumpEnd:
 		break;
 	case Client::CApostleOfGreed::State_KnockBack:
 		m_sComponent.m_pMeshCom->Set_AnimationSet(18);
+		ApSound_RandomPlay(ApSound::ApSound_Groggy, 1.4f);
 		m_AniSpeed = 1.f;
 		break;
 	case Client::CApostleOfGreed::State_Groggy:
@@ -256,6 +270,7 @@ void Client::CApostleOfGreed::Set_StateToAnimation(State _state, Skill_Ap _skill
 		m_TimeGroggy = GROGGY;
 		break;
 	case Client::CApostleOfGreed::State_GroggyUp:
+		ApSound_RandomPlay(ApSound::ApSound_GroggyUp, 1.4f);
 		m_sComponent.m_pMeshCom->Set_AnimationSet(20);
 		m_AniSpeed = 1.f;
 		break;
@@ -366,7 +381,7 @@ void CApostleOfGreed::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphere
 			if (!_colSphere->Check_DamagedObject(this)) {
 				_colSphere->m_VecDamagedObject.emplace_back(this);
 				m_sStat.m_fHp -= _col->Get_sStat()->m_fAttack;
-				Sound_RandomPlay(RandomSound::Sound_MonDamaged);
+				Sound_RandomPlay(UnitSound::Sound_MonDamaged);
 				Emplace_DelayHpDec(_col->Get_sStat()->m_fAttack);
 				if (m_sStat.m_fKnockBackHp >= 0.f) {
 					m_sStat.m_fKnockBackHp -= _col->Get_sStat()->m_fAttack;
@@ -402,6 +417,11 @@ void CApostleOfGreed::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMesh
 			else {
 				Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, false);
 			}
+			if (!m_bCheck[bCheck_Sound1] && trackPos > 2.f) {
+				ApSound_RandomPlay(ApSound::ApSound_Skill01, 2.f);
+				m_bCheck[bCheck_Sound1] = true;
+				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.7f);
+			}
 			return;
 		}
 	}
@@ -425,6 +445,10 @@ void CApostleOfGreed::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMesh
 			if (2.9f < trackPos && trackPos < 3.1f) {
 				m_sComponent.m_pTransformCom->Set_Pos(&pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * 30.f), &m_sStat.m_dwNaviIndex));
 			}
+			if (!m_bCheck[bCheck_Sound1] && trackPos > 3.f) {
+				ApSound_RandomPlay(ApSound::ApSound_Skill03, 2.f);
+				m_bCheck[bCheck_Sound1] = true;
+			}
 			return;
 		}
 	}
@@ -444,6 +468,31 @@ void CApostleOfGreed::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMesh
 			if (0.72f < trackPos && trackPos < 0.8f) {
 				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(1.2f);
 			}
+			if (!m_bCheck[bCheck_Sound1] && trackPos >0.8f) {
+				ApSound_RandomPlay(ApSound::ApSound_Skill07);
+				m_bCheck[bCheck_Sound1] = true;
+			}
+		}
+
+	}
+	else if (m_SkillState == Skill_Ap::Skill_Ap_10) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
+			Set_StateToAnimation(State::State_Wait);
+		}
+		if (m_SkillCool[SKill_Cool_Ap::SCool_Ap_10_2] <= 0.f) {
+			m_SkillCool[SKill_Cool_Ap::SCool_Ap_10_2] = 0.5f;
+			
+			_vec3 vPlayerPos;
+			m_pPlayerTrans->Get_Info(Engine::INFO_POS, &vPlayerPos);
+			vPlayerPos.y = 1.5f;
+			CEffectRcTex::Create(m_pGraphicDev)->Set_Effect(false, vPlayerPos, 7.f, L"Texture_Effect_Circle01", 4, 4, 15.f, 90.f, 0.f, 0.f);
+			ApSound_RandomPlay(ApSound::ApSound_Circle, 1.5f);
+			if (m_SkillPosSave.x != 0.f) {
+				CEffectRcTex::Create(m_pGraphicDev)->Set_Effect(true, m_SkillPosSave, 10.f, L"Texture_Effect_Thunder", 4, 1, 12.f)->Get_sComponent()->m_pTransformCom->Set_Scale(5.f, 20.f, 5.f);
+				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.2f);
+				ApSound_RandomPlay(ApSound::ApSound_Thunder);
+			}
+			m_SkillPosSave = vPlayerPos;
 		}
 	}
 }
@@ -451,7 +500,8 @@ void CApostleOfGreed::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMesh
 bool CApostleOfGreed::Random_Skill(float playerTodisTance) {
 	if (m_SkillCool[SKill_Cool_Ap::SCool_Ap_Total] > 0.f)
 		return false;
-	int iPattern = CRandom_Manager::Random() % 3;
+	int iPattern = CRandom_Manager::Random() % 4;
+	//int iPattern = 3;
 	switch (iPattern)
 	{
 	case 0: {
@@ -478,6 +528,17 @@ bool CApostleOfGreed::Random_Skill(float playerTodisTance) {
 		if (m_SkillCool[SKill_Cool_Ap::SCool_Ap_7] <= 0.f && PLAYER_SEARCH_DISTANCE < playerTodisTance && playerTodisTance < ApSkill_Cool7_DisTance && m_AngleOfSame) {
 			Set_StateToAnimation(State::State_Skill, Skill_Ap::Skill_Ap_7);
 			m_PlayerDistanceSave = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS];
+			return true;
+		}
+		else {
+			return false;
+		}
+		break;
+	}
+	case 3: {
+		if (m_SkillCool[SKill_Cool_Ap::SCool_Ap_10] <= 0.f) {
+			Set_StateToAnimation(State::State_Skill, Skill_Ap::Skill_Ap_10);
+			//m_PlayerDistanceSave = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS];
 			return true;
 		}
 		else {
@@ -523,4 +584,62 @@ void CApostleOfGreed::Update_DelayHpDec(float fTimeDelta) {
 			m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp;
 	}
 	return;
+}
+
+void CApostleOfGreed::ApSound_RandomPlay(ApSound _voice, float _addVolume)
+{
+	if (_voice == ApSound::ApSound_AttackVoice) {
+		int voiceNumber = CRandom_Manager::Random() % 7 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Ap_AttackVoice%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::MONSTER, VOLUME_ETC * _addVolume);
+	}
+	else if (_voice == ApSound::ApSound_Dead) {
+		SoundManager::PlayOverlapSound(L"Ap_Dead.ogg", SoundChannel::MONSTER, VOLUME_ETC * _addVolume);
+	}
+	else if (_voice == ApSound::ApSound_Groggy) {
+		SoundManager::PlayOverlapSound(L"Ap_Groggy.ogg", SoundChannel::MONSTER, VOLUME_ETC * _addVolume);
+	}
+	else if (_voice == ApSound::ApSound_GroggyUp) {
+		int voiceNumber = CRandom_Manager::Random() % 3 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Ap_GroggyUp%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::MONSTER, VOLUME_ETC * _addVolume);
+	}
+	else if (_voice == ApSound::ApSound_Skill01) {
+		int voiceNumber = CRandom_Manager::Random() % 2 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Ap_Skill01_%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::MONSTER, VOLUME_ETC * _addVolume);
+	}
+	else if (_voice == ApSound::ApSound_Skill03) {
+		SoundManager::PlayOverlapSound(L"Ap_Skill03.ogg", SoundChannel::MONSTER, VOLUME_ETC * _addVolume);
+	}
+	else if (_voice == ApSound::ApSound_Skill07) {
+		int voiceNumber = CRandom_Manager::Random() % 5 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Ap_Skill07_%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::MONSTER, VOLUME_ETC * _addVolume);
+	}
+	else if (_voice == ApSound::ApSound_Start) {
+		SoundManager::PlayOverlapSound(L"Ap_Start.ogg", SoundChannel::MONSTER, VOLUME_ETC * _addVolume);
+	}
+	else if (_voice == ApSound::ApSound_Circle) {
+		int voiceNumber = CRandom_Manager::Random() % 4 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Circle%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::MONSTER, VOLUME_ETC * _addVolume);
+	}
+	else if (_voice == ApSound::ApSound_Thunder) {
+		int voiceNumber = CRandom_Manager::Random() % 8 + 1;
+		_tchar		szFileName[256] = L"";
+
+		wsprintf(szFileName, L"Thunder%d.ogg", voiceNumber);
+		SoundManager::PlayOverlapSound(szFileName, SoundChannel::MONSTER, VOLUME_ETC * _addVolume);
+	}
 }

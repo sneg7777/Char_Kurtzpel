@@ -48,6 +48,8 @@ public:
 protected:
 	virtual void Free(void) override;
 	HRESULT Load_StaticObject(Engine::CLayer* _layer, const _tchar* pLayerTag);
+private:
+	bool	m_ClearPortal = false;
 };
 
 END

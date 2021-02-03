@@ -198,11 +198,11 @@ void Client::CEffectRcTex::Collision(CSphereCollider* _mySphere, CUnit* _col, CS
 
 }
 
-void CEffectRcTex::Set_Effect(bool _bill, _vec3 _pos, float _scale, const _tchar* _pResourcesTag, int _uOffset, int _vOffset, float _speed, float _rotateX, float _rotateY, float _rotateZ)
+CEffectRcTex* CEffectRcTex::Set_Effect(bool _bill, _vec3 _pos, float _scale, const _tchar* _pResourcesTag, int _uOffset, int _vOffset, float _speed, float _rotateX, float _rotateY, float _rotateZ)
 {
 	m_bill = _bill;
 	m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] = _pos;
-	m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS].y += 0.2f;
+	m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS].y += 0.3f;
 	m_sComponent.m_pTransformCom->m_vScale = { _scale, _scale, _scale };
 	CUnit::Update_Object(0.f);
 
@@ -217,4 +217,5 @@ void CEffectRcTex::Set_Effect(bool _bill, _vec3 _pos, float _scale, const _tchar
 	m_sComponent.m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(_rotateZ));
 
 	dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_Layer(Engine::CLayer::LayerName::Layer_StaticNoColl)->Add_GameObject(L"EffectRcTex", this);
+	return this;
 }

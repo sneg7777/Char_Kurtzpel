@@ -17,6 +17,7 @@
 #include "EffectMesh.h"
 #include "EffectMesh_GHSkillE.h"
 #include "EffectRcTex.h"
+#include "SoundManager.h"
 
 CStage_2::CStage_2(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CStage(pGraphicDev)
@@ -44,6 +45,9 @@ HRESULT CStage_2::Ready_Scene(void)
 		CUI_Manager::Get_Instance()->Ready_CreateUI();
 		m_LightCheck = true;
 	}
+	SoundManager::StopAll();
+	SoundManager::PlayBGM(L"BGM_Stage2.ogg");
+
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 	return S_OK;
 }

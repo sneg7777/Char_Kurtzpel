@@ -15,6 +15,8 @@
 #include "NpcQuest_Manager.h"
 #include "Monster1_TwoHand.h"
 #include "Monster2_CrossBow.h"
+#include "Portal.h"
+#include "SoundManager.h"
 
 CStage_1::CStage_1(LPDIRECT3DDEVICE9 pGraphicDev)
 	: CStage(pGraphicDev)
@@ -42,7 +44,9 @@ HRESULT CStage_1::Ready_Scene(void)
 		CUI_Manager::Get_Instance()->Ready_CreateUI();
 		m_LightCheck = true;
 	}
-	
+	SoundManager::StopAll();
+	SoundManager::PlayBGM(L"BGM_Stage1.ogg");
+
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 	return S_OK;
 }
@@ -62,6 +66,15 @@ Engine::_int CStage_1::Update_Scene(const _float& fTimeDelta)
 	//
 	//CameraControl(fTimeDelta);
 	//
+	
+	if (!m_ClearPortal && Get_LayerObject(Engine::CLayer::Layer_Dynamic, Engine::CGameObject::UnitName::Monster) == nullptr) {
+		m_ClearPortal = true;
+		CPortal* pPortal;
+		Engine::CGameObject* pGameObject = pPortal = CPortal::Create(m_pGraphicDev);
+		pPortal->Set_Collider(_vec3{ 70.f, 1.f, 80.f }, 30.f, CSphereCollider::BoneTeam::BoneTeam_Portal, 2);
+		NULL_CHECK_RETURN(pGameObject, E_FAIL);
+		Get_Layer(Engine::CLayer::LayerName::Layer_Static)->Add_GameObject(L"Portal", pGameObject);
+	}
 	return temp;
 }
 
@@ -129,7 +142,7 @@ HRESULT CStage_1::Ready_GameLogic_Dynamic_Layer(const _tchar * pLayerTag)
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Player", pGameObject), E_FAIL);
 	
 	int questNumber = CNpcQuest_Manager::Get_NpcQuestInfo()->m_QuestNumber;
-	if (true){//questNumber == 9){
+	if (false){//questNumber == 9){
 		pGameObject = CMonster1_TwoHand::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pGameObject, E_FAIL);
 		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"M_Monster1_TwoHand", pGameObject), E_FAIL);
@@ -143,7 +156,7 @@ HRESULT CStage_1::Ready_GameLogic_Dynamic_Layer(const _tchar * pLayerTag)
 		pGameObject = CMonster2_CrossBow::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pGameObject, E_FAIL);
 		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"M_Monster2_CrossBow", pGameObject), E_FAIL);
-		dynamic_cast<CMonster2_CrossBow*>(pGameObject)->Get_sComponent()->m_pTransformCom->Set_Pos(65.f, 0.f, 85.f);
+		dynamic_cast<CMonster2_CrossBow*>(pGameObject)->Get_sComponent()->m_pTransformCom->Set_Pos(65.f, 0.f, 82.f);
 		pGameObject->Engine::CGameObject::Update_Object(0.f);
 
 		pGameObject = CMonster1_TwoHand::Create(m_pGraphicDev);

@@ -200,59 +200,59 @@ HRESULT Client::CUnit::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 }
 
 
-void Client::CUnit::Sound_RandomPlay(RandomSound _voice, float _addVolume)
+void Client::CUnit::Sound_RandomPlay(UnitSound _voice, float _addVolume)
 {
 	//Sound_Arrow_Hit, Sound_Arrow, Sound_BowTwang, Sound_Dash, Sound_GHAttack, Sound_GHHit, Sound_Jump, Sound_Phoenix, Sound_Run
-	if (_voice == RandomSound::Sound_Arrow_Hit) {
+	if (_voice == UnitSound::Sound_Arrow_Hit) {
 		int voiceNumber = CRandom_Manager::Random() % 6 + 1;
 		_tchar		szFileName[256] = L"";
 
 		wsprintf(szFileName, L"Arrow_Hit%d.ogg", voiceNumber);
 		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME_ETC * _addVolume);
 	}
-	else if (_voice == RandomSound::Sound_Arrow) {
+	else if (_voice == UnitSound::Sound_Arrow) {
 		int voiceNumber = CRandom_Manager::Random() % 5 + 1;
 		_tchar		szFileName[256] = L"";
 
 		wsprintf(szFileName, L"Arrow%d.ogg", voiceNumber);
 		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME_ETC * _addVolume);
 	}
-	else if (_voice == RandomSound::Sound_BowTwang) {
+	else if (_voice == UnitSound::Sound_BowTwang) {
 		int voiceNumber = CRandom_Manager::Random() % 2 + 1;
 		_tchar		szFileName[256] = L"";
 
 		wsprintf(szFileName, L"Bow_Twang%d.ogg", voiceNumber);
 		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME_ETC * _addVolume);
 	}
-	else if (_voice == RandomSound::Sound_Dash) {
+	else if (_voice == UnitSound::Sound_Dash) {
 		int voiceNumber = CRandom_Manager::Random() % 4 + 1;
 		_tchar		szFileName[256] = L"";
 
 		wsprintf(szFileName, L"Dash%d.ogg", voiceNumber);
 		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME_ETC * _addVolume);
 	}
-	else if (_voice == RandomSound::Sound_GHAttack) {
+	else if (_voice == UnitSound::Sound_GHAttack) {
 		int voiceNumber = CRandom_Manager::Random() % 7 + 1;
 		_tchar		szFileName[256] = L"";
 
 		wsprintf(szFileName, L"GH_Attack%d.ogg", voiceNumber);
 		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME_ETC * _addVolume);
 	}
-	else if (_voice == RandomSound::Sound_GHHit) {
+	else if (_voice == UnitSound::Sound_GHHit) {
 		int voiceNumber = CRandom_Manager::Random() % 7 + 1;
 		_tchar		szFileName[256] = L"";
 
 		wsprintf(szFileName, L"GH_Hit%d.ogg", voiceNumber);
 		SoundManager::PlayOverlapSound(szFileName, SoundChannel::PLAYER, VOLUME_ETC * _addVolume);
 	}
-	else if (_voice == RandomSound::Sound_MonDamaged) {
+	else if (_voice == UnitSound::Sound_MonDamaged) {
 		int voiceNumber = CRandom_Manager::Random() % 7 + 1;
 		_tchar		szFileName[256] = L"";
 
 		wsprintf(szFileName, L"GH_Hit%d.ogg", voiceNumber);
 		SoundManager::PlayOverlapSound(szFileName, SoundChannel::MONSTER, 0.1f * _addVolume);
 	}
-	else if (_voice == RandomSound::Sound_Jump) {
+	else if (_voice == UnitSound::Sound_Jump) {
 		int voiceNumber = CRandom_Manager::Random() % 4 + 1;
 		_tchar		szFileName[256] = L"";
 

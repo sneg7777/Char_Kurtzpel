@@ -163,7 +163,7 @@ void Client::CArrow::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereC
 		return;
 	if (_colSphere->m_BonePart == CSphereCollider::BonePart::BonePart_CollBody) {
 		m_sStat.m_IsDead = true;
-		Sound_RandomPlay(RandomSound::Sound_Arrow_Hit);
+		Sound_RandomPlay(UnitSound::Sound_Arrow_Hit);
 	}
 }
 

@@ -120,7 +120,7 @@ private:
 
 	void		Talk_NpcToPortal();
 	void		Dissolve_WeaponIdle(float fTimeDelta);
-	void		Sound_Random(RandomSound _voice);
+	void		Sound_Random(UnitSound _voice);
 private:
 	//มกวม
 	_float						m_fJumpPower = 0.12f;

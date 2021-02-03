@@ -44,7 +44,7 @@ public:
 	//_bool						m_bColl = false;
 	//_bool						m_bDraw = false;
 
-	Engine::CTransform* m_pPlayerTrans = nullptr;
+	Engine::CTransform*			m_pPlayerTrans = nullptr;
 	bool						m_isSearch = false;
 	float						m_TimeGroggy = 0.f;
 

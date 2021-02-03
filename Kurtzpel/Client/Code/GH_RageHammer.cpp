@@ -100,7 +100,7 @@ HRESULT Client::CGH_RageHammer::Ready_Object()
 	m_sComponent.m_pMeshCom->Set_AnimationSet(0);
 	m_sComponent.m_pTransformCom->Set_Scale(0.06f, 0.06f, 0.06f);
 	dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_Layer(Engine::CLayer::LayerName::Layer_DynamicNoColl)->Add_GameObject(L"GH_Rock", this);
-	Sound_RandomPlay(RandomSound::Sound_GHAttack, 1.8f);
+	Sound_RandomPlay(UnitSound::Sound_GHAttack, 1.8f);
 	return S_OK;
 }
 
