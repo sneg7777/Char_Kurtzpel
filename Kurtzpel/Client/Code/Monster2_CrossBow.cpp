@@ -30,7 +30,7 @@ CMonster2_CrossBow::CMonster2_CrossBow(LPDIRECT3DDEVICE9 pGraphicDev)
 	}
 	m_sStat.m_fInitSpeed = 9.f;
 	m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
-	m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp = m_sStat.m_fHp = m_sStat.m_fMaxHp = 7200.f;
+	m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp = m_sStat.m_fHp = m_sStat.m_fMaxHp = 6600.f;
 	m_sStat.m_fKnockBackHp =  m_sStat.m_fMaxKnockBackHp = 3000.f;
 	m_sStat.m_fAttack = 50.f;
 	m_sStat.m_dwNaviIndex = 0;

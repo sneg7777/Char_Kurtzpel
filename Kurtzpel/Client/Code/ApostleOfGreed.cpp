@@ -41,7 +41,7 @@ CApostleOfGreed::CApostleOfGreed(LPDIRECT3DDEVICE9 pGraphicDev)
 	}
 	m_sStat.m_fInitSpeed = 9.f;
 	m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
-	m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp = m_sStat.m_fHp = m_sStat.m_fMaxHp = 20000.f;
+	m_sStat.m_fDelayHp = m_sStat.m_fMaxDelayHp = m_sStat.m_fHp = m_sStat.m_fMaxHp = 18000.f;
 	m_sStat.m_fKnockBackHp =  m_sStat.m_fMaxKnockBackHp = 4000.f;
 	m_sStat.m_fAttack = 100.f;
 	m_sStat.m_dwNaviIndex = 0;

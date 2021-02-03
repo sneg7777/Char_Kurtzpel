@@ -127,7 +127,7 @@ Client::_int Client::CGH_RageHammer::Update_Object(const _float& fTimeDelta)
 		CGH_RockIn::Create(m_pGraphicDev, false, vPos);
 		vPos.y += 2.f;
 		m_RockHit = true;
-		CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 8.f, CSphereCollider::BoneTeam_Player, CPlayer::GetInstance()->Get_sStat()->m_fAttack * 0.3f, 2.f, 0.1f);
+		CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 8.f, CSphereCollider::BoneTeam_Player, CPlayer::GetInstance()->Get_sStat()->m_fAttack * 0.5f, 2.f, 0.1f);
 	}
 	CUnit_D::Update_Object(fTimeDelta);
 

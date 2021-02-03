@@ -2112,7 +2112,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 			}
 			float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
 			if (!m_bCheck[bCheck::bCheck_Skill_F1] &&  trackPos > 0.7f) {
-				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 7.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 3.f, 0.5f);
+				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 7.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 4.f, 0.5f);
 				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.5f);
 				m_bCheck[bCheck::bCheck_Skill_F1] = true;
 			}
@@ -2181,7 +2181,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 					m_TimeCheck[TimeCheck::TimeCheck_LB_SkillE_Attack_Arrow_Start_Total] = 2.5f;
 					m_sComponent.m_pMeshCom->Set_AnimationSet(32);
 					m_AniSpeed = 1.f;
-					CSkillCollider::Create(m_pGraphicDev)->Set_Collider(m_LB_SkillE_Pos, 7.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 0.5f, 3.f, 0.3f, 0.05f, 0.7f);
+					CSkillCollider::Create(m_pGraphicDev)->Set_Collider(m_LB_SkillE_Pos, 7.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 0.9f, 3.f, 0.3f, 0.05f, 0.7f);
 					SoundManager::PlayOverlapSound(L"LB_SkillE.ogg", SoundChannel::PLAYER, VOLUME_VOICE);
 				}
 			}
@@ -2533,7 +2533,7 @@ void CPlayer::Create_Phoenix_SkillZ(_vec3 _vPos, _vec3 _vDir)
 
 	pUnit->Engine::CGameObject::Update_Object(0.f);
 	dynamic_cast<CPhoenix*>(pUnit)->Update_Object(0.f);
-	pUnit->Get_sStat()->m_fAttack = m_sStat.m_fAttack * 0.8f;
+	pUnit->Get_sStat()->m_fAttack = m_sStat.m_fAttack * 1.2f;
 	Engine::CLayer* pLayer = Engine::CManagement::GetInstance()->m_pScene->Get_Layer(Engine::CLayer::LayerName::Layer_Dynamic);
 	pLayer->Add_GameObject(L"Phoenix_SkillQ", pGameObject);
 
