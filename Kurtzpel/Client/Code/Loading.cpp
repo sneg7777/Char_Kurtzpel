@@ -409,6 +409,14 @@ _uint CLoading::Loading_ForStage(void)
 												L"GH_SkillF_StoneOut.X"),
 												E_FAIL);
 
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_GH_RageHammer",
+												Engine::TYPE_DYNAMIC,
+												L"../Bin/Resource/Mesh/DynamicMesh/RageHammer/",
+												L"RageHammer.X"),
+												E_FAIL);
+
 	/*FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 												Engine::RESOURCE_STAGE,
 												L"Mesh_Equip_Top_01",

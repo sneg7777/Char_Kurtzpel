@@ -61,7 +61,7 @@ protected:
 	void		SetUp_OnTerrain(void);
 	_bool		Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
-	void		Sound_RandomPlay(RandomSound _voice);
+	void		Sound_RandomPlay(RandomSound _voice, float _addVolume = 1.f);
 protected:
 	sComponent					m_sComponent;
 

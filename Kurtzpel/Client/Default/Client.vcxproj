@@ -187,6 +187,7 @@
     <ClInclude Include="..\Code\EffectMesh_GHSkillE.h" />
     <ClInclude Include="..\Code\EffectRcTex.h" />
     <ClInclude Include="..\Code\Equip_Top_01.h" />
+    <ClInclude Include="..\Code\GH_RageHammer.h" />
     <ClInclude Include="..\Code\GH_RockIn.h" />
     <ClInclude Include="..\Code\Hammer.h" />
     <ClInclude Include="..\Code\Loading.h" />
@@ -250,6 +251,7 @@
     <ClCompile Include="..\Code\EffectMesh_GHSkillE.cpp" />
     <ClCompile Include="..\Code\EffectRcTex.cpp" />
     <ClCompile Include="..\Code\Equip_Top_01.cpp" />
+    <ClCompile Include="..\Code\GH_RageHammer.cpp" />
     <ClCompile Include="..\Code\GH_RockIn.cpp" />
     <ClCompile Include="..\Code\Hammer.cpp" />
     <ClCompile Include="..\Code\Loading.cpp" />

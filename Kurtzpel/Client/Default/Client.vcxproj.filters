@@ -312,6 +312,9 @@
     <ClInclude Include="..\Code\EffectRcTex.h">
       <Filter>02. GameObject\01. Stage\24. EffectRcTex</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\GH_RageHammer.h">
+      <Filter>02. GameObject\01. Stage\10.Equip\Hammer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -478,6 +481,9 @@
     </ClCompile>
     <ClCompile Include="..\Code\EffectRcTex.cpp">
       <Filter>02. GameObject\01. Stage\24. EffectRcTex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\GH_RageHammer.cpp">
+      <Filter>02. GameObject\01. Stage\10.Equip\Hammer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

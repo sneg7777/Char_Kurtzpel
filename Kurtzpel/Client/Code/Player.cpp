@@ -20,6 +20,7 @@
 #include "SoundManager.h"
 #include "EffectMesh_GHSkillE.h"
 #include "EffectRcTex.h"
+#include "GH_RageHammer.h"
 
 #define MP_GH_Q 50.f
 #define MP_GH_E 50.f
@@ -247,6 +248,7 @@ void Client::CPlayer::Set_StateToAnimation(State _state, _vec3 _vPos, _vec3 _vDi
 				m_TimeCheck[TimeCheck::TimeCheck_Invin] = 10.f;
 				CCameraScene_Manager::Get_Instance()->Set_CameraScene(2);
 				Sound_Random(RandomSound::Sound_SkillVoice);
+				m_bCheck[bCheck::bCheck_Skill_F1] = false;
 				break;
 			}
 			default:
@@ -2138,6 +2140,7 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 					dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.8f);
 					CSkillCollider::Create(m_pGraphicDev)->Set_Collider(vPos, 5.f, CSphereCollider::BoneTeam_Player, m_sStat.m_fAttack * 5.f, 0.5f);
 					Sound_Random(RandomSound::Sound_GHHit);
+					//CEffectRcTex::Create(m_pGraphicDev)->Set_Effect(false, vPos, 4.f, L"Texture_Effect_GH_RockHit", 2, 2, 7.f, 90.f, 0.f, 0.f);
 				}
 			}
 			else if (m_AniClip == AnimationClip::Ani_3) {
@@ -2159,6 +2162,10 @@ void CPlayer::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMeshCom, _ve
 			}
 			else */if (trackPos > 1.6f && trackPos < 1.7f) {
 				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(1.2f);
+			}
+			if (!m_bCheck[bCheck::bCheck_Skill_F1] && trackPos > 1.6f) {
+				m_bCheck[bCheck::bCheck_Skill_F1] = true;
+				CGH_RageHammer::Create(m_pGraphicDev);
 			}
 				
 		}

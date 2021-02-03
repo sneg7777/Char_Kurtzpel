@@ -129,19 +129,39 @@ HRESULT CStage_1::Ready_GameLogic_Dynamic_Layer(const _tchar * pLayerTag)
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Player", pGameObject), E_FAIL);
 	
 	int questNumber = CNpcQuest_Manager::Get_NpcQuestInfo()->m_QuestNumber;
-	if (true){//questNumber == 7 || questNumber == 9) {
+	if (true){//questNumber == 9){
+		pGameObject = CMonster1_TwoHand::Create(m_pGraphicDev);
+		NULL_CHECK_RETURN(pGameObject, E_FAIL);
+		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"M_Monster1_TwoHand", pGameObject), E_FAIL);
+
 		pGameObject = CMonster2_CrossBow::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pGameObject, E_FAIL);
 		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"M_Monster2_CrossBow", pGameObject), E_FAIL);
+		dynamic_cast<CMonster2_CrossBow*>(pGameObject)->Get_sComponent()->m_pTransformCom->Set_Pos(60.f, 0.f, 80.f);
+		pGameObject->Engine::CGameObject::Update_Object(0.f);
+
+		pGameObject = CMonster2_CrossBow::Create(m_pGraphicDev);
+		NULL_CHECK_RETURN(pGameObject, E_FAIL);
+		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"M_Monster2_CrossBow", pGameObject), E_FAIL);
+		dynamic_cast<CMonster2_CrossBow*>(pGameObject)->Get_sComponent()->m_pTransformCom->Set_Pos(65.f, 0.f, 85.f);
+		pGameObject->Engine::CGameObject::Update_Object(0.f);
+
 		pGameObject = CMonster1_TwoHand::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pGameObject, E_FAIL);
 		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"M_Monster1_TwoHand", pGameObject), E_FAIL);
 		dynamic_cast<CMonster1_TwoHand*>(pGameObject)->Get_sComponent()->m_pTransformCom->Set_Pos(75.f, 0.f, 70.f);
 		pGameObject->Engine::CGameObject::Update_Object(0.f);
+
+		pGameObject = CMonster2_CrossBow::Create(m_pGraphicDev);
+		NULL_CHECK_RETURN(pGameObject, E_FAIL);
+		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"M_Monster2_CrossBow", pGameObject), E_FAIL);
+		dynamic_cast<CMonster2_CrossBow*>(pGameObject)->Get_sComponent()->m_pTransformCom->Set_Pos(75.f, 0.f, 80.f);
+		pGameObject->Engine::CGameObject::Update_Object(0.f);
+
 		pGameObject = CMonster1_TwoHand::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pGameObject, E_FAIL);
 		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"M_Monster1_TwoHand", pGameObject), E_FAIL);
-		dynamic_cast<CMonster1_TwoHand*>(pGameObject)->Get_sComponent()->m_pTransformCom->Set_Pos(75.f, 0.f, 80.f);
+		dynamic_cast<CMonster1_TwoHand*>(pGameObject)->Get_sComponent()->m_pTransformCom->Set_Pos(65.f, 0.f, 65.f);
 		pGameObject->Engine::CGameObject::Update_Object(0.f);
 	}
 	else /*if(questNumber == 11)*/{

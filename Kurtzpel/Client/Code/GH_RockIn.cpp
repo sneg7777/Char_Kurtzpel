@@ -19,7 +19,7 @@ CGH_RockIn::~CGH_RockIn(void)
 
 }
 
-HRESULT Client::CGH_RockIn::Add_Component(bool _inCheck)
+HRESULT Client::CGH_RockIn::Add_Component(bool _inCheck, _vec3 _vPos)
 {
 	Engine::CComponent*		pComponent = nullptr;
 
@@ -32,7 +32,14 @@ HRESULT Client::CGH_RockIn::Add_Component(bool _inCheck)
 	NULL_CHECK_RETURN(pComponent, E_FAIL);
 	m_mapComponent[Engine::ID_STATIC].emplace(L"Com_Mesh", pComponent);
 	_vec3 vPos;
-	CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+	if (_vPos.x == 0.f) {
+		CPlayer::GetInstance()->Get_sComponent()->m_pTransformCom->Get_Info(Engine::INFO_POS, &vPos);
+		m_sComponent.m_pTransformCom->Set_Scale(0.035f, 0.035f, 0.035f);
+	}
+	else {
+		vPos = _vPos;
+		m_sComponent.m_pTransformCom->Set_Scale(0.05f, 0.02f, 0.05f);
+	}
 	m_sComponent.m_pTransformCom->Set_Pos(&vPos);
 	Engine::CGameObject::Update_Object(0.f);
 	
@@ -75,11 +82,11 @@ HRESULT CGH_RockIn::SetUp_ConstantTable(LPD3DXEFFECT& pEffect)
 }
 
 
-CGH_RockIn* CGH_RockIn::Create(LPDIRECT3DDEVICE9 pGraphicDev, bool _inCheck)
+CGH_RockIn* CGH_RockIn::Create(LPDIRECT3DDEVICE9 pGraphicDev, bool _inCheck, _vec3 _vPos)
 {
 	CGH_RockIn*	pInstance = new CGH_RockIn(pGraphicDev);
 
-	if (FAILED(pInstance->Ready_Object(_inCheck)))
+	if (FAILED(pInstance->Ready_Object(_inCheck, _vPos)))
 		Client::Safe_Release(pInstance);
 	return pInstance;
 }
@@ -91,18 +98,18 @@ void CGH_RockIn::Free(void)
 
 HRESULT Client::CGH_RockIn::Ready_Object()
 {
-	FAILED_CHECK_RETURN(Add_Component(false), E_FAIL);
+	FAILED_CHECK_RETURN(Add_Component(false, _vec3{0.f, 0.f, 0.f}), E_FAIL);
 	m_sComponent.m_pMeshCom->Set_AnimationSet(0);
 	m_sComponent.m_pTransformCom->Set_Scale(0.035f, 0.035f, 0.035f);
 	dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_Layer(Engine::CLayer::LayerName::Layer_DynamicNoColl)->Add_GameObject(L"GH_Rock", this);
 	return S_OK;
 }
 
-HRESULT Client::CGH_RockIn::Ready_Object(bool _inCheck)
+HRESULT Client::CGH_RockIn::Ready_Object(bool _inCheck, _vec3 _vPos)
 {
-	FAILED_CHECK_RETURN(Add_Component(_inCheck), E_FAIL);
+	FAILED_CHECK_RETURN(Add_Component(_inCheck, _vPos), E_FAIL);
 	m_sComponent.m_pMeshCom->Set_AnimationSet(0);
-	m_sComponent.m_pTransformCom->Set_Scale(0.035f, 0.035f, 0.035f);
+	
 	dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_Layer(Engine::CLayer::LayerName::Layer_DynamicNoColl)->Add_GameObject(L"GH_Rock", this);
 	return S_OK;
 }
@@ -118,8 +125,11 @@ Client::_int Client::CGH_RockIn::Update_Object(const _float& fTimeDelta)
 	SetUp_OnTerrain();
 	//Pattern(fTimeDelta);
 
-	if(m_sComponent.m_pMeshCom->Get_AnimationTrackPos() <= m_sComponent.m_pMeshCom->Get_Period())
+	if (m_sComponent.m_pMeshCom->Get_AnimationTrackPos() <= m_sComponent.m_pMeshCom->Get_Period() - 0.05f)
 		m_sComponent.m_pMeshCom->Play_Animation(fTimeDelta * m_AniSpeed);
+	else
+		m_sComponent.m_pMeshCom->Play_Animation(0.f);
+
 	CUnit_D::Update_Object(fTimeDelta);
 
 	m_sComponent.m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);

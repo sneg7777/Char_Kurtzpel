@@ -13,7 +13,7 @@ private:
 
 public:
 	virtual HRESULT Ready_Object(void) override;
-	HRESULT Ready_Object(bool _inCheck);
+	HRESULT Ready_Object(bool _inCheck, _vec3 _vPos);
 	virtual _int Update_Object(const _float& fTimeDelta) override;
 	virtual _int LateUpdate_Object(const _float& fTimeDelta);
 	virtual void Render_Object(void) override;
@@ -21,7 +21,7 @@ public:
 public:
 
 private:
-	HRESULT		Add_Component(bool _inCheck);
+	HRESULT		Add_Component(bool _inCheck, _vec3 _vPos);
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
 	void		SetUp_OnTerrain(void);
 	void		Calc_Time(_float fTimeDelta);
@@ -29,7 +29,7 @@ private:
 	virtual void	 Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider* _colSphere, const _float& fTimeDelta);
 
 public:
-	static CGH_RockIn*	Create(LPDIRECT3DDEVICE9 pGraphicDev, bool _inCheck);
+	static CGH_RockIn* Create(LPDIRECT3DDEVICE9 pGraphicDev, bool _inCheck, _vec3 _vPos = { 0.f, 0.f, 0.f });
 
 private:
 	virtual void Free(void) override;
