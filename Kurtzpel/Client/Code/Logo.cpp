@@ -62,20 +62,27 @@ HRESULT CLogo::Ready_Environment_Layer(const _tchar * pLayerTag)
 {
 	Engine::CLayer*			pLayer = Engine::CLayer::Create();
 	NULL_CHECK_RETURN(pLayer, E_FAIL);
-	
+
+	CBackGround* pBackGround;
 	Engine::CGameObject*		pGameObject = nullptr;
 
-	pGameObject = CBackGround::Create(m_pGraphicDev);
+	pGameObject = pBackGround = CBackGround::Create(m_pGraphicDev);
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"BackGround", pGameObject), E_FAIL);
+	//// texture
+	Engine::CComponent* pComponent = pBackGround->m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_LOGO, L"Texture_Logo"));
+	NULL_CHECK_RETURN(pComponent, E_FAIL);
+	pBackGround->Get_mapComStatic()->emplace(L"Com_Texture", pComponent);
 
-	/*pGameObject = CTestPlayer::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"TestPlayer", pGameObject), E_FAIL);
+	//pGameObject = pBackGround = CBackGround::Create(m_pGraphicDev);
+	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	//FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"BackGround", pGameObject), E_FAIL);
+	//// texture
+	//pComponent = pBackGround->m_pTextureCom = dynamic_cast<Engine::CTexture*>(Engine::Clone(Engine::RESOURCE_LOGO, L"Texture_Loading"));
+	//NULL_CHECK_RETURN(pComponent, E_FAIL);
+	//pBackGround->Get_mapComStatic()->emplace(L"Com_Texture", pComponent);
 
-	pGameObject = CTestMonster::Create(m_pGraphicDev);
-	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"TestMonster", pGameObject), E_FAIL);*/
+
 
 	
 	m_mapLayer.emplace(pLayerTag, pLayer);
@@ -116,6 +123,8 @@ HRESULT Client::CLogo::Ready_Resource(Engine::RESOURCETYPE eType)
 	FAILED_CHECK_RETURN(Engine::Ready_Buffer(m_pGraphicDev, Engine::RESOURCE_STATIC, L"Buffer_TriCol", Engine::BUFFER_TRICOL), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Buffer(m_pGraphicDev, Engine::RESOURCE_STATIC, L"Buffer_RcTex", Engine::BUFFER_RCTEX), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_LOGO, L"Texture_Logo", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Logo/Logo.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_LOGO, L"Texture_Loading", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/Loading.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_LOGO, L"Texture_LoadingComplete", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/LoadingComplete.png"), E_FAIL);
 
 	Engine::CComponent*		pComponent = nullptr;
 

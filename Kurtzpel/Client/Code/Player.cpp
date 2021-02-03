@@ -2364,7 +2364,7 @@ void CPlayer::Collision(CSphereCollider* _mySphere, CUnit* _col, CSphereCollider
 				else
 					Set_StateToAnimation_Jump(State::State_Damaged);
 				m_LB_Arrow_Count = 0;
-				m_TimeCheck[TimeCheck_Invin] = 4.f;
+				m_TimeCheck[TimeCheck_Invin] = 3.f;
 				m_sStat.m_fKnockBackDir = m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS] - dynamic_cast<CUnit*>(_col)->Get_sComponent()->m_pTransformCom->m_vInfo[Engine::INFO_POS];
 				D3DXVec3Normalize(&m_sStat.m_fKnockBackDir, &m_sStat.m_fKnockBackDir);
 			}

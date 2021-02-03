@@ -175,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\ApostleOfGreed.h" />
+    <ClInclude Include="..\Code\Ap_Arrow.h" />
     <ClInclude Include="..\Code\Arrow.h" />
     <ClInclude Include="..\Code\ArrowNaviTerrain.h" />
     <ClInclude Include="..\Code\Arrow_SkillF.h" />
@@ -239,6 +240,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Code\ApostleOfGreed.cpp" />
+    <ClCompile Include="..\Code\Ap_Arrow.cpp" />
     <ClCompile Include="..\Code\Arrow.cpp" />
     <ClCompile Include="..\Code\ArrowNaviTerrain.cpp" />
     <ClCompile Include="..\Code\Arrow_SkillF.cpp" />

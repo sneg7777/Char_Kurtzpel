@@ -291,6 +291,17 @@ void CNpc_01::NpcNextTalk() {
 			questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
 			break;
 		}
+		case 12: {
+			if (talkNumber == 1) {
+				uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_TheEnd");
+			}
+			else {
+				questMgr->Get_NpcQuestInfo()->m_PlayerTalk = false;
+				questMgr->Get_NpcQuestInfo()->m_TalkEnd = true;
+				questMgr->Get_NpcQuestInfo()->m_QuestNumber++;
+			}
+			break;
+		}
 		default: {
 			questMgr->Get_NpcQuestInfo()->m_TalkEnd = true;
 			questMgr->Get_NpcQuestInfo()->m_PlayerTalk = false;
@@ -331,6 +342,10 @@ void CNpc_01::NpcQuest()
 		}
 		case 10: {
 			uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_13dlwpak");
+			break;
+		}
+		case 12: {
+			uiMgr->Create_Text(CUI::UIKind::UIK_TalkText, L"Texture_Text_14wlrma");
 			break;
 		}
 		default:

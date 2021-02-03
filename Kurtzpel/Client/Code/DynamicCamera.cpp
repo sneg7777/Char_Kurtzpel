@@ -285,7 +285,7 @@ void CDynamicCamera::Move_NpcCamera_No(const _float& fTimeDelta)
 
 		vEyeDir = vEyePos - m_vEye;
 		float dist = sqrtf(vEyeDir.x * vEyeDir.x + vEyeDir.y * vEyeDir.y + vEyeDir.z * vEyeDir.z);
-		if (dist < 0.1f) {
+		if (dist < 0.3f) {
 			CNpcQuest_Manager::Get_NpcQuestInfo()->m_TalkEnd = false;
 		}
 		else {

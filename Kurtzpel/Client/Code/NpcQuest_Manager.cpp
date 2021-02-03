@@ -75,7 +75,7 @@ void Client::CNpcQuest_Manager::QusetProgress(const _float& fTimeDelta)
 		}
 	}
 	else if (m_NpcQuestInfo.m_QuestNumber == 9) {
-		if (m_NpcQuestInfo.m_DeadTwoHand > 1) {
+		if (m_NpcQuestInfo.m_DeadTwoHand > 3 && m_NpcQuestInfo.m_DeadTwoHand > 2) {
 			m_NpcQuestInfo.m_QuestNumber++;
 			CUI_Manager::Get_Instance()->Create_QuestClear();
 		}

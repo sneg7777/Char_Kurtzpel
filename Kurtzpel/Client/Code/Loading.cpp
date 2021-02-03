@@ -190,6 +190,8 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_11shffkdns", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/11shffkdns.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_12ektlans", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/12ektlans.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_13dlwpak", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/13dlwpak.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_14wlrma", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/14wlrma.png"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_TheEnd", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/TheEnd.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Text_99wkfgotdj", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Text/99wkfgotdj.png"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_DissolveTex", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/DissolveTex.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_Test", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/Test.tga"), E_FAIL);
@@ -202,6 +204,7 @@ _uint CLoading::Loading_ForStage(void)
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_GH_RockHit", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/GH_RockHit.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_Circle01", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/Circle01.tga"), E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_Thunder", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/Thunder.tga"), E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect_MagicCircle", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Effect/MagicCircle.tga"), E_FAIL);
 	
 	
 	lstrcpy(m_szLoading, L"Mesh Loading.............................");
@@ -274,6 +277,13 @@ _uint CLoading::Loading_ForStage(void)
 												L"Mesh_Arrow", 
 												Engine::TYPE_STATIC, 
 												L"../Bin/Resource/Mesh/StaticMesh/Arrow/",
+												L"Arrow.X"),
+												E_FAIL);
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_AP_Arrow", 
+												Engine::TYPE_STATIC, 
+												L"../Bin/Resource/Mesh/StaticMesh/Ap_Arrow/",
 												L"Arrow.X"),
 												E_FAIL);
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,

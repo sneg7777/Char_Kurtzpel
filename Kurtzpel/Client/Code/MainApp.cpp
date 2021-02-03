@@ -84,7 +84,8 @@ void CMainApp::Render_MainApp(void)
 	Engine::Render_Begin(D3DXCOLOR(0.7f, 0.7f, 0.7f, 1.f));
 	
 	m_pManagementClass->Render_Scene(m_pGraphicDev);
-	Engine::Render_Font(L"Font_Jinji", m_szFPS, &_vec2(700.f, 10.f), D3DXCOLOR(0.f, 0.f,0.f, 1.f));
+	//Engine::Render_Font(L"Font_Jinji", m_szFPS, &_vec2(700.f, 10.f), D3DXCOLOR(0.f, 0.f,0.f, 1.f));
+	//Engine::Render_Font(L"Font_Jinji", m_szFPS, &_vec2(700.f, -200.f), D3DXCOLOR(0.f, 0.f, 0.f, 1.f));
 
 	Engine::Render_End();
 }

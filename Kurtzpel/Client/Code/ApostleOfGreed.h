@@ -21,13 +21,13 @@ public:
 		TimeCheck_Dash, TimeCheck_End
 	};
 	enum Skill_Ap {
-		Skill_Ap_None, Skill_Ap_1, Skill_Ap_3, Skill_Ap_7, Skill_Ap_10, Skill_Ap_End
+		Skill_Ap_None, Skill_Ap_1, Skill_Ap_3, Skill_Ap_5, Skill_Ap_7, Skill_Ap_10, Skill_Ap_End
 	};
 	enum SKill_Cool_Ap {
-		SCool_Ap_1, SCool_Ap_3, SCool_Ap_7, SCool_Ap_10, SCool_Ap_10_2, SCool_Ap_Total, SCool_Ap_End
+		SCool_Ap_1, SCool_Ap_3, SCool_Ap_5, SCool_Ap_7, SCool_Ap_10, SCool_Ap_10_2, SCool_Ap_Total, SCool_Ap_End
 	};
 	enum ApSound {
-		ApSound_AttackVoice, ApSound_Dead, ApSound_Groggy, ApSound_GroggyUp, ApSound_Skill01, ApSound_Skill03, ApSound_Skill07,
+		ApSound_AttackVoice, ApSound_Dead, ApSound_Groggy, ApSound_GroggyUp, ApSound_Skill01, ApSound_Skill03, ApSound_Skill05, ApSound_Skill07,
 		ApSound_Start, ApSound_Circle, ApSound_Thunder, ApSound_End
 	};
 private:

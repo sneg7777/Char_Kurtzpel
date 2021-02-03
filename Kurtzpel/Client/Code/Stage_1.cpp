@@ -142,7 +142,7 @@ HRESULT CStage_1::Ready_GameLogic_Dynamic_Layer(const _tchar * pLayerTag)
 	FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"Player", pGameObject), E_FAIL);
 	
 	int questNumber = CNpcQuest_Manager::Get_NpcQuestInfo()->m_QuestNumber;
-	if (false){//questNumber == 9){
+	if (questNumber == 9){
 		pGameObject = CMonster1_TwoHand::Create(m_pGraphicDev);
 		NULL_CHECK_RETURN(pGameObject, E_FAIL);
 		FAILED_CHECK_RETURN(pLayer->Add_GameObject(L"M_Monster1_TwoHand", pGameObject), E_FAIL);

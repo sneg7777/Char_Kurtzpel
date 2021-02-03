@@ -19,6 +19,8 @@
 #define ApSkill_Cool1 12.f
 #define ApSkill_Cool3 12.f
 #define ApSkill_Cool3_DisTance 15.f
+#define ApSkill_Cool5 12.f
+#define ApSkill_Cool5_DisTance 15.f
 #define ApSkill_Cool7 12.f
 #define ApSkill_Cool7_DisTance 30.f
 #define ApSkill_Cool10 12.f
@@ -242,6 +244,12 @@ void Client::CApostleOfGreed::Set_StateToAnimation(State _state, Skill_Ap _skill
 			Set_BonePartColliderAttack(CSphereCollider::BonePart_Weapon, m_sStat.m_fAttack, false, 4.f);
 			Set_BonePartColliderAttack(CSphereCollider::BonePart_RHand, m_sStat.m_fAttack, false, 4.f);
 		}
+		else if (m_SkillState == Skill_Ap_5) {
+			m_SkillCool[SKill_Cool_Ap::SCool_Ap_5] = ApSkill_Cool5;
+			m_sComponent.m_pMeshCom->Set_AnimationSet(12);
+			m_sStat.m_fSpeed = m_sStat.m_fInitSpeed;
+			m_AniSpeed = 1.1f;
+		}
 		else if (m_SkillState == Skill_Ap_7) {
 			m_SkillCool[SKill_Cool_Ap::SCool_Ap_7] = ApSkill_Cool7;
 			m_sComponent.m_pMeshCom->Set_AnimationSet(7);
@@ -452,6 +460,22 @@ void CApostleOfGreed::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMesh
 			return;
 		}
 	}
+	else if (m_SkillState == Skill_Ap::Skill_Ap_5) {
+		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
+			Set_StateToAnimation(State::State_Wait);
+		}
+		else {
+			float trackPos = m_sComponent.m_pMeshCom->Get_AnimationTrackPos();
+
+			if (!m_bCheck[bCheck_Sound1] && trackPos > 0.4f) {
+				ApSound_RandomPlay(ApSound::ApSound_Circle, 2.f);
+				m_bCheck[bCheck_Sound1] = true;
+				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.3f);
+				CEffectRcTex::Create(m_pGraphicDev)->Set_Effect(false, vPos, 10.f, L"Texture_Effect_MagicCircle", 1, 1, 1.f, 90.f);// ->Get_sComponent()->m_pTransformCom->Set_Scale(5.f, 20.f, 5.f);
+			}
+			return;
+		}
+	}
 	else if (m_SkillState == Skill_Ap::Skill_Ap_7) {
 		if (m_sComponent.m_pMeshCom->Is_AnimationSetEnd(0.1f)) {
 			Set_StateToAnimation(State::State_Wait);
@@ -491,6 +515,7 @@ void CApostleOfGreed::Event_Skill(float fTimeDelta, Engine::CNaviMesh* pNaviMesh
 				CEffectRcTex::Create(m_pGraphicDev)->Set_Effect(true, m_SkillPosSave, 10.f, L"Texture_Effect_Thunder", 4, 1, 12.f)->Get_sComponent()->m_pTransformCom->Set_Scale(5.f, 20.f, 5.f);
 				dynamic_cast<CStage*>(Engine::CManagement::GetInstance()->m_pScene)->Get_DynamicCamera()->Set_ShakeTime(0.2f);
 				ApSound_RandomPlay(ApSound::ApSound_Thunder);
+				CSkillCollider::Create(m_pGraphicDev)->Set_Collider(m_SkillPosSave, 3.f, CSphereCollider::BoneTeam_Enemy, m_sStat.m_fAttack * 1.5f, 0.5f, 0.f, 0.f, 0.7f);
 			}
 			m_SkillPosSave = vPlayerPos;
 		}
@@ -539,6 +564,17 @@ bool CApostleOfGreed::Random_Skill(float playerTodisTance) {
 		if (m_SkillCool[SKill_Cool_Ap::SCool_Ap_10] <= 0.f) {
 			Set_StateToAnimation(State::State_Skill, Skill_Ap::Skill_Ap_10);
 			//m_PlayerDistanceSave = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS];
+			return true;
+		}
+		else {
+			return false;
+		}
+		break;
+	}
+	case 4: {
+		if (m_SkillCool[SKill_Cool_Ap::SCool_Ap_5] <= 0.f && playerTodisTance < PLAYER_ATTACK_DISTANCE && m_AngleOfSame) {
+			Set_StateToAnimation(State::State_Skill, Skill_Ap::Skill_Ap_5);
+			m_PlayerDistanceSave = m_pPlayerTrans->m_vInfo[Engine::INFO_POS] - m_sComponent.m_pTransformCom->m_vInfo[Engine::INFO_POS];
 			return true;
 		}
 		else {
@@ -608,7 +644,7 @@ void CApostleOfGreed::ApSound_RandomPlay(ApSound _voice, float _addVolume)
 		wsprintf(szFileName, L"Ap_GroggyUp%d.ogg", voiceNumber);
 		SoundManager::PlayOverlapSound(szFileName, SoundChannel::MONSTER, VOLUME_ETC * _addVolume);
 	}
-	else if (_voice == ApSound::ApSound_Skill01) {
+	else if (_voice == ApSound::ApSound_Skill01 || _voice == ApSound::ApSound_Skill05) {
 		int voiceNumber = CRandom_Manager::Random() % 2 + 1;
 		_tchar		szFileName[256] = L"";
 
